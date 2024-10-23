@@ -1,26 +1,26 @@
 <script setup>
 import { ref } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
-
+const isAuthenticated = ref(!!localStorage.getItem('loggedInUser'));
 
 const hiddenPopup = ref(false)
 </script>
 
 <template>
   <div :class="hiddenPopup ? 'body flex hidden':'body flex'">
-    <div class="body-bar">
+    <div class="body-bar" v-if="isAuthenticated" >
       <div class="nav">
         <div class="logo">
           <div class="logo_web flex" style="justify-items: center;">
             <div class="img flex" style="align-items: center;">
               <img src="https://cdn-icons-png.flaticon.com/512/5339/5339181.png" alt="" width="50">
-            </div>
+            </div> &nbsp; &nbsp;
             <h2>Hưng thịnh</h2>
           </div>
         </div>
         <ul class="menu">
           <li class="menu_item">
-            <a href="" class="button"><i class='bx bx-equalizer'></i> <span>Hỏi đáp trợ lý</span></a>
+            <a href="/assistant" class="button"><i class='bx bx-equalizer'></i> <span>Hỏi đáp trợ lý</span></a>
           </li>
           <li class="menu_item">
             <a href="" class="button"><i class='bx bx-file'></i> <span>Xử lý & tạo mới hồ sơ</span></a>
@@ -44,13 +44,13 @@ const hiddenPopup = ref(false)
         </div>
       </div>
       <div class="menu_icon" v-if="hiddenPopup" @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em;" class='bx bx-menu-alt-left' ></i>
+        <i style="font-size: 2em; color: #e03d31;" class='bx bx-menu-alt-left' ></i>
       </div>
       <div class="menu_icon center" v-else  @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em;" class='bx bx-caret-left-circle' ></i>
+        <i style="font-size: 2em; color: #e03d31;" class='bx bx-caret-left-circle' ></i>
       </div>
     </div>
-    <div class="body-content">
+    <div class="body-content" :class="!isAuthenticated ? 'body-full': ''">
       <RouterView />
     </div>
   </div>
@@ -64,11 +64,12 @@ const hiddenPopup = ref(false)
   display: flex;
 }
 .nav{
-  height: 100dvh;
+  height: 100vh;
   width: 250px;
   box-shadow: 1px 2px 5px 1px rgba(128, 128, 128, 0.281);
   padding: 10px;
-  transition: all 1s;
+  background-color: #ececec;
+  transition: all 0.1s;
 }
 .body-bar {
   position: relative;
@@ -98,7 +99,9 @@ const hiddenPopup = ref(false)
 .body-content {
   width: calc(100% - 250px);
 }
-
+.body-full {
+  width: 100%;
+}
 .logo {
   height: 100px;
 }
@@ -119,16 +122,20 @@ li {
 }
 
 .menu_item {
-  padding: 15px 20px;
+  padding: 15px 10px;
   padding-left: 10px;
   display: flex;
   border: 1px solid rgba(170, 170, 170, 0);
   transition: all 0.5s;
-  background-color: rgba(0, 255, 255, 0.123);
+  border-radius: 10px;
+  color: #fff;
+  background-color: #e03d31;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .menu_item:hover {
-  background-color: antiquewhite;
+  background-color: #f4d1ce;
+  color: black;
   cursor: pointer;
 }
 
@@ -146,9 +153,19 @@ li .button span {
 }
 
 .user {
-  height: 80px;
+  height: 50px;
+  background-color: #fff;
+  position: absolute;
+  bottom: 0;
+  right: 0;
+  left: 0;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
-
+.user:hover {
+  background-color: rgba(0, 0, 0, 0.6);  ;
+  border-color: #fff;
+  color: #fff;
+}
 .body-content {
   padding: 10px;
 }
