@@ -4,7 +4,8 @@ import { login, register, logout } from '../api/auth';
 const store = createStore({
     state: {
         user: JSON.parse(localStorage.getItem('user')) || null,
-        token: localStorage.getItem('token') || null
+        token: localStorage.getItem('token') || null,
+        isLogin: !!localStorage.getItem('token') 
     },
     mutations: {
         setUser(state, user) {
@@ -13,11 +14,13 @@ const store = createStore({
         },
         setToken(state, token) {
             state.token = token;
+            state.isLogin = !!token;
             localStorage.setItem('token', token);
         },
         clearAuthData(state) {
             state.user = null;
             state.token = null;
+            state.isLogin = false;
             localStorage.removeItem('user');
             localStorage.removeItem('token');
         }
@@ -45,6 +48,9 @@ const store = createStore({
         },
         getUser(state) {
             return state.user;
+        },
+        isLogin(state) {
+            return state.isLogin; 
         }
     }
 });

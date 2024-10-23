@@ -1,18 +1,19 @@
 @import './base.css';
+
 #app {
   /* max-width: 1280px; */
 }
+
 .title {
   line-height: 30px;
-  color: var(--color-primary)!important;
+  color: var(--color-primary) !important;
 }
-a,
-.green {
+
+a {
   text-decoration: none;
-  transition: 0.4s;
-  padding: 3px;
-  color: inherit;
+  color: var(--color-text);
 }
+
 /* 
 @media (hover: hover) {
   a:hover {

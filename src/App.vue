@@ -1,19 +1,20 @@
 <script setup>
 import { ref } from "vue";
-import { RouterLink, RouterView } from 'vue-router'
-const isAuthenticated = ref(!!localStorage.getItem('token'));
+import store from '@/store';
 
+import { RouterLink, RouterView } from 'vue-router'
+const isLogin = store.getters.isLogin; 
 const hiddenPopup = ref(false);
 </script>
 
 <template>
   <div :class="hiddenPopup ? 'body flex hidden' : 'body flex'">
-    <div class="body-bar" v-if="isAuthenticated">
+    <div class="body-bar" v-if="isLogin">
       <div class="nav">
         <div class="logo">
           <div class="logo_web flex" style="justify-items: center;">
             <div class="img flex" style="align-items: center;">
-              <img src="/public/icon_logo.png" alt="" width="50">
+              <img src="../icon_logo.png" alt="" width="50">
             </div> &nbsp; &nbsp;
             <h2>Hưng thịnh</h2>
           </div>
@@ -50,7 +51,7 @@ const hiddenPopup = ref(false);
         <i style="font-size: 2em; color: #e03d31;" class='bx bx-caret-left-circle'></i>
       </div>
     </div>
-    <div class="body-content" :class="!isAuthenticated ? 'body-full' : ''">
+    <div class="body-content" :class="!isLogin ? 'body-full' : ''">
       <RouterView />
     </div>
   </div>
@@ -71,7 +72,7 @@ const hiddenPopup = ref(false);
   box-shadow: 1px 2px 5px 1px rgba(128, 128, 128, 0.281);
   padding: 10px;
   background-color: #ececec;
-  transition: all 0.1s;
+  transition: all 0.3s;
   position: relative;
 }
 
@@ -131,7 +132,7 @@ li {
 }
 
 .menu_item {
-  padding: 15px 10px;
+  padding: 15px 5px;
   padding-left: 10px;
   display: flex;
   border: 1px solid rgba(170, 170, 170, 0);
@@ -144,8 +145,10 @@ li {
 
 .menu_item:hover {
   background-color: #f4d1ce;
-  color: black;
   cursor: pointer;
+}
+.menu_item:hover .button{
+  color: black;
 }
 
 .menu_item i {
@@ -155,7 +158,10 @@ li {
 li .button {
   display: flex;
   align-items: center;
+  color: #ececec;
 }
+
+
 
 li .button span {
   padding-left: 5px;
@@ -178,7 +184,7 @@ li .button span {
 }
 
 .body-content {
-  padding: 10px;
+  padding: 10px 0px;
 }
 
 .user_profile {

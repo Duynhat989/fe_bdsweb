@@ -8,8 +8,13 @@ const name = ref('');
 const email = ref('');
 const password = ref('');
 const errorMessage = ref('');
-const isLoading = ref(false);
 
+const isLoading = ref(false);
+const emit = defineEmits(['switchToForgotPassword']);
+
+const switchToForgotPassword = () => {
+  emit('switchToForgotPassword');
+};
 const handleRegister = async (event) => {
     errorMessage.value = '';
     isLoading.value = true;
@@ -33,6 +38,7 @@ const handleRegister = async (event) => {
             <span v-if="isLoading"><i class='bx bx-loader-circle'></i> Đăng đăng ký ...</span>
             <span v-else>Đăng ký</span>
         </button>
+        <span class="forgot-password" @click="switchToForgotPassword">Quên mật khẩu</span>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
 </template>
@@ -40,20 +46,20 @@ const handleRegister = async (event) => {
 .form {
     display: flex;
     flex-direction: column;
-    gap: 15px;
+    gap: 25px;
 }
 .error {
     color: red;
 }
 input {
-    padding: 10px;
+    padding: 15px;
     font-size: 16px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
 
 button {
-    padding: 10px;
+    padding: 15px;
     font-size: 16px;
     background: rgb(229, 57, 53);
     background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
@@ -65,5 +71,14 @@ button {
 
 button:hover {
     opacity: 0.8;
+}
+
+.forgot-password {
+  color: #007bff;
+  cursor: pointer;
+}
+
+.forgot-password:hover {
+  text-decoration: underline;
 }
 </style>

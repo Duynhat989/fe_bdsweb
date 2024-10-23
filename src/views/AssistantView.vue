@@ -159,6 +159,7 @@ const changePage = (page) => {
   padding: 5px 10px;
   border: none;
   cursor: pointer;
+  font-family: inherit;
 }
 
 .change-type button.active {
