@@ -1,19 +1,19 @@
 <script setup>
 import { ref } from "vue";
 import { RouterLink, RouterView } from 'vue-router'
-const isAuthenticated = ref(!!localStorage.getItem('loggedInUser'));
+const isAuthenticated = ref(!!localStorage.getItem('token'));
 
-const hiddenPopup = ref(false)
+const hiddenPopup = ref(false);
 </script>
 
 <template>
-  <div :class="hiddenPopup ? 'body flex hidden':'body flex'">
-    <div class="body-bar" v-if="isAuthenticated" >
+  <div :class="hiddenPopup ? 'body flex hidden' : 'body flex'">
+    <div class="body-bar" v-if="isAuthenticated">
       <div class="nav">
         <div class="logo">
           <div class="logo_web flex" style="justify-items: center;">
             <div class="img flex" style="align-items: center;">
-              <img src="https://cdn-icons-png.flaticon.com/512/5339/5339181.png" alt="" width="50">
+              <img src="/public/icon_logo.png" alt="" width="50">
             </div> &nbsp; &nbsp;
             <h2>Hưng thịnh</h2>
           </div>
@@ -44,47 +44,54 @@ const hiddenPopup = ref(false)
         </div>
       </div>
       <div class="menu_icon" v-if="hiddenPopup" @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em; color: #e03d31;" class='bx bx-menu-alt-left' ></i>
+        <i style="font-size: 2em; color: #e03d31;" class='bx bx-menu-alt-left'></i>
       </div>
-      <div class="menu_icon center" v-else  @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em; color: #e03d31;" class='bx bx-caret-left-circle' ></i>
+      <div class="menu_icon center" v-else @click="hiddenPopup = !hiddenPopup">
+        <i style="font-size: 2em; color: #e03d31;" class='bx bx-caret-left-circle'></i>
       </div>
     </div>
-    <div class="body-content" :class="!isAuthenticated ? 'body-full': ''">
+    <div class="body-content" :class="!isAuthenticated ? 'body-full' : ''">
       <RouterView />
     </div>
   </div>
 </template>
 
 <style scoped>
-.body{
+.body {
   height: 100dvh;
 }
+
 .flex {
   display: flex;
 }
-.nav{
-  height: 100vh;
+
+.nav {
+  height: 100dvh;
   width: 250px;
   box-shadow: 1px 2px 5px 1px rgba(128, 128, 128, 0.281);
   padding: 10px;
   background-color: #ececec;
   transition: all 0.1s;
+  position: relative;
 }
+
 .body-bar {
   position: relative;
 }
-.menu_icon{
+
+.menu_icon {
   position: absolute;
   top: 10px;
   right: calc(-2em - 10px);
   z-index: 9;
   cursor: pointer;
 }
-.center{
+
+.center {
   top: 42%;
 }
-.hidden .nav{
+
+.hidden .nav {
   width: 0 !important;
   visibility: hidden;
   opacity: 0;
@@ -92,16 +99,18 @@ const hiddenPopup = ref(false)
   height: 0;
 }
 
-.hidden .body-content{
+.hidden .body-content {
   width: 100% !important;
 }
 
 .body-content {
   width: calc(100% - 250px);
 }
+
 .body-full {
   width: 100%;
 }
+
 .logo {
   height: 100px;
 }
@@ -161,11 +170,13 @@ li .button span {
   left: 0;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
+
 .user:hover {
-  background-color: rgba(0, 0, 0, 0.6);  ;
+  background-color: rgba(0, 0, 0, 0.6);
   border-color: #fff;
   color: #fff;
 }
+
 .body-content {
   padding: 10px;
 }

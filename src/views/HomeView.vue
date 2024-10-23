@@ -44,7 +44,6 @@ const activeTab = ref('login');
 .main {
   margin: 40px 0;
 }
-
 .main-container {
   display: flex;
   justify-content: space-between;
@@ -63,7 +62,7 @@ const activeTab = ref('login');
 }
 
 .left-box {
-  flex: 2.5;
+  width: 55%;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
@@ -71,7 +70,7 @@ const activeTab = ref('login');
 }
 
 .right-box {
-  flex: 1;
+  width: calc(100% - 55% - 20px);
   background-color: white;
   padding: 40px 30px;
   border-radius: 10px;
@@ -94,7 +93,6 @@ const activeTab = ref('login');
   background-color: #f4f4f4;
   color: #333;
   border: none;
-  /* margin: 0 10px; */
 }
 
 .tab-button.active {
@@ -108,5 +106,36 @@ const activeTab = ref('login');
   flex-direction: column;
   gap: 20px;
   margin-top: 30px;
+}
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .main-container {
+    max-width: 1000px;
+    padding: 15px;
+  }
+
+
+}
+
+@media (max-width: 992px) {
+  .main-container {
+    max-width: 800px;
+  }
+
+}
+
+@media (max-width: 768px) {
+  .main-container {
+    max-width: 600px;
+  }
+
+}
+
+@media (max-width: 576px) {
+  .main-container {
+    max-width: 100%;
+    padding: 10px;
+  }
+
 }
 </style>

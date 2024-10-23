@@ -1,12 +1,39 @@
 <script setup>
+import { ref } from 'vue'
+import store from '@/store';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
+const name = ref('');
+const email = ref('');
+const password = ref('');
+const errorMessage = ref('');
+const isLoading = ref(false);
+
+const handleRegister = async (event) => {
+    errorMessage.value = '';
+    isLoading.value = true;
+    try {
+        await new Promise(resolve => setTimeout(resolve, 1000));
+        await store.dispatch('register', { name: name.value, email: email.value, password: password.value });
+        router.push('/assistant');
+    } catch (error) {
+        errorMessage.value = error.message || 'Đăng nhập thất bại, vui lòng thử lại.';
+    } finally {
+        isLoading.value = false;
+    }
+}
 </script>
 <template>
-    <form class="form">
-        <input type="text" placeholder="Tên đăng nhập" required />
-        <input type="email" placeholder="Email" required />
-        <input type="password" placeholder="Mật khẩu" required />
-        <button type="submit">Đăng ký</button>
+    <form class="form" @submit.prevent="handleRegister">
+        <input type="text" v-model="name" placeholder="Tên đăng nhập" required />
+        <input type="email" v-model="email" placeholder="Email" required />
+        <input type="password" v-model="password" placeholder="Mật khẩu" required />
+        <button type="submit" :disabled="isLoading">
+            <span v-if="isLoading"><i class='bx bx-loader-circle'></i> Đăng đăng ký ...</span>
+            <span v-else>Đăng ký</span>
+        </button>
+        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
 </template>
 <style scoped>
@@ -15,7 +42,9 @@
     flex-direction: column;
     gap: 15px;
 }
-
+.error {
+    color: red;
+}
 input {
     padding: 10px;
     font-size: 16px;
@@ -26,8 +55,8 @@ input {
 button {
     padding: 10px;
     font-size: 16px;
-    background: rgb(229,57,53);
-    background: linear-gradient(90deg, rgba(229,57,53,1) 0%, rgba(229,57,53,1) 35%, rgba(44,44,44,1) 100%);
+    background: rgb(229, 57, 53);
+    background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
     color: white;
     border: none;
     border-radius: 5px;
