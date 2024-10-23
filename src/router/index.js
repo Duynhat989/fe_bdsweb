@@ -1,6 +1,7 @@
 import { createRouter, createWebHistory } from 'vue-router'
 import HomeView from '../views/HomeView.vue'
 import AssistantView from '../views/AssistantView.vue'
+import AssistantDetail from '@/views/AssistantDetail.vue'
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -14,6 +15,12 @@ const router = createRouter({
       path: '/assistant',
       name: 'assistant',
       component: AssistantView,
+      meta: { requiresAuth: true } 
+    },
+    {
+      path: '/assistant/:id',
+      name: 'assistantDetail',
+      component: AssistantDetail,
       meta: { requiresAuth: true } 
     }
   ]

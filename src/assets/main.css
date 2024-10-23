@@ -3,6 +3,7 @@
   /* max-width: 1280px; */
 }
 .title {
+  line-height: 30px;
   color: var(--color-primary)!important;
 }
 a,
