@@ -123,11 +123,11 @@ const handleClick = (routeName) => {
 .right-icon {
   position: absolute;
   right: -10px;
-  top: -75px;
+  top: -85px;
 }
 
 .right-icon img {
-  width: 100px;
+  width: 150px;
   height: auto;
 }
 
@@ -141,12 +141,13 @@ const handleClick = (routeName) => {
 }
 
 .tab-button {
-  padding: 10px 20px;
+  padding: 12px 20px;
   font-size: 16px;
   cursor: pointer;
   background-color: #f4f4f4;
   color: #333;
   border: none;
+  min-width: 150px;
 }
 
 .tab-button.active {
