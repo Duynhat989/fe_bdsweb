@@ -16,7 +16,7 @@ const handleForgotPassword = async (event) => {
 
 </script>
 <template>
-    <h1>Quên mật khẩu</h1>
+    <h3>Quên mật khẩu</h3>
     <form class="form" @submit.prevent="handleForgotPassword">
         <input type="email" v-model="email" placeholder="Nhập email" required />
         <button type="submit">Gửi yêu cầu</button>

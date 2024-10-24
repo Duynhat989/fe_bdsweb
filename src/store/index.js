@@ -1,5 +1,7 @@
 import { createStore } from 'vuex';
-import { login, register, logout } from '../api/auth';
+import { login, register } from '../api/auth';
+import { useRouter } from 'vue-router';
+const router = useRouter();
 
 const store = createStore({
     state: {
@@ -38,7 +40,6 @@ const store = createStore({
             commit('setToken', data.data.token);
         },
         async logout({ commit }) {
-            await logout();
             commit('clearAuthData');
         }
     },

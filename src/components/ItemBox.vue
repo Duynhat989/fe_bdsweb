@@ -1,7 +1,6 @@
 <script setup>
 
 const props = defineProps({
-  url: String,
   text: String,
   imageUrl: String
 });
@@ -9,12 +8,10 @@ const props = defineProps({
 </script>
 <template>
   <div class="item-box">
-    <a :href="url">
       <div class="item-content">
         <img v-if="imageUrl" :src="imageUrl" :alt="text" class="item-image" />
         <p class="text">{{ text }}</p>
       </div>
-    </a>
   </div>
 </template>
 <style scoped>
@@ -28,15 +25,18 @@ const props = defineProps({
   height: 200px;
   transition: all 0.5s;
 }
-.item-box a {
+
+.item-box {
   color: #2C2C2C;
 }
-.item-box:hover{
+
+.item-box:hover {
   transition: all 0.5s;
   background: rgb(204, 204, 204);
-  background: linear-gradient(0deg,  rgba(204, 204, 204, 1) 0%,rgba(229, 57, 53, 1) 50%);
+  background: linear-gradient(0deg, rgba(204, 204, 204, 1) 0%, rgba(229, 57, 53, 1) 50%);
 }
-.item-box:hover a {
+
+.item-box:hover {
   color: white;
 }
 

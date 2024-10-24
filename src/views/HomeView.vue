@@ -1,31 +1,54 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import ItemBox from '@/components/ItemBox.vue';
 import RegisterForm from '@/components/RegisterForm.vue';
 import LoginForm from '@/components/LoginForm.vue';
 import footerView from '@/components/footerView.vue';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm.vue';
+import store from '@/store';
 
+const isHighlighted = ref(false);
 const activeTab = ref('login');
+
+// watch(activeTab, (newTab) => {
+//   if (newTab === 'login') {
+//     isHighlighted.value = true;
+//   }
+// });
 const setActiveTab = (tab) => {
   activeTab.value = tab;
+  if (tab === 'login') {
+    isHighlighted.value = true;
+    setTimeout(() => {
+      isHighlighted.value = false;
+    }, 3000);
+  }
 };
+const handleClick = (routeName) => {
+    if (!store.getters.isLogin) {
+      localStorage.setItem('intendedRoute', routeName);
+      setActiveTab('login');
+    } else {
+      router.push({ name: routeName });
+    }
+  };
 </script>
 <template>
   <div class="main">
     <div class="header-title">
-      <h1 class="title">Bất động sản Hưng Thịnh</h1>
-      <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản Hưng Thịnh.</p>
+      <h1 class="title">Hưng Thịnh</h1>
+      <p>Hỗ trợ bạn trong việc tìm kiếm thông tin và giải đáp thắc mắc về bất động sản.</p>
+      <p>Trợ lý Hưng Thịnh giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý trở nên dễ dàng hơn.</p>
     </div>
     <div class="main-container">
       <div class="left-box">
-        <ItemBox url="./" text="Hỏi đáp trợ lý" imageUrl="/q_a.png" />
-        <ItemBox url="" text="Xử lý & tạo mới hồ sơ" imageUrl="/contract.png" />
-        <ItemBox url="" text="Tìm kiếm bất động sản" imageUrl="/search_home.png" />
-        <ItemBox url="" text="Khóa học bất động sản" imageUrl="/course.png" />
+        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="/q_a.png" />
+        <ItemBox @click="handleClick('contract')" text="Xử lý & tạo mới hợp đồng" imageUrl="/contract.png" />
+        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="/search_home.png" />
+        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="/course.png" />
       </div>
 
-      <div class="right-box">
+      <div class="right-box"  :class="{ highlight: isHighlighted }">
         <div class="right-icon">
           <img src="/icon_logo1.png" alt="icon logo">
         </div>
@@ -40,15 +63,13 @@ const setActiveTab = (tab) => {
         <div class="form-container">
           <LoginForm v-if="activeTab === 'login'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
           <RegisterForm v-if="activeTab === 'register'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
-          <ForgotPasswordForm v-if="activeTab === 'forgotPassword'"/>
+          <ForgotPasswordForm v-if="activeTab === 'forgotPassword'" />
         </div>
       </div>
     </div>
-    <footerView/>
+    <footerView />
   </div>
 </template>
-
-
 
 <style scoped>
 .main {
@@ -59,19 +80,29 @@ const setActiveTab = (tab) => {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
-  max-width: 1300px;
-  margin: 100px auto;
   gap: 30px;
+  max-width: 1200px;
+  margin: 100px auto;
 }
 
 .header-title {
   text-align: center;
+  width: 1000px;
+  margin: 0 auto;
 }
 
 .header-title .title {
-  color: #e53935;
+  font-size: 50px;
+  font-weight: bold;
+  color: #e03d31; 
+  line-height: 56px;
 }
-
+.header-title p {
+  font-size: 18px;
+  color: #555;
+  margin-top: 10px;
+  line-height: 1.6;
+}
 .left-box {
   width: 55%;
   display: flex;
@@ -129,6 +160,13 @@ const setActiveTab = (tab) => {
   flex-direction: column;
   gap: 20px;
   margin-top: 30px;
+}
+
+.highlight {
+  border: 2px solid #ff5722;
+  background-color: #fff3e0;
+  box-shadow: 0 0 10px rgba(255, 87, 34, 0.5);
+  transition: all 0.3s ease;
 }
 
 /* Responsive Styles */

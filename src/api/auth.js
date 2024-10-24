@@ -8,7 +8,3 @@ export function login(credentials) {
 export function register(credentials) {
     return request.post(END_POINT.REGISTER, credentials);
 }
-
-export function logout() {
-    return request.post(END_POINT.LOGOUT);
-}

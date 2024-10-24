@@ -13,7 +13,7 @@ const isLoading = ref(false);
 const emit = defineEmits(['switchToForgotPassword']);
 
 const switchToForgotPassword = () => {
-  emit('switchToForgotPassword');
+    emit('switchToForgotPassword');
 };
 const handleRegister = async (event) => {
     errorMessage.value = '';
@@ -21,13 +21,12 @@ const handleRegister = async (event) => {
     try {
         await new Promise(resolve => setTimeout(resolve, 1000));
         await store.dispatch('register', { name: name.value, email: email.value, password: password.value });
-        router.push('/assistant');
     } catch (error) {
         errorMessage.value = error.message || 'Đăng nhập thất bại, vui lòng thử lại.';
     } finally {
         isLoading.value = false;
     }
-}
+};
 </script>
 <template>
     <form class="form" @submit.prevent="handleRegister">
@@ -39,6 +38,20 @@ const handleRegister = async (event) => {
             <span v-else>Đăng ký</span>
         </button>
         <span class="forgot-password" @click="switchToForgotPassword">Quên mật khẩu</span>
+        <div class="tertiary">Tiếp tục đăng ký, bạn đồng ý với
+            <a href="https://trogiup.batdongsan.com.vn/docs/dieu-khoan-thoa-thuan">
+                Điều khoản sử dụng
+            </a>,
+            <a href="https://trogiup.batdongsan.com.vn/docs/chinh-sach-bao-mat">
+                Chính sách bảo mật
+            </a>,
+            <a href="https://trogiup.batdongsan.com.vn/docs/quy-che-hoat-dong">
+                Quy chế
+            </a>, 
+            <a href="https://trogiup.batdongsan.com.vn/" class="sc-ksXhwv yKtqX">
+                Chính sách
+            </a> của chúng tôi.
+        </div>
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
     </form>
 </template>
@@ -48,9 +61,11 @@ const handleRegister = async (event) => {
     flex-direction: column;
     gap: 25px;
 }
+
 .error {
     color: red;
 }
+
 input {
     padding: 15px;
     font-size: 16px;
@@ -74,11 +89,21 @@ button:hover {
 }
 
 .forgot-password {
-  color: #007bff;
-  cursor: pointer;
+    color: #007bff;
+    cursor: pointer;
+    text-align: center;
 }
 
 .forgot-password:hover {
-  text-decoration: underline;
+    text-decoration: underline;
+}
+
+.tertiary {
+    text-align: center;
+    font-size: 15px;
+}
+.tertiary a {
+    display: inline-block;
+    color: #007bff;
 }
 </style>

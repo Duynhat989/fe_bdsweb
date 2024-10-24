@@ -1,10 +1,24 @@
 <script setup>
-import { ref } from "vue";
+import { ref ,computed } from "vue";
 import store from '@/store';
 
-import { RouterLink, RouterView } from 'vue-router'
-const isLogin = store.getters.isLogin; 
+import { useRouter , RouterView } from 'vue-router'
+import { Notifications } from "@kyvg/vue3-notification";
+
+const isLogin = computed(() => store.getters.isLogin);
+const user = computed(() => store.getters.getUser);
 const hiddenPopup = ref(false);
+
+const router = useRouter();
+const handleLogOut = async (event) => {
+  try {
+    await new Promise(resolve => setTimeout(resolve, 1000));
+    await store.dispatch('logout');
+    router.push('/');
+  } catch (error) {  
+    // errorMessage.value = 'Đăng xuất lỗi.';
+  } 
+};
 </script>
 
 <template>
@@ -24,10 +38,10 @@ const hiddenPopup = ref(false);
             <a href="/assistant" class="button"><i class='bx bx-equalizer'></i> <span>Hỏi đáp trợ lý</span></a>
           </li>
           <li class="menu_item">
-            <a href="" class="button"><i class='bx bx-file'></i> <span>Xử lý & tạo mới hồ sơ</span></a>
+            <a href="/contract" class="button"><i class='bx bx-file'></i> <span>Xử lý & tạo mới hồ sơ</span></a>
           </li>
           <li class="menu_item">
-            <a href="" class="button"><i class='bx bx-search-alt'></i> <span>Tìm kiếm bất động sản</span></a>
+            <a href="/search" class="button"><i class='bx bx-search-alt'></i> <span>Tìm kiếm bất động sản</span></a>
           </li>
           <li class="menu_item">
             <a href="" class="button"><i class='bx bx-movie-play'></i> <span>Khóa học bất động sản</span></a>
@@ -39,7 +53,10 @@ const hiddenPopup = ref(false);
               <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" width="30" height="30">
             </div>
             <div class="username" style="padding-left: 10px;">
-              <h3>Dinh Viet Duy</h3>
+              <h3>{{ user.name }}</h3>
+            </div>
+            <div class="logout">
+               <span @click="handleLogOut">Đăng xuất</span>
             </div>
           </div>
         </div>
@@ -54,6 +71,7 @@ const hiddenPopup = ref(false);
     <div class="body-content" :class="!isLogin ? 'body-full' : ''">
       <RouterView />
     </div>
+    <notifications />
   </div>
 </template>
 
@@ -174,13 +192,15 @@ li .button span {
   bottom: 0;
   right: 0;
   left: 0;
+  cursor: pointer;
+  color: #e03d31;
+  transition: all 1s;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
 .user:hover {
-  background-color: rgba(0, 0, 0, 0.6);
   border-color: #fff;
-  color: #fff;
+  color: #111;
 }
 
 .body-content {
@@ -191,7 +211,29 @@ li .button span {
   border: 1px solid rgba(170, 170, 170, 0.226);
   padding: 10px;
   align-items: center;
+  position: relative;
+}
+.user:hover .logout {
+  left: 0px;
+  bottom: 100%;
+  transition: all 0.5s;
+
 }
 
+.logout {
+  position: absolute;
+  bottom: 110%;
+  cursor: pointer;
+  padding: 10px;
+  background-color: #ececec;
+  width: 100%;
+  border-radius: 5px;
+  left: -100%;
+  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+}
+.logout:hover {
+  background-color: #a8303042;
+  color: #ececec;
+}
 @media (min-width: 1024px) {}
 </style>

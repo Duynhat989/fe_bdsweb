@@ -2,6 +2,8 @@
 import { ref } from 'vue'
 import store from '@/store';
 import { useRouter } from 'vue-router';
+import { notify } from '@kyvg/vue3-notification';
+
 const router = useRouter();
 
 const email = ref('');
@@ -21,13 +23,29 @@ const handleLogin = async (event) => {
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
     await store.dispatch('login', { email: email.value, password: password.value });
-    router.push('/assistant');
+    const intendedRoute = localStorage.getItem('intendedRoute');
+    if (intendedRoute) {
+        router.push(intendedRoute);
+        localStorage.removeItem('intendedRoute');
+    } else {
+        router.push('/assistant');
+    }
+    notify({
+      title: 'Thành công',
+      text: 'Đăng nhập thành công!',
+      type: 'success',
+    });
+
   } catch (error) {
-    errorMessage.value = error.message || 'Đăng nhập thất bại, vui lòng thử lại.';
+    notify({
+      title: 'Lỗi',
+      text: error.message || 'Đăng nhập thất bại, vui lòng thử lại.',
+      type: 'error',
+    });
   } finally {
     isLoading.value = false;
   }
-}
+};
 
 </script>
 <template>

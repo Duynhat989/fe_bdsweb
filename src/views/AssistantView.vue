@@ -74,6 +74,16 @@ const changePage = (page) => {
     currentPage.value = page;
   }
 };
+
+const itemsToShow = computed(() => {
+  if (window.innerWidth < 768) {
+    return 1; 
+  } else if (window.innerWidth < 1024) {
+    return 2; 
+  } else {
+    return 3;
+  }
+});
 </script>
 <template>
   <div class="main-container">
@@ -104,7 +114,7 @@ const changePage = (page) => {
             {{ page }}</span>
         </div>
       </div>
-      <carousel v-if="viewType === 'slide'" :items-to-show="4" class="assistant-slide">
+      <carousel v-if="viewType === 'slide'" :items-to-show="itemsToShow" class="assistant-slide">
         <slide v-for="(assistant, index) in assistants" class="assistant-card slide-card" :key="index">
           <div class="assistant-section">
             <img :src="assistant.image" alt="assistant image" />
@@ -146,10 +156,11 @@ const changePage = (page) => {
 <style scoped>
 .main-title {
   text-align: center;
+  padding: 30px 0;
 }
 
 .main-container {
-  max-width: 1300px;
+  max-width: 1100px;
   margin: 5px auto;
   position: relative;
 }
@@ -273,7 +284,7 @@ const changePage = (page) => {
   display: block;
   padding: 10px;
   text-align: center;
-  margin: 0 5px;
+  margin: 0 10px;
 }
 
 .slide-card img {
