@@ -25,30 +25,31 @@ const setActiveTab = (tab) => {
   }
 };
 const handleClick = (routeName) => {
-    if (!store.getters.isLogin) {
-      localStorage.setItem('intendedRoute', routeName);
-      setActiveTab('login');
-    } else {
-      router.push({ name: routeName });
-    }
-  };
+  if (!store.getters.isLogin) {
+    localStorage.setItem('intendedRoute', routeName);
+    setActiveTab('login');
+  } else {
+    router.push({ name: routeName });
+  }
+};
 </script>
 <template>
-  <div class="main">
+  <div class="main-container">
     <div class="header-title">
       <h1 class="title">Hưng Thịnh</h1>
       <p>Hỗ trợ bạn trong việc tìm kiếm thông tin và giải đáp thắc mắc về bất động sản.</p>
-      <p>Trợ lý Hưng Thịnh giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý trở nên dễ dàng hơn.</p>
+      <p>Trợ lý Hưng Thịnh giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý
+        trở nên dễ dàng hơn.</p>
     </div>
-    <div class="main-container">
+    <div class="content">
       <div class="left-box">
         <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="/q_a.png" />
-        <ItemBox @click="handleClick('contract')" text="Xử lý & tạo mới hợp đồng" imageUrl="/contract.png" />
+        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="/contract.png" />
         <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="/search_home.png" />
         <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="/course.png" />
       </div>
 
-      <div class="right-box"  :class="{ highlight: isHighlighted }">
+      <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
           <img src="/icon_logo1.png" alt="icon logo">
         </div>
@@ -67,42 +68,43 @@ const handleClick = (routeName) => {
         </div>
       </div>
     </div>
-    <footerView />
   </div>
+  <footerView />
 </template>
 
 <style scoped>
-.main {
-  margin: 40px 0;
+.main-container {
+  max-width: 1200px;
+  margin: 10px auto;
 }
 
-.main-container {
+.content {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   gap: 30px;
-  max-width: 1200px;
-  margin: 100px auto;
+  margin: 100px 0;
 }
 
 .header-title {
   text-align: center;
-  width: 1000px;
-  margin: 0 auto;
+  margin: 30px auto;
 }
 
 .header-title .title {
   font-size: 50px;
   font-weight: bold;
-  color: #e03d31; 
+  color: #e03d31;
   line-height: 56px;
 }
+
 .header-title p {
   font-size: 18px;
   color: #555;
   margin-top: 10px;
   line-height: 1.6;
 }
+
 .left-box {
   width: 55%;
   display: flex;
@@ -173,7 +175,7 @@ const handleClick = (routeName) => {
 @media (max-width: 1200px) {
   .main-container {
     max-width: 1000px;
-    padding: 15px;
+    padding: 0px 15px ;
   }
 
 
@@ -191,13 +193,38 @@ const handleClick = (routeName) => {
     max-width: 600px;
   }
 
+  .header-title .title {
+    font-size: 30px;
+    line-height: 40px;
+  }
+
+  .header-title p {
+    font-size: 16px;
+  }
+
+  .content {
+    flex-direction: column;
+  }
+
+  .left-box,
+  .right-box {
+    width: 100%;
+  }
+
+  .right-box {
+    order: 1;
+  }
+
+  .left-box {
+    order: 2;
+    gap: 10px;
+    justify-content: center;
+  }
 }
 
 @media (max-width: 576px) {
   .main-container {
     max-width: 100%;
-    padding: 10px;
   }
-
 }
 </style>

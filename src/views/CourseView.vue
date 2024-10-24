@@ -1,15 +1,286 @@
+<script setup>
+import PaymentPopup from '@/components/PaymentPopup.vue';
+import { ref, computed , onMounted } from 'vue';
+import { useRouter } from 'vue-router';
+
+import { notify } from '@kyvg/vue3-notification';
+import { encodeId } from '@/utils/encoding';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+import { formatCurrency } from '@/utils/format';
+const router = useRouter();
+const activeTab = ref('all');
+const showPaymentPopup = ref(false);
+const selectedCourse = ref({});
+const searchQuery = ref('');
+const courses = ref([]);
+
+const fetchCourses = async () => {
+  try {
+    const response = await request.get(END_POINT.COURSES_LIST);
+    courses.value = response.courses; 
+  } catch (error) {
+    console.error('Lỗi lấy danh sách trợ lý:', error);
+  }
+};
+
+
+const filteredCourses = computed(() =>
+  courses.value.filter(course =>
+    course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    course.detail.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+);
+const handleCourseClick = (course) => {
+  // Kiểm tra người dùng đã mua khóa học 
+  const encodedId = encodeId(course.id);
+  router.push(`/course/${encodedId}`);
+  // if (course.purchased) {
+  // } else {
+  //   selectedCourse.value = course;
+  //   showPaymentPopup.value = true;
+  // }
+};
+
+const handlePaymentSuccess = () => {
+  notify({
+    title: 'Thành công',
+    text: 'Khóa học đã được thanh toán thành công!',
+    type: 'success',
+  });
+};
+
+onMounted(() => {
+  fetchCourses();
+});
+</script>
 <template>
-  <div class="about">
-    <h1>This is an about CourseView</h1>
+  <div class="courses-page">
+    <div class="header-title">
+      <h1 class="title">Khóa học bất động sản</h1>
+    </div>
+    <div class="tabs">
+      <button @click="activeTab = 'all'" :class="{ active: activeTab === 'all' }">Tất cả khóa học</button>
+      <button @click="activeTab = 'my-courses'" :class="{ active: activeTab === 'my-courses' }">Khóa học của
+        tôi</button>
+    </div>
+    <div class="search-bar">
+      <input type="text" placeholder="Tìm kiếm khóa học..." v-model="searchQuery" @input="filterCourses" />
+    </div>
+    <div v-if="activeTab === 'all'">
+      <h2 class="section-title">Danh sách khóa học</h2>
+      <div class="course-list">
+        <div class="course-card" v-for="course in filteredCourses" :key="course.id" @click="handleCourseClick(course)">
+          <img :src="course.image" alt="Course Image" class="course-image" />
+          <div class="course-content">
+            <h3 class="course-title">{{ course.name }}</h3>
+            <p class="course-detail">{{ course.detail }}</p>
+            <div class="course-pricing">
+              <span class="price">{{ formatCurrency(course.price) }}</span>
+            </div>
+            <div class="course-status">
+              <span :class="{ active: course.status === 1, inactive: course.status !== 1 }">
+                {{ course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
+              </span>
+            </div>
+            <div class="course-dates">
+              <span>Ngày tạo: {{ new Date(course.createdAt).toLocaleDateString() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div v-else>
+      <h2 class="section-title">Khóa học của tôi</h2>
+      <p>Hiện tại bạn chưa có khóa học nào.</p>
+    </div>
+    <PaymentPopup v-if="showPaymentPopup" :course="selectedCourse" :visible="showPaymentPopup"
+      @close="showPaymentPopup = false" @paymentSuccess="handlePaymentSuccess" />
   </div>
 </template>
 
-<style>
-@media (min-width: 1024px) {
-  .about {
-    min-height: 100vh;
-    display: flex;
-    align-items: center;
+<style scoped>
+.courses-page {
+  max-width: 1300px;
+  margin: 40px auto;
+  padding: 50px 20px;
+}
+.header-title {
+  text-align: center;
+  margin-bottom: 40px;
+}
+
+.header-title .title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #e03d31;
+  line-height: 40px;
+}
+.tabs {
+  display: flex;
+  margin: 0 auto;
+  width: fit-content;
+  border-radius: 5px;
+  overflow: hidden;
+}
+
+.tabs button {
+  padding: 10px 20px;
+  font-size: 18px;
+  cursor: pointer;
+  background-color: #f4f4f4;
+  color: #333;
+  border: none;
+  text-align: center;
+  width: fit-content;
+  font-family: inherit;
+}
+
+.tabs button.active {
+  background: rgb(229, 57, 53);
+  background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
+  color: white;
+}
+
+.search-bar {
+  width: 50%;
+  margin: 20px auto;
+}
+
+.search-bar input {
+  width: 100%;
+  padding: 10px;
+  font-size: 16px;
+  border: 2px solid #ccc;
+  border-radius: 5px;
+  font-family: inherit;
+}
+
+.section-title {
+  font-size: 24px;
+  margin-top: 20px;
+  margin-bottom: 5px;
+}
+
+.course-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
+  margin-top: 20px;
+}
+
+.course-card {
+  background: white;
+  border: 1px solid #e0e0e0;
+  border-radius: 5px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+  width: calc(33.333% - 20px);
+  transition: transform 0.3s;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+}
+
+.course-card:hover {
+  transform: scale(1.05);
+}
+
+.course-image {
+  width: 100%;
+  height: 160px;
+  object-fit: cover;
+}
+
+.course-content {
+  padding: 10px;
+}
+
+.course-title {
+  font-size: 18px;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+.course-detail {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 5px;
+}
+
+.course-pricing {
+  font-size: 16px;
+  font-weight: bold;
+  color: #ff0000;
+  margin-bottom: 5px;
+}
+
+.course-status {
+  font-size: 14px;
+  margin-bottom: 5px;
+}
+
+.course-status .active {
+  color: #28a745;
+}
+
+.course-status .inactive {
+  color: #dc3545;
+}
+
+.course-dates {
+  font-size: 14px;
+  color: #777;
+  margin-bottom: 5px;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .courses-page {
+    max-width: 1000px;
+    padding: 0 20px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .courses-page {
+    max-width: 800px;
+  }
+}
+
+@media (max-width: 768px) {
+  .courses-page {
+    max-width: 700px;
+  }
+
+  .course-card {
+    width: calc(50% - 20px);
+  }
+}
+
+@media (max-width: 576px) {
+  .courses-page {
+    width: 100%;
+  }
+  .courses-page {
+    margin-top: 60px ;
+  }
+  .course-card {
+    width: 100%;
+  }
+  .search-bar {
+    width: 100%;
+  }
+}
+@media (max-width: 420px) {
+  
+  .tabs button{
+    padding: 10px 10px;
+    color: 15px;
+  }
+  .course-card {
+    width: 100%;
   }
 }
 </style>

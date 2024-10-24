@@ -21,7 +21,7 @@ const props = defineProps({
   border-radius: 10px;
   font-size: 18px;
   cursor: pointer;
-  width: 45%;
+  width: calc((100% - 20px)/2);
   height: 200px;
   transition: all 0.5s;
 }
@@ -48,7 +48,9 @@ const props = defineProps({
   flex-direction: column;
   gap: 10px;
 }
-
+.item-content .text {
+  text-align: center;
+}
 .item-image {
   box-shadow: rgba(50, 50, 93, 0.25) 0px 6px 12px -2px, rgba(0, 0, 0, 0.3) 0px 3px 7px -3px;
   width: 100px;

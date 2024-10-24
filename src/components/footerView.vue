@@ -44,7 +44,7 @@
 </template>
 
 <script setup>
-// No additional script is needed for static content.
+
 </script>
 
 <style scoped>
@@ -102,7 +102,6 @@
     align-items: center;
     font-size: 16px;
 }
-
 .support a {
     color: inherit;
 }
@@ -110,13 +109,43 @@
 .support a:hover {
     color: inherit;
 }
-
 .support span {
     font-size: 20px;
 }
 
-.app-links img {
-    width: 120px;
-    margin-right: 10px;
+@media (max-width: 1024px) {
+    .footer-container {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+    .footer-section {
+        width: 100%;
+        margin-bottom: 20px;
+    }
+    .footer-logo {
+        margin-bottom: 10px;
+    }
+}
+
+@media (max-width: 768px) {
+    .footer-section {
+        text-align: center;
+    }
+    .support {
+        justify-content: center;
+    }
+}
+
+@media (max-width: 480px) {
+    .footer {
+        padding: 10px 0;
+    }
+
+    .footer-section {
+        padding: 5px;
+    }
+    .footer-logo {
+        width: 120px;
+    }
 }
 </style>

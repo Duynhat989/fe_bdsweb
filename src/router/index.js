@@ -6,7 +6,7 @@ import store from '@/store';
 import SearchView from '@/views/SearchView.vue';
 import ContractView from '@/views/ContractView.vue';
 import CourseView from '@/views/CourseView.vue';
-
+import CourseDetail from '@/views/CourseDetail.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -51,13 +51,18 @@ const router = createRouter({
       name: 'course',
       component: CourseView ,
       meta: { requiresAuth: true } 
+    },
+    {
+      path: '/course/:id',
+      name: 'courseDetail',
+      component: CourseDetail ,
+      meta: { requiresAuth: true } 
     }
   ]
 })
 
 router.beforeEach((to, from, next) => {
   const isLogin = store.getters.isLogin;
-  console.log(to.meta.requiresAuth && !isLogin);
   if (to.meta.requiresAuth && !isLogin) {
     localStorage.setItem('intendedRoute', to.fullPath);
     next('/login'); 

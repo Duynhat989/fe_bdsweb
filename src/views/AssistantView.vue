@@ -1,64 +1,65 @@
 <script setup>
-import { ref, computed } from 'vue';
-const viewType = ref('list');
+import { ref, computed, onMounted } from 'vue';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
-const setView = (type) => {
-  viewType.value = type;
-};
-const assistants = ref([
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 1',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 2',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 3',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 4',
-  },
-  {
-    image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-    title: 'Bất động sản 5',
-  },
-  {
-    image: 'https://mahamangala.vn/aidu/team.png',
-    title: 'Bất động sản 6',
-  },
-]);
+import { useRouter } from 'vue-router';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+import { encodeId } from '@/utils/encoding';
+const router = useRouter();
+const viewType = ref('list');
+const assistants = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 
+const handleClick = (id) => {
+  const encodedId = encodeId(id);
+  router.push(`/assistant/${encodedId}`);
+};
+
+const fetchAssistants = async () => {
+  try {
+    const response = await request.get(END_POINT.ASSISTANTS_LIST);
+    assistants.value = response.data;
+  } catch (error) {
+    console.error('Lỗi lấy danh sách trợ lý:', error);
+  }
+};
+
+const setView = (type) => {
+  viewType.value = type;
+};
+// const assistants = ref([
+//   {
+//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
+//     name: 'Bất động sản 1',
+//     view: 1,
+//     detail: 'Bất động sản 1',
+//   },
+//   {
+//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
+//     name: 'Bất động sản 1',
+//     view: 1,
+//     detail: 'Bất động sản 1',
+//   },
+//   {
+//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
+//     name: 'Bất động sản 1',
+//     view: 1,
+//     detail: 'Bất động sản 1',
+//   },
+//   {
+//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
+//     name: 'Bất động sản 1',
+//     view: 1,
+//     detail: 'Bất động sản 1',
+//   }, {
+//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
+//     name: 'Bất động sản 1',
+//     view: 1,
+//     detail: 'Bất động sản 1',
+//   }
+// ]);
 const paginatedItems = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
@@ -77,13 +78,18 @@ const changePage = (page) => {
 
 const itemsToShow = computed(() => {
   if (window.innerWidth < 768) {
-    return 1; 
+    return 1;
   } else if (window.innerWidth < 1024) {
-    return 2; 
+    return 2;
   } else {
     return 3;
   }
 });
+
+onMounted(() => {
+  fetchAssistants();
+});
+
 </script>
 <template>
   <div class="main-container">
@@ -91,21 +97,19 @@ const itemsToShow = computed(() => {
       <button @click="setView('list')" :class="{ active: viewType === 'list' }">Danh sách</button>
       <button @click="setView('slide')" :class="{ active: viewType === 'slide' }">Slide</button>
     </div>
-    <div class="main-title">
-      <h1 class="title">Bất động sản Hưng Thịnh Hỏi đáp trợ lý</h1>
+    <div class="header-title">
+      <h1 class="title">Hỏi đáp trợ lý</h1>
       <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản Hưng Thịnh.</p>
     </div>
     <div class="main-content">
       <div v-if="viewType === 'list'" class="assistant-list">
-        <div v-for="(assistant, index) in paginatedItems" :key="index" class="assistant-card list-card">
-          <div class="assistant-section">
-            <img :src="assistant.image" alt="assistant image" />
-            <div class="assistant-info">
-              <h3 class="assistant-title">{{ assistant.title }}</h3>
-            </div>
-            <div class="favorite-section">
-              <i class="bx bx-heart"></i>
-            </div>
+        <div class="assistant-card list-card" v-for="assistant in paginatedItems" :key="assistant.id"
+          @click="handleClick(assistant.id)">
+          <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
+          <div class="assistant-content">
+            <h3 class="assistant-title">{{ assistant.name }}</h3>
+            <p class="assistant-detail">{{ assistant.detail }}</p>
+            <span class="assistant-view">Lượt xem: {{ assistant.view }}</span>
           </div>
         </div>
         <div class="pagination">
@@ -114,16 +118,15 @@ const itemsToShow = computed(() => {
             {{ page }}</span>
         </div>
       </div>
-      <carousel v-if="viewType === 'slide'" :items-to-show="itemsToShow" class="assistant-slide">
-        <slide v-for="(assistant, index) in assistants" class="assistant-card slide-card" :key="index">
-          <div class="assistant-section">
-            <img :src="assistant.image" alt="assistant image" />
-            <div class="assistant-info">
-              <h3 class="assistant-title">{{ assistant.title }}</h3>
-            </div>
-            <div class="favorite-section">
-              <i class="bx bx-heart"></i>
-            </div>
+      <carousel v-if="viewType === 'slide' && assistants.length > 0" :items-to-show="itemsToShow"
+        class="assistant-slide">
+        <slide class="assistant-card slide-card" v-for="assistant in assistants" :key="assistant.id"
+          @click="handleClick(assistant.id)">
+          <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
+          <div class="assistant-content">
+            <h3 class="assistant-title">{{ assistant.name }}</h3>
+            <p class="assistant-detail">{{ assistant.detail }}</p>
+            <span class="assistant-view">Lượt xem: {{ assistant.view }}</span>
           </div>
         </slide>
         <template #addons>
@@ -154,9 +157,17 @@ const itemsToShow = computed(() => {
 </template>
 
 <style scoped>
-.main-title {
+.header-title {
   text-align: center;
-  padding: 30px 0;
+  margin-top: 40px;
+  margin-bottom: 40px;
+}
+
+.header-title .title {
+  font-size: 30px;
+  font-weight: bold;
+  color: #e03d31;
+  line-height: 40px;
 }
 
 .main-container {
@@ -219,18 +230,6 @@ const itemsToShow = computed(() => {
   color: #fff;
 }
 
-.assistant-card {
-  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  overflow: hidden;
-  cursor: pointer;
-  transition: transform 0.3s ease;
-}
-
-.assistant-card:hover {
-  transform: scale(1.02);
-}
 .list-card {
   display: flex;
   padding: 10px;
@@ -239,45 +238,50 @@ const itemsToShow = computed(() => {
   width: calc((100% - 45px)/4);
 }
 
-
-.assistant-section {
-  position: relative;
-  width: 100%;
+.assistant-card:hover {
+  transform: scale(1.02);
 }
 
-.assistant-section img {
+.assistant-card {
+  background: #fff;
+  box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
+  border-radius: 10px;
+  overflow: hidden;
+  text-align: center;
+  cursor: pointer;
+  transition: transform 0.3s ease;
+}
+
+.assistant-card:hover {
+  transform: scale(1.05);
+}
+
+.assistant-image {
   width: 100%;
-  height: 100px;
+  height: 180px;
   object-fit: cover;
 }
 
-
-
-.assistant-info {
-  padding: 15px;
+.assistant-content {
+  padding: 10px;
 }
 
 .assistant-title {
-  font-size: 16px;
+  font-size: 18px;
   font-weight: bold;
-  margin-bottom: 8px;
-  line-height: 1.4;
+  color: #333;
+  margin-bottom: 10px;
 }
 
-.favorite-section {
-  padding: 10px;
-  text-align: right;
-  background-color: #f9f9f9;
+.assistant-detail {
+  font-size: 14px;
+  color: #666;
+  margin-bottom: 15px;
 }
 
-.favorite-section i {
-  color: #ccc;
-  cursor: pointer;
-  font-size: 20px;
-}
-
-.favorite-section i:hover {
-  color: #e03d31;
+.assistant-view {
+  font-size: 12px;
+  color: #777;
 }
 
 .slide-card {
@@ -300,5 +304,41 @@ const itemsToShow = computed(() => {
   color: #fff;
   display: flex;
   border-radius: 50%;
+}
+
+/* Responsive Styles */
+@media (max-width: 1200px) {
+  .main-container {
+    max-width: 1000px;
+  }
+}
+
+@media (max-width: 1024px) {
+  .main-container {
+    max-width: 800px;
+    padding: 10px;
+  }
+
+  .list-card {
+    width: calc((100% - 30px)/3);
+  }
+}
+@media (max-width: 768px) {
+  .main-container {
+    max-width: 600px;
+  }
+
+  .list-card {
+    width: calc((100% - 30px)/2);
+  }
+}
+@media (max-width: 576px) {
+  .main-container {
+    max-width: 100%;
+  }
+
+  .list-card {
+    width: 100%;
+  }
 }
 </style>

@@ -1,29 +1,46 @@
 <script setup>
-import { ref ,computed } from "vue";
+import { ref, computed, onMounted, watch } from "vue";
 import store from '@/store';
 
-import { useRouter , RouterView } from 'vue-router'
+import { useRouter, RouterView } from 'vue-router'
 import { Notifications } from "@kyvg/vue3-notification";
 
 const isLogin = computed(() => store.getters.isLogin);
 const user = computed(() => store.getters.getUser);
 const hiddenPopup = ref(false);
+const isBodyFull = ref(false);
 
 const router = useRouter();
+// check screen < 1024
+const checkScreenSize = () => {
+  hiddenPopup.value = window.innerWidth < 1024;
+};
+watch(hiddenPopup, (newType) => {
+  if (newType === true && window.innerWidth < 576) {
+    isBodyFull.value = false;
+  } else {
+    isBodyFull.value = true;
+  }
+});
+
+onMounted(() => {
+  checkScreenSize();
+  window.addEventListener('resize', checkScreenSize);
+});
 const handleLogOut = async (event) => {
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
     await store.dispatch('logout');
     router.push('/');
-  } catch (error) {  
+  } catch (error) {
     // errorMessage.value = 'Đăng xuất lỗi.';
-  } 
+  }
 };
 </script>
 
 <template>
   <div :class="hiddenPopup ? 'body flex hidden' : 'body flex'">
-    <div class="body-bar" v-if="isLogin">
+    <div class="body-bar" :class="{ 'body-bar__full': isBodyFull }" v-if="isLogin">
       <div class="nav">
         <div class="logo">
           <div class="logo_web flex" style="justify-items: center;">
@@ -44,7 +61,7 @@ const handleLogOut = async (event) => {
             <a href="/search" class="button"><i class='bx bx-search-alt'></i> <span>Tìm kiếm bất động sản</span></a>
           </li>
           <li class="menu_item">
-            <a href="" class="button"><i class='bx bx-movie-play'></i> <span>Khóa học bất động sản</span></a>
+            <a href="/course" class="button"><i class='bx bx-movie-play'></i> <span>Khóa học bất động sản</span></a>
           </li>
         </ul>
         <div class="user">
@@ -56,7 +73,7 @@ const handleLogOut = async (event) => {
               <h3>{{ user.name }}</h3>
             </div>
             <div class="logout">
-               <span @click="handleLogOut">Đăng xuất</span>
+              <span @click="handleLogOut">Đăng xuất</span>
             </div>
           </div>
         </div>
@@ -77,7 +94,7 @@ const handleLogOut = async (event) => {
 
 <style scoped>
 .body {
-  height: 100dvh;
+  /* height: 100dvh; */
 }
 
 .flex {
@@ -85,7 +102,7 @@ const handleLogOut = async (event) => {
 }
 
 .nav {
-  height: 100dvh;
+  height: 100vh;
   width: 250px;
   box-shadow: 1px 2px 5px 1px rgba(128, 128, 128, 0.281);
   padding: 10px;
@@ -96,6 +113,8 @@ const handleLogOut = async (event) => {
 
 .body-bar {
   position: relative;
+  z-index: 999;
+  transition: all 0.5s;
 }
 
 .menu_icon {
@@ -104,6 +123,7 @@ const handleLogOut = async (event) => {
   right: calc(-2em - 10px);
   z-index: 9;
   cursor: pointer;
+  z-index: 9999;
 }
 
 .center {
@@ -165,7 +185,8 @@ li {
   background-color: #f4d1ce;
   cursor: pointer;
 }
-.menu_item:hover .button{
+
+.menu_item:hover .button {
   color: black;
 }
 
@@ -202,17 +223,13 @@ li .button span {
   border-color: #fff;
   color: #111;
 }
-
-.body-content {
-  padding: 10px 0px;
-}
-
 .user_profile {
   border: 1px solid rgba(170, 170, 170, 0.226);
   padding: 10px;
   align-items: center;
   position: relative;
 }
+
 .user:hover .logout {
   left: 0px;
   bottom: 100%;
@@ -231,9 +248,36 @@ li .button span {
   left: -100%;
   box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
+
 .logout:hover {
-  background-color: #a8303042;
+  background-color: #e03d31;
   color: #ececec;
 }
-@media (min-width: 1024px) {}
+
+
+@media (max-width: 768px) {
+  .menu_icon.center {
+    right: calc(-2em - -35px);
+  }
+
+
+}
+
+@media (max-width: 576px) {
+  .main-container {
+    max-width: 100%;
+  }
+
+  .body-bar__full,
+  .body-bar__full .nav {
+    width: 100%;
+  }
+
+  .body-bar__full+.body-content {
+    display: none;
+  }
+  .center {
+    top: 10px;
+  }
+}
 </style>

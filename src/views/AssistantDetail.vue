@@ -1,7 +1,7 @@
 <script setup>
 import { ref, onMounted } from 'vue';
 
-const activeTab = ref('chat');
+const activeTab = ref('suggest');
 
 const actions = ref([
     { id: 1, name: 'Create image' },
@@ -18,7 +18,7 @@ const history = ref([
 ]);
 
 const executeAction = (action) => {
-    
+
 };
 
 onMounted(() => {
@@ -27,28 +27,23 @@ onMounted(() => {
 </script>
 <template>
     <div class="main-container">
-        <div class="main-title">
-            <h1 class="title">Bất động sản Hưng Thịnh Hỏi đáp trợ lý</h1>
+        <div class="header-title">
+            <h1 class="title">Hỏi đáp trợ lý</h1>
             <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản Hưng Thịnh.</p>
         </div>
         <div class="search-bar">
             <div class="search-container">
                 <div class="input-wrapper">
-                    <input type="text" placeholder="Tìm kiếm trợ lý hỗ trợ..." />
+                    <input type="text" placeholder="Nhập yêu cầu hỗ trợ..." />
                     <span class="search-icon">🔍</span>
                 </div>
-                <button class="search-button">Tìm kiếm</button>
-            </div>
-            <div class="actions">
-                <button v-for="action in actions" :key="action.id" @click="executeAction(action)">
-                    {{ action.name }}
-                </button>
+                <button class="search-button"><i class='bx bx-up-arrow-circle'></i></button>
             </div>
         </div>
         <div class="content-box">
             <div class="tabs">
-                <div class="tab" :class="{ active: activeTab === 'chat' }" @click="activeTab = 'chat'">
-                    Chat
+                <div class="tab" :class="{ active: activeTab === 'suggest' }" @click="activeTab = 'suggest'">
+                    Gợi ý
                 </div>
                 <div v-if="history.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
                     @click="activeTab = 'history'">
@@ -56,19 +51,45 @@ onMounted(() => {
                 </div>
             </div>
             <div class="content">
-                <p v-if="activeTab === 'chat'">Nội dung của Đoạn chat sẽ hiển thị ở đây.</p>
-                <p v-else-if="activeTab === 'history'">
-                    <span v-if="history.length > 0">Nội dung của Lịch sử sẽ hiển thị ở đây.</span>
+                <div v-if="activeTab === 'suggest'">
+                    <div class="actions">
+                        <button v-for="action in actions" :key="action.id" @click="executeAction(action)"
+                            class="action-card">
+                            <div class="icon">
+                                <i class="bx bx-message-square-dots"></i>
+                            </div>
+                            <div class="title">{{ action.name }}</div>
+                        </button>
+                    </div>
+                </div>
+
+                <div v-if="activeTab === 'history'">
+                    <div class="history" v-if="history.length > 0">
+                        <div class="history-item" v-for="item in history" :key="item.id" @click="openHistory(item)">
+                            <div class="description">{{ item.description }}</div>
+                        </div>
+                    </div>
                     <span v-else>Không có lịch sử để hiển thị.</span>
-                </p>
+                </div>
             </div>
         </div>
     </div>
 </template>
 <style scoped>
-.main-title {
+.header-title {
     text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
+
+.header-title .title {
+    font-size: 30px;
+    font-weight: bold;
+    color: #e03d31;
+    line-height: 40px;
+    margin-bottom: 10px;
+}
+
 .main-container {
     max-width: 1400px;
     margin: 5px auto;
@@ -110,6 +131,7 @@ onMounted(() => {
     color: #2C2C2C;
     font-size: 18px;
     background-color: #f0f0f0;
+    font-family: inherit;
 }
 
 .search-icon {
@@ -122,10 +144,10 @@ onMounted(() => {
     background-color: #d9534f;
     color: #fff;
     border: none;
-    padding: 10px 10px;
+    padding: 8px 10px 4px 10px;
     border-radius: 5px;
     margin-left: 10px;
-    font-size: 18px;
+    font-size: 25px;
     cursor: pointer;
 }
 
@@ -134,32 +156,86 @@ onMounted(() => {
 }
 
 .actions {
-    width: 100%;
-    margin-top: 20px;
-    text-align: center;
+    display: flex;
+    gap: 20px;
+    justify-content: center;
+    flex-wrap: wrap;
 }
 
-.actions button {
-    margin: 0 5px;
+.action-card {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
     padding: 10px;
-    border-radius: 15px;
-    border: none;
-    cursor: pointer;
-    position: relative;
-    text-align: center;
-    top: 0;
     font-size: 16px;
-    vertical-align: top;
+    color: #333;
+    cursor: pointer;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+    max-width: 200px;
+    text-align: left;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
     white-space: nowrap;
-    transition: opacity 0.2s ease-in, top 0.2s ease-in;
-    box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
 
-.actions button:hover {
-    background-color: #c9302c;
-    color: #FFF;
-    opacity: .8;
-    top: -4px;
+.action-card:hover {
+    transform: scale(1.05);
+    box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
+}
+
+.action-card:focus {
+    outline: none;
+    border-color: #007bff;
+    box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
+}
+
+.action-card .icon {
+    font-size: 24px;
+    color: #666;
+    margin-bottom: 8px;
+}
+
+.action-card .title {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 4px;
+}
+
+.history {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.history-item {
+    background-color: #f9f9f9;
+    border: 1px solid #e0e0e0;
+    border-radius: 8px;
+    padding: 10px;
+    cursor: pointer;
+    transition: background-color 0.2s ease;
+    width: 80%;
+    margin: 0 auto;
+}
+
+.history-item:hover {
+    background-color: #f1f1f1;
+}
+
+.history-item .description {
+    font-size: 14px;
+    font-weight: bold;
+    color: #333;
+}
+
+.history-item .last-message {
+    font-size: 14px;
+    color: #999;
 }
 
 .content-box {
@@ -195,15 +271,15 @@ onMounted(() => {
 }
 
 .content {
-    text-align: left;
+    margin-top: 30px;
 }
 
 /* Responsive Styles */
 @media (max-width: 1200px) {
     .main-container {
         max-width: 1000px;
-        padding: 15px;
     }
+
     .search-container {
         width: 70%;
     }
@@ -213,12 +289,15 @@ onMounted(() => {
     .main-container {
         max-width: 800px;
     }
+
     .search-container {
         width: 80%;
     }
+
     .actions button {
         font-size: 14px;
     }
+
     .input-wrapper input {
         font-size: 16px;
     }
@@ -228,11 +307,19 @@ onMounted(() => {
     .main-container {
         max-width: 600px;
     }
+
     .search-container {
         width: 90%;
     }
-    .actions button {
-        margin: 5px;
+
+    .actions {
+        gap: 10px;
+        font-size: 14px;
+    }
+
+    .header-title .title {
+        font-size: 25px;
+        line-height: 30px;
     }
 }
 
@@ -241,17 +328,21 @@ onMounted(() => {
         max-width: 100%;
         padding: 10px;
     }
+
     .search-container {
         width: 100%;
     }
+
     .input-wrapper input {
         font-size: 14px;
     }
+
     .search-button {
         font-size: 14px;
     }
-    .actions button {
-        font-size: 14px;
+
+    .history-item {
+        width: 100%;
     }
 }
 </style>
