@@ -10,11 +10,6 @@ import store from '@/store';
 const isHighlighted = ref(false);
 const activeTab = ref('login');
 
-// watch(activeTab, (newTab) => {
-//   if (newTab === 'login') {
-//     isHighlighted.value = true;
-//   }
-// });
 const setActiveTab = (tab) => {
   activeTab.value = tab;
   if (tab === 'login') {
@@ -43,15 +38,15 @@ const handleClick = (routeName) => {
     </div>
     <div class="content">
       <div class="left-box">
-        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="/q_a.png" />
-        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="/contract.png" />
-        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="/search_home.png" />
-        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="/course.png" />
+        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="../public/q_a.png" />
+        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="../public/contract.png" />
+        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="../public/search_home.png" />
+        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="../public/course.png" />
       </div>
 
       <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
-          <img src="/icon_logo1.png" alt="icon logo">
+          <img src="../../public/icon_logo1.png" alt="icon logo">
         </div>
         <div class="tabs">
           <button class="tab-button" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">Đăng nhập
@@ -62,7 +57,8 @@ const handleClick = (routeName) => {
         </div>
 
         <div class="form-container">
-          <LoginForm v-if="activeTab === 'login'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
+          <LoginForm  v-if="activeTab === 'login'"
+            @switchToForgotPassword="setActiveTab('forgotPassword')" />
           <RegisterForm v-if="activeTab === 'register'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
           <ForgotPasswordForm v-if="activeTab === 'forgotPassword'" />
         </div>
@@ -186,7 +182,8 @@ const handleClick = (routeName) => {
   .main-container {
     max-width: 800px;
   }
-  .right-icon{
+
+  .right-icon {
     width: 120px;
   }
 }

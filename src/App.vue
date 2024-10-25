@@ -45,7 +45,7 @@ const handleLogOut = async (event) => {
         <div class="logo">
           <div class="logo_web flex" style="justify-items: center;">
             <div class="img flex" style="align-items: center;">
-              <img src="../icon_logo.png" alt="" width="50">
+              <img src="../public/icon_logo.png" alt="" width="50">
             </div> &nbsp; &nbsp;
             <h2>Hưng thịnh</h2>
           </div>
@@ -170,7 +170,6 @@ li {
 }
 
 .menu_item {
-  padding: 15px 5px;
   padding-left: 10px;
   display: flex;
   border: 1px solid rgba(170, 170, 170, 0);
@@ -198,6 +197,8 @@ li .button {
   display: flex;
   align-items: center;
   color: #ececec;
+  width: 100%;
+  padding: 15px 5px;
 }
 
 

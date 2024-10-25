@@ -6,14 +6,14 @@
     </div>
     <div class="contract-options">
       <div class="contract-box">
-        <img src="https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg" alt="Rà soát hợp đồng" class="contract-image" />
+        <img src="../../public/contract_ct.png" alt="Rà soát hợp đồng" class="contract-image" />
         <h2>Rà soát hợp đồng</h2>
         <p>Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp pháp.</p>
         <button class="contract-button">Rà soát ngay</button>
       </div>
 
       <div class="contract-box">
-        <img src="https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg" alt="Tạo hợp đồng" class="contract-image" />
+        <img src="../../public/create_file.png" alt="Tạo hợp đồng" class="contract-image" />
         <h2>Tạo hợp đồng</h2>
         <p>Tạo mới hợp đồng theo nhu cầu của bạn với các mẫu có sẵn và tùy chỉnh dễ dàng.</p>
         <button class="contract-button">Tạo mới</button>
@@ -83,10 +83,10 @@
 }
 
 .contract-image {
-  width: 100%;
+  width: 210px;
   height: auto;
   border-radius: 8px;
-  margin-bottom: 10px;
+  margin: 10px auto;
 }
 
 .contract-box h2 {

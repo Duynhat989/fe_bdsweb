@@ -1,26 +1,53 @@
 <script setup>
 import { ref } from 'vue'
 import store from '@/store';
-import { useRouter } from 'vue-router';
-const router = useRouter();
+const isLoading = ref(false);
+import { notify } from '@kyvg/vue3-notification';
 
 const email = ref('');
-const errorMessage = ref('');
-
 
 const handleForgotPassword = async (event) => {
-    if (email.value) {
-        console.log('Sending forgot password request for:', email.value);
+    isLoading.value = true;
+    try {
+        if (email.value) {
+            await new Promise(resolve => setTimeout(resolve, 1000));
+            await store.dispatch('forgePassword', { email: email.value });
+            notify({
+                title: 'Thành công',
+                text: 'Gửi mail thành công vui lòng check mail của bạn!',
+                type: 'success',
+            });
+        }
+    } catch (error) {
+        notify({
+            title: 'Lỗi',
+            text: error.message || 'Gửi mail thất bại, vui lòng thử lại.',
+            type: 'error',
+        });
+    } finally {
+        isLoading.value = false;
     }
-}
-
+};
 </script>
 <template>
     <h3>Quên mật khẩu</h3>
     <form class="form" @submit.prevent="handleForgotPassword">
         <input type="email" v-model="email" placeholder="Nhập email" required />
-        <button type="submit">Gửi yêu cầu</button>
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
+        <button type="submit" :disabled="isLoading">
+            <span v-if="isLoading">
+                <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                    viewBox="0 0 24 24">
+                    <path fill="currentColor"
+                        d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
+                        opacity="0.5" />
+                    <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+                        <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite"
+                            to="360 12 12" type="rotate" />
+                    </path>
+                </svg>
+                Đang gửi yêu cầu ...</span>
+            <span v-else>Gửi yêu cầu</span>
+        </button>
     </form>
 </template>
 

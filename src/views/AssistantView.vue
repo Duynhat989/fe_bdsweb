@@ -141,7 +141,7 @@ onMounted(() => {
 
 .main-container {
   max-width: 1200px;
-  padding: 0 5%; 
+  padding: 0 5%;
   margin: 5px auto;
   position: relative;
 }
@@ -237,16 +237,28 @@ onMounted(() => {
 }
 
 .assistant-title {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 16px;
+  font-weight: 600;
   color: #333;
-  margin-bottom: 10px;
+  margin-bottom: 5px;
+  line-height: 20px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: justify;
 }
 
 .assistant-detail {
   font-size: 14px;
   color: #666;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .assistant-view {
@@ -293,6 +305,7 @@ onMounted(() => {
     width: calc((100% - 30px)/3);
   }
 }
+
 @media (max-width: 768px) {
   .main-container {
     max-width: 600px;
@@ -302,6 +315,7 @@ onMounted(() => {
     width: calc((100% - 30px)/2);
   }
 }
+
 @media (max-width: 576px) {
   .main-container {
     max-width: 100%;

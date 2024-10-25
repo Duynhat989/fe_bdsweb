@@ -2,13 +2,12 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-section">
-                <img src="https://staticfile.batdongsan.com.vn/images/logo/standard/black/logo_gray-5.svg"
+                <img src="https://hocvienamg.edu.vn/wp-content/uploads/2023/03/Logo-CED-01.png"
                     alt="Batdongsan Logo" class="footer-logo" />
-                <p>CÔNG TY CỔ PHẦN PROPERTYGURU VIỆT NAM</p>
-                <p>Tầng 31, Keangnam Hanoi Landmark, Phạm Hùng, Nam Từ Liêm, Hà Nội</p>
-                <p>📞 (024) 3562 5939 - (024) 3562 5940</p>
+                <p>CÔNG TY CỔ PHẦN HỌC VIỆN ĐÀO TẠO AMG </p>
+                <p><i class='bx bx-map' ></i> Lô TT04-23 HD Mon, Hàm Nghi, Mỹ Đình 2, Nam Từ Liêm, Hà Nội</p>
+                <p>📞 035.863.5665 - 088.699.6565</p>
             </div>
-
             <div class="footer-section">
                 <h4>GIỚI THIỆU</h4>
                 <p>Công ty chúng tôi là đơn vị dẫn đầu trong lĩnh vực bất động sản tại Việt Nam, cung cấp các giải pháp
@@ -23,23 +22,19 @@
                 </ul>
             </div>
             <div class="footer-section">
-                <h4>LIÊN HỆ HOTLINE</h4>
+                <h4>WEBSITE</h4>
                 <div class="support">
                     <span><i class='bx bxs-phone'></i></span> &nbsp;
-                    <a href="tel:1900 1881">1900 1881</a>
+                    <a  href="https://hocvienamg.edu.vn/">Hocvienamg.edu.vn</a>
                 </div>
-                <h4>HỖ TRỢ KHÁCH HÀNG</h4>
+                <h4>FACEBOOK</h4>
                 <div class="support">
-                    <span><i class='bx bx-support'></i></span>&nbsp;
-                    <a href="mailto: trogiup.batdongsan.com.vn">trogiup.batdongsan.com.vn</a>
-                </div>
-                <h4>CHĂM SÓC KHÁCH HÀNG</h4>
-                <div class="support">
-                    <span><i class='bx bx-envelope'></i></span>&nbsp;
-                    <a href="mailto: hotro@batdongsan.com.vn"> hotro@batdongsan.com.vn</a>
+                    <span><i class='bx bxl-facebook'></i></span>&nbsp;
+                    <a href="https://www.facebook.com/duongdinhchaubds?mibextid=LQQJ4d">Fanpage</a>
                 </div>
             </div>
         </div>
+        <div class="footer-copyright">Coppyright 2024 © <strong>AMG</strong>      </div>
     </footer>
 </template>
 
@@ -60,7 +55,9 @@
     margin: 0 auto;
     padding: 0 20px;
 }
-
+.footer-copyright {
+    text-align: center;
+}
 .footer-section {
     flex: 1;
     padding: 10px;
