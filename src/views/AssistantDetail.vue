@@ -1,75 +1,151 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { decodeId } from '@/utils/encoding';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+const route = useRoute();
 
 const activeTab = ref('suggest');
+const encodedId = route.params.id;
+const assistantId = decodeId(encodedId);
+const assistantData = ref([]);
+const message = ref('');
+const threadId = ref('');
+// const conversationList = ref([]);
+const suggests = ref([]);
+const conversationList = [
+ 
+];
 
-const actions = ref([
-    { id: 1, name: 'Create image' },
-    { id: 2, name: 'Analyze images' },
-    { id: 3, name: 'Summarize text' },
-    { id: 4, name: 'Brainstorm' },
-    { id: 5, name: 'More' }
-]);
+const fetchAssistantData = async () => {
+    try {
+        if (assistantId) {
+            const response = await request.post(END_POINT.ASSISTANT_FIND, { id: assistantId });
+            assistantData.value = response.data;
+            suggests.value = JSON.parse(response.data.suggests || '[]');
+        } else {
+            console.error('ID không hợp lệ');
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
+// Tạo phiên tin nhắn mới
+const fetchConversationNew = async () => {
+    try {
+        if (assistantId) {
+            const response = await request.post(END_POINT.CONVERSATION_THREAD, { assistant_id: assistantId });
+            threadId.value = response.data.id
+        } else {
+            console.error('ID không hợp lệ');
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
 
+const fetchConversationList = async () => {
+    try {
+        if (threadId) {
+            const response = await request.post(END_POINT.CONVERSATION_LIST, { thread_id: threadId.value });
+            conversationList.value = response.data.messages;
+        } else {
+            console.error('ID không hợp lệ');
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
+const executeAction = (suggest) => {
+    console.log(suggest);
+    message.value = suggest;
+    handleSend();
+};
+const handleSend = async () => {
+    if (!message.value?.trim()) {
+        return;
+    }
+    try {
+        const response = await request.post(END_POINT.CONVERSATION_STREAM, {
+            message: message.value,
+            thread_id: threadId.value
+        });
+
+    } catch (error) {
+        console.error('Send request failed:', error);
+    }
+};
 const history = ref([
     { id: 1, description: 'History entry 1' },
     { id: 2, description: 'History entry 2' },
     { id: 3, description: 'History entry 3' }
 ]);
 
-const executeAction = (action) => {
-
+const loadConversation = async () => {
+    await fetchAssistantData();
+    await fetchConversationNew();
+    await fetchConversationList();
 };
 
 onMounted(() => {
-
+    loadConversation();
 });
 </script>
 <template>
     <div class="main-container">
-        <div class="header-title">
-            <h1 class="title">Hỏi đáp trợ lý</h1>
-            <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản Hưng Thịnh.</p>
-        </div>
-        <div class="search-bar">
-            <div class="search-container">
-                <div class="input-wrapper">
-                    <input type="text" placeholder="Nhập yêu cầu hỗ trợ..." />
-                    <span class="search-icon">🔍</span>
-                </div>
-                <button class="search-button"><i class='bx bx-up-arrow-circle'></i></button>
+        <div class="flex">
+            <div class="header-title">
+                <h1 class="title">{{ assistantData.name }}</h1>
+                <p>{{ assistantData.detail }}</p>
             </div>
-        </div>
-        <div class="content-box">
-            <div class="tabs">
-                <div class="tab" :class="{ active: activeTab === 'suggest' }" @click="activeTab = 'suggest'">
-                    Gợi ý
-                </div>
-                <div v-if="history.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
-                    @click="activeTab = 'history'">
-                    Lịch sử
+            <div v-if="conversationList && conversationList.length > 0" class="conversation-list">
+                <div v-for="(message, index) in conversationList" :key="index"
+                    :class="{ 'user-message': message.role === 'user', 'model-message': message.role === 'model' }"
+                    class="message-item">
+                    <div class="message-content">{{ message.content }}</div>
                 </div>
             </div>
-            <div class="content">
-                <div v-if="activeTab === 'suggest'">
-                    <div class="actions">
-                        <button v-for="action in actions" :key="action.id" @click="executeAction(action)"
-                            class="action-card">
-                            <div class="icon">
-                                <i class="bx bx-message-square-dots"></i>
-                            </div>
-                            <div class="title">{{ action.name }}</div>
-                        </button>
+            <div class="content-box" v-else>
+                <div class="tabs">
+                    <div class="tab" :class="{ active: activeTab === 'suggest' }" @click="activeTab = 'suggest'">
+                        Gợi ý
+                    </div>
+                    <div v-if="history.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
+                        @click="activeTab = 'history'">
+                        Lịch sử
                     </div>
                 </div>
-
-                <div v-if="activeTab === 'history'">
-                    <div class="history" v-if="history.length > 0">
-                        <div class="history-item" v-for="item in history" :key="item.id" @click="openHistory(item)">
-                            <div class="description">{{ item.description }}</div>
+                <div class="content">
+                    <div v-if="activeTab === 'suggest'" class="content-center">
+                        <div class="actions">
+                            <button v-for="(suggest, index) in suggests" :key="index" @click="executeAction(suggest)"
+                                class="action-card">
+                                <div class="icon">
+                                    <i class="bx bx-message-square-dots"></i>
+                                </div>
+                                <div class="title">{{ suggest }}</div>
+                            </button>
                         </div>
                     </div>
-                    <span v-else>Không có lịch sử để hiển thị.</span>
+
+                    <div v-if="activeTab === 'history'" class="content-center">
+                        <div class="history" v-if="history.length > 0">
+                            <div class="history-item" v-for="item in history" :key="item.id" @click="openHistory(item)">
+                                <div class="description">{{ item.description }}</div>
+                            </div>
+                        </div>
+                        <span v-else>Không có lịch sử để hiển thị.</span>
+                    </div>
+                </div>
+            </div>
+            <div class="send-bar">
+                <div class="send-container">
+                    <div class="input-wrapper">
+                        <input type="text" v-model="message" placeholder="Nhập yêu cầu hỗ trợ..." />
+                        <span class="send-icon">🔍</span>
+                    </div>
+                    <button class="send-button" @click="handleSend"><i class='bx bx-up-arrow-circle'></i></button>
                 </div>
             </div>
         </div>
@@ -90,13 +166,34 @@ onMounted(() => {
     margin-bottom: 10px;
 }
 
+.user-message {
+    background-color: #f0f0f0;
+    text-align: left;
+}
+
+.model-message {
+    background-color: #d0f0ff;
+    text-align: right;
+}
+
+.message-item {
+    margin: 8px auto;
+    padding: 10px;
+    border-radius: 5px;
+    width: 80%;
+}
+
 .main-container {
-    max-width: 1400px;
+    max-width: 1200px;
+    padding: 0 5%;
     margin: 5px auto;
     position: relative;
 }
-
-.search-bar {
+.main-container .flex {
+    display: flex;
+    flex-direction: column;
+}
+.send-bar {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -104,7 +201,7 @@ onMounted(() => {
     flex-direction: column;
 }
 
-.search-container {
+.send-container {
     display: flex;
     align-items: center;
     background-color: #f0f0f0;
@@ -134,13 +231,13 @@ onMounted(() => {
     font-family: inherit;
 }
 
-.search-icon {
+.send-icon {
     position: absolute;
     left: 10px;
     font-size: 20px;
 }
 
-.search-button {
+.send-button {
     background-color: #d9534f;
     color: #fff;
     border: none;
@@ -151,7 +248,7 @@ onMounted(() => {
     cursor: pointer;
 }
 
-.search-button:hover {
+.send-button:hover {
     background-color: #c9302c;
 }
 
@@ -172,7 +269,7 @@ onMounted(() => {
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
-    max-width: 200px;
+    width: calc((100% - 20px)/2);
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -237,12 +334,19 @@ onMounted(() => {
     font-size: 14px;
     color: #999;
 }
-
+.conversation-list {
+    max-height: calc(80vh - 100px);
+    overflow-y: scroll;
+    transition: all 1s;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
 .content-box {
     width: 100%;
     padding: 20px;
     margin-top: 20px;
     position: relative;
+    order: 2;
 }
 
 .tabs {
@@ -272,6 +376,11 @@ onMounted(() => {
 
 .content {
     margin-top: 30px;
+}
+
+.content-center {
+    width: 80%;
+    margin: 0 auto;
 }
 
 /* Responsive Styles */

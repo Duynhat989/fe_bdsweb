@@ -1,24 +1,35 @@
 <script setup>
 import PaymentPopup from '@/components/PaymentPopup.vue';
-import { ref, computed , onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
 import { notify } from '@kyvg/vue3-notification';
 import { encodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
-import { formatCurrency } from '@/utils/format';
+import { formatCurrency } from '@/utils/helps';
 const router = useRouter();
 const activeTab = ref('all');
 const showPaymentPopup = ref(false);
 const selectedCourse = ref({});
 const searchQuery = ref('');
 const courses = ref([]);
+const myCourses = ref([]);
+
+// Khóa học của Tôi
+const fetchMyCourses = async () => {
+  try {
+    const response = await request.get(END_POINT.COURSE_ME);
+    myCourses.value = response.data;
+  } catch (error) {
+    console.error('Lỗi lấy danh sách trợ lý:', error);
+  }
+};
 
 const fetchCourses = async () => {
   try {
     const response = await request.get(END_POINT.COURSES_LIST);
-    courses.value = response.courses; 
+    courses.value = response.courses;
   } catch (error) {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
@@ -31,26 +42,32 @@ const filteredCourses = computed(() =>
     course.detail.toLowerCase().includes(searchQuery.value.toLowerCase())
   )
 );
-const handleCourseClick = (course) => {
-  // Kiểm tra người dùng đã mua khóa học 
-  const encodedId = encodeId(course.id);
-  router.push(`/course/${encodedId}`);
-  // if (course.purchased) {
-  // } else {
-  //   selectedCourse.value = course;
-  //   showPaymentPopup.value = true;
-  // }
-};
 
-const handlePaymentSuccess = () => {
-  notify({
-    title: 'Thành công',
-    text: 'Khóa học đã được thanh toán thành công!',
-    type: 'success',
-  });
+const filteredMyCourses = computed(() =>
+  myCourses.value.filter(courseItem =>
+    courseItem.course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
+    courseItem.course.detail.toLowerCase().includes(searchQuery.value.toLowerCase())
+  )
+);
+
+const handleCourseClick = (value) => {
+  const encodedId = encodeId(value.course.id);
+  router.push(`/course/${encodedId}`);
 };
+const handlePayment = (course) => {
+  selectedCourse.value = course;
+  showPaymentPopup.value = true;
+};
+// const handlePaymentSuccess = () => {
+//   notify({
+//     title: 'Thành công',
+//     text: 'Khóa học đã được thanh toán thành công!',
+//     type: 'success',
+//   });
+// };
 
 onMounted(() => {
+  fetchMyCourses();
   fetchCourses();
 });
 </script>
@@ -70,7 +87,7 @@ onMounted(() => {
     <div v-if="activeTab === 'all'">
       <h2 class="section-title">Danh sách khóa học</h2>
       <div class="course-list">
-        <div class="course-card" v-for="course in filteredCourses" :key="course.id" @click="handleCourseClick(course)">
+        <div class="course-card" v-for="course in filteredCourses" :key="course.id">
           <img :src="course.image" alt="Course Image" class="course-image" />
           <div class="course-content">
             <h3 class="course-title">{{ course.name }}</h3>
@@ -87,25 +104,49 @@ onMounted(() => {
               <span>Ngày tạo: {{ new Date(course.createdAt).toLocaleDateString() }}</span>
             </div>
           </div>
+          <div class="register-overlay">
+            <button class="register-button" @click.stop="handlePayment(course)">Đăng ký ngay</button>
+          </div>
         </div>
       </div>
     </div>
 
     <div v-else>
       <h2 class="section-title">Khóa học của tôi</h2>
-      <p>Hiện tại bạn chưa có khóa học nào.</p>
+      <div v-if="filteredMyCourses.length > 0" class="course-list">
+        <div class="course-card" v-for="value in filteredMyCourses" :key="value.course.id" @click="handleCourseClick(value)">
+          <img :src="value.course.image" alt="Course Image" class="course-image" />
+          <div class="course-content">
+            <h3 class="course-title">{{ value.course.name }}</h3>
+            <p class="course-detail">{{ value.course.detail }}</p>
+            <div class="course-pricing">
+              <span class="price">{{ formatCurrency(value.course.price) }}</span>
+            </div>
+            <div class="course-status">
+              <span :class="{ active: value.course.status === 1, inactive: value.course.status !== 1 }">
+                {{ value.course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
+              </span>
+            </div>
+            <div class="course-dates">
+              <span>Ngày tạo: {{ new Date(value.course.createdAt).toLocaleDateString() }}</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <p v-else>Hiện tại bạn chưa có khóa học nào.</p>
     </div>
     <PaymentPopup v-if="showPaymentPopup" :course="selectedCourse" :visible="showPaymentPopup"
-      @close="showPaymentPopup = false" @paymentSuccess="handlePaymentSuccess" />
+      @close="showPaymentPopup = false" />
   </div>
 </template>
 
 <style scoped>
 .courses-page {
-  max-width: 1300px;
   margin: 40px auto;
-  padding: 50px 20px;
+  max-width: 1200px;
+  padding: 40px 5%;
 }
+
 .header-title {
   text-align: center;
   margin-bottom: 40px;
@@ -117,6 +158,7 @@ onMounted(() => {
   color: #e03d31;
   line-height: 40px;
 }
+
 .tabs {
   display: flex;
   margin: 0 auto;
@@ -181,6 +223,7 @@ onMounted(() => {
   display: flex;
   flex-direction: column;
   cursor: pointer;
+  position: relative;
 }
 
 .course-card:hover {
@@ -235,6 +278,40 @@ onMounted(() => {
   margin-bottom: 5px;
 }
 
+.course-card .register-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(238, 227, 227, 0.856);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.3s ease-in-out;
+}
+
+.course-card:hover .register-overlay {
+  opacity: 1;
+}
+
+.register-button {
+  background-color: #f04a4a;
+  color: #fff;
+  border: none;
+  padding: 6px 10px;
+  font-size: 16px;
+  cursor: pointer;
+  border-radius: 5px;
+  font-family: inherit;
+  transition: background-color 0.3s ease;
+}
+
+.register-button:hover {
+  background-color: #d43d3d;
+}
+
 /* Responsive Styles */
 @media (max-width: 1200px) {
   .courses-page {
@@ -263,22 +340,27 @@ onMounted(() => {
   .courses-page {
     width: 100%;
   }
+
   .courses-page {
-    margin-top: 60px ;
+    margin-top: 60px;
   }
+
   .course-card {
     width: 100%;
   }
+
   .search-bar {
     width: 100%;
   }
 }
+
 @media (max-width: 420px) {
-  
-  .tabs button{
+
+  .tabs button {
     padding: 10px 10px;
     color: 15px;
   }
+
   .course-card {
     width: 100%;
   }

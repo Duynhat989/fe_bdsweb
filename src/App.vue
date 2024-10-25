@@ -55,7 +55,7 @@ const handleLogOut = async (event) => {
             <a href="/assistant" class="button"><i class='bx bx-equalizer'></i> <span>Hỏi đáp trợ lý</span></a>
           </li>
           <li class="menu_item">
-            <a href="/contract" class="button"><i class='bx bx-file'></i> <span>Xử lý & tạo mới hồ sơ</span></a>
+            <a href="/contract" class="button"><i class='bx bx-file'></i> <span>Rà soát & tạo mới hợp đồng</span></a>
           </li>
           <li class="menu_item">
             <a href="/search" class="button"><i class='bx bx-search-alt'></i> <span>Tìm kiếm bất động sản</span></a>
@@ -103,7 +103,7 @@ const handleLogOut = async (event) => {
 
 .nav {
   height: 100vh;
-  width: 250px;
+  width: 300px;
   box-shadow: 1px 2px 5px 1px rgba(128, 128, 128, 0.281);
   padding: 10px;
   background-color: #ececec;

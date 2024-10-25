@@ -16,7 +16,7 @@ export const decodeId = (encodedId) => {
     try {
         const decodedStr = atob(encodedId);
         const [id] = decodedStr.split('-');
-        return id;
+        return parseInt(id);
     } catch (error) {
         console.error('Lỗi khi giải mã ID:', error);
         return null;

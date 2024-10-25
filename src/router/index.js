@@ -7,6 +7,7 @@ import SearchView from '@/views/SearchView.vue';
 import ContractView from '@/views/ContractView.vue';
 import CourseView from '@/views/CourseView.vue';
 import CourseDetail from '@/views/CourseDetail.vue';
+import ProjectDetail from '@/views/ProjectDetail.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -44,6 +45,12 @@ const router = createRouter({
       path: '/search',
       name: 'search',
       component: SearchView ,
+      meta: { requiresAuth: true } 
+    },
+    {
+      path: '/project-detail/:id',
+      name: 'projectDetail',
+      component: ProjectDetail ,
       meta: { requiresAuth: true } 
     },
     {

@@ -71,10 +71,10 @@ const handleClick = (routeName) => {
   </div>
   <footerView />
 </template>
-
 <style scoped>
 .main-container {
   max-width: 1200px;
+  padding: 40px 5%;
   margin: 10px auto;
 }
 
@@ -176,7 +176,7 @@ const handleClick = (routeName) => {
 @media (max-width: 1200px) {
   .main-container {
     max-width: 1000px;
-    padding: 0px 15px ;
+    padding: 0px 15px;
   }
 
 

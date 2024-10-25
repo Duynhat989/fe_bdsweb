@@ -1,29 +1,44 @@
 <script setup>
-import { ref , onMounted } from 'vue';
+import { ref, onMounted } from 'vue';
 const currentVideo = ref(null);
 const selectedLessonIndex = ref(null);
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { useRoute } from 'vue-router';
 import { decodeId } from '@/utils/encoding';
+import { getEmbedUrl } from '@/utils/helps';
 
 const route = useRoute();
 
 const encodedId = route.params.id;
-
 const courseId = decodeId(encodedId);
-const courseData = ref([]);
+const courseDetail = ref({});
+const watched = ref([]);
 
-const fetchCourseData = async () => {
+// const fetchCourseData = async () => {
+//     try {
+//         if (courseId) {
+//             const response = await request.post(END_POINT.COURSE_FIND, { id: courseId });
+//             courseDetail.value = response.data;
+//         } else {
+//             console.error('ID không hợp lệ');
+//         }
+//     } catch (error) {
+//         console.error('Lỗi khi tải dữ liệu khóa học:', error);
+//     }
+// };
+
+const fetchMyCourses = async () => {
     try {
-        if (courseId) {
-            const response = await request.post(END_POINT.COURSE_FIND, { id: courseId });
-            courseData.value = response.data; 
-        } else {
-            console.error('ID không hợp lệ');
+        const response = await request.get(END_POINT.COURSE_ME);
+
+        const courseData = response.data.find(courseItem => courseItem.course.id === courseId);
+        if (courseData) {
+            watched.value = JSON.parse(courseData.watched);
+            courseDetail.value = courseData.course;
         }
     } catch (error) {
-        console.error('Lỗi khi tải dữ liệu khóa học:', error);
+        console.error('Lỗi lấy danh sách trợ lý:', error);
     }
 };
 
@@ -31,39 +46,53 @@ const playVideo = (url, index) => {
     currentVideo.value = url;
     selectedLessonIndex.value = index;
 };
+const loadConversation = async () => {
+    await fetchMyCourses();   
 
-onMounted(fetchCourseData);
+};
+onMounted(() => {
+    loadConversation();
+});
 </script>
 <template>
     <div class="course-detail">
         <div class="course-header">
             <div class="course-info">
-                <h1 class="title">{{ courseData.name }}</h1>
-                <p class="detail">{{ courseData.detail }}</p>
+                <h1 class="title">{{ courseDetail.name }}</h1>
             </div>
         </div>
 
         <div class="content">
             <div class="video-section">
                 <div v-if="currentVideo" class="video-player">
-                    <iframe :src="currentVideo" title="Video bài giảng" frameborder="0" allowfullscreen></iframe>
+                    <iframe :src="getEmbedUrl(currentVideo)" title="Video bài giảng" frameborder="0"
+                        allowfullscreen></iframe>
                 </div>
                 <div v-else class="video-placeholder">
                     <p>Chọn bài giảng để xem video</p>
+                    <img src="https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg" alt="Hình ảnh khóa học">
                 </div>
             </div>
             <div class="lessons-section">
                 <h2>Nội dung khóa học</h2>
                 <ul class="lesson-list">
-                    <li v-for="(lesson, index) in courseData.lessons" :key="index" class="lesson-item"
+                    <li v-for="(lesson, index) in courseDetail.lessons" :key="index" class="lesson-item"
                         :class="{ active: selectedLessonIndex === index }" @click="playVideo(lesson.url_video, index)">
                         <div class="lesson-info">
                             <span class="lesson-index">{{ index + 1 }}</span>
                             <span>{{ lesson.name }}</span>
-                            <span class="icon"><i class='bx bxs-movie-play'></i></span>
+                            <span class="icon" v-if="watched.includes( index + 1)">
+                                <i class='bx bxs-movie-play'></i>
+                            </span>
                         </div>
                     </li>
                 </ul>
+            </div>
+        </div>
+        <div class="detail">
+            <p>Nội dung mô tả</p>
+            <div class="detail-ct">
+                {{ courseDetail.detail }}
             </div>
         </div>
     </div>
@@ -71,9 +100,9 @@ onMounted(fetchCourseData);
 
 <style scoped>
 .course-detail {
-    max-width: 1300px;
+    max-width: 1200px;
+    padding: 40px 5%;
     margin: 40px auto;
-    padding: 50px 20px;
 }
 
 .course-header {
@@ -93,7 +122,7 @@ onMounted(fetchCourseData);
 }
 
 .course-info .title {
-    font-size: 24px;
+    font-size: 30px;
     font-weight: bold;
     margin-bottom: 10px;
 }
@@ -107,7 +136,19 @@ onMounted(fetchCourseData);
     display: flex;
     gap: 20px;
 }
-
+.detail {
+    margin-top: 30px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    padding: 20px;
+}
+.detail p {
+    color: #E03C31;
+    font-size: 18px;
+    font-weight: bold;
+}
+.detail .detail-ct {
+    margin-top: 15px;
+}
 .video-section {
     flex: 3;
     display: flex;
@@ -138,7 +179,12 @@ onMounted(fetchCourseData);
     font-size: 18px;
     color: #555;
 }
-
+.video-placeholder img {
+    margin-top: 20px;
+    width: 100%;
+    object-fit: contain;
+    max-height: 500px;
+}
 .lessons-section {
     flex: 2;
     background: #fff;
@@ -148,7 +194,11 @@ onMounted(fetchCourseData);
     max-height: 600px;
     overflow-y: scroll;
 }
-
+.lessons-section h2 {
+    font-size: 20px;
+    font-weight: bold;
+    color: #D62929;
+}
 .lesson-list {
     list-style: none;
     padding: 0;
@@ -182,6 +232,7 @@ onMounted(fetchCourseData);
     top: 50%;
     position: absolute;
     transform: translateY(-50%);
+    color: #E03C31;
 }
 
 .lesson-index {

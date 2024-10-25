@@ -29,37 +29,6 @@ const fetchAssistants = async () => {
 const setView = (type) => {
   viewType.value = type;
 };
-// const assistants = ref([
-//   {
-//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-//     name: 'Bất động sản 1',
-//     view: 1,
-//     detail: 'Bất động sản 1',
-//   },
-//   {
-//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-//     name: 'Bất động sản 1',
-//     view: 1,
-//     detail: 'Bất động sản 1',
-//   },
-//   {
-//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-//     name: 'Bất động sản 1',
-//     view: 1,
-//     detail: 'Bất động sản 1',
-//   },
-//   {
-//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-//     name: 'Bất động sản 1',
-//     view: 1,
-//     detail: 'Bất động sản 1',
-//   }, {
-//     image: 'https://file4.batdongsan.com.vn/crop/393x222/2024/09/13/20240913223403-9018_wm.jpg',
-//     name: 'Bất động sản 1',
-//     view: 1,
-//     detail: 'Bất động sản 1',
-//   }
-// ]);
 const paginatedItems = computed(() => {
   const start = (currentPage.value - 1) * itemsPerPage.value;
   const end = start + itemsPerPage.value;
@@ -171,7 +140,8 @@ onMounted(() => {
 }
 
 .main-container {
-  max-width: 1100px;
+  max-width: 1200px;
+  padding: 0 5%; 
   margin: 5px auto;
   position: relative;
 }

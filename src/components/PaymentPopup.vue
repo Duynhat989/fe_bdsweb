@@ -1,5 +1,6 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref } from 'vue';
+import { formatCurrency } from '@/utils/helps';
 
 const props = defineProps({
     course: {
@@ -13,17 +14,12 @@ const props = defineProps({
 });
 
 // Sự kiện emit từ component con sang component cha
-const emit = defineEmits(['close', 'paymentSuccess']);
+const emit = defineEmits(['close']);
 
 const totalPrice = ref(props.course.price || 0);
 
 const closePopup = () => {
     emit('close');
-};
-
-const processPayment = () => {
-    emit('paymentSuccess');
-    closePopup();
 };
 </script>
 
@@ -37,8 +33,8 @@ const processPayment = () => {
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
                     <p>Khóa học: {{ course.name }}</p>
-                    <p>Giá : {{ course.price }}đ</p>
-                    <p>Tổng: {{ totalPrice }}đ</p>
+                    <p>Giá : {{ formatCurrency(course.price ) }}</p>
+                    <p>Tổng: {{ formatCurrency(totalPrice)  }}</p>
                     <p>Nôi dung: <span class="payment-content">Nội dung</span></p>
                     <div class="payment-qr">
                         <img src="https://via.placeholder.com/150" alt="Mã QR">
@@ -55,76 +51,93 @@ const processPayment = () => {
     left: 0;
     right: 0;
     bottom: 0;
-    background: rgba(0, 0, 0, 0.5);
+    background-color: rgba(0, 0, 0, 0.6); 
     display: flex;
-    align-items: center;
     justify-content: center;
-    z-index: 999;
+    align-items: center;
+    z-index: 9999;
 }
 
 .payment-popup {
-    background: white;
+    background-color: #fff;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
+    max-width: 450px;
+    width: 90%;
     padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    z-index: 1000;
-    width: 50%;
-    max-width: 600px;
+    text-align: center;
     position: relative;
+    animation: popupFadeIn 0.3s ease-in-out;
 }
 
 .popup-content {
-    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
 }
 
 .close-btn {
     position: absolute;
-    top: -10px;
-    right: -10px;
+    top: 10px;
+    right: 10px;
     background: none;
     border: none;
-    font-size: 25px;
     cursor: pointer;
+    font-size: 20px;
+    color: #333;
+}
+
+h3 {
+    font-size: 24px;
+    color:#E03C31;
+}
+
+p {
+    font-size: 16px;
+    color: #555;
 }
 
 .payment-details {
-    margin-top: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+    padding: 15px;
+    text-align: left;
 }
 
-.payment-qr {
-    text-align: center;
-}
-.payment-content {
-    color: red;
-    font-weight: bold;
-}
 .payment-details h4 {
     font-size: 18px;
     margin-bottom: 10px;
+    color: #333;
 }
 
 .payment-details p {
-    margin-bottom: 5px;
+    margin: 5px 0;
 }
 
-.payment-details input {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
+.payment-content {
+    font-weight: bold;
+    color: #E03C31; 
 }
 
-.payment-details button {
-    width: 100%;
-    padding: 10px;
-    background: #007bff;
-    color: white;
-    border: none;
-    cursor: pointer;
-    border-radius: 5px;
-    margin-top: 10px;
+.payment-qr {
+    margin-top: 15px;
+    text-align: center;
 }
 
-.payment-details button:hover {
-    background: #0056b3;
+.payment-qr img {
+    width: 150px;
+    height: 150px;
+    border-radius: 8px;
+}
+
+@keyframes popupFadeIn {
+    from {
+        opacity: 0;
+        transform: scale(0.9);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1);
+    }
 }
 </style>
