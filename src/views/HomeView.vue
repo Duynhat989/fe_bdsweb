@@ -186,7 +186,9 @@ const handleClick = (routeName) => {
   .main-container {
     max-width: 800px;
   }
-
+  .right-icon{
+    width: 120px;
+  }
 }
 
 @media (max-width: 768px) {
