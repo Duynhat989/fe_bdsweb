@@ -17,12 +17,23 @@ const emit = defineEmits(['switchToForgotPassword']);
 const switchToForgotPassword = () => {
     emit('switchToForgotPassword');
 };
+const handleLogin = async ({ email, password }) => {
+    try {
+        await store.dispatch('login', { email, password });
+    } catch (error) {
+        notify({
+            title: 'Lỗi',
+            text: error.message || 'Đăng nhập thất bại, vui lòng thử lại.',
+            type: 'error',
+        });
+    }
+};
 const handleRegister = async (event) => {
     isLoading.value = true;
     try {
         await new Promise(resolve => setTimeout(resolve, 1000));
         await store.dispatch('register', { name: name.value, email: email.value, password: password.value, phone: phone.value });
-
+        await handleLogin({ email: email.value, password: password.value });
         const intendedRoute = localStorage.getItem('intendedRoute');
         if (intendedRoute) {
             router.push(intendedRoute);
@@ -32,13 +43,13 @@ const handleRegister = async (event) => {
         }
         notify({
             title: 'Thành công',
-            text: 'Đăng ký thành công!',
+            text: 'Đăng ký và đăng nhập thành công!',
             type: 'success',
         });
     } catch (error) {
         notify({
             title: 'Lỗi',
-            text: error.message || 'Đăng nhập thất bại, vui lòng thử lại.',
+            text: error.message || 'Đăng ký thất bại, vui lòng thử lại.',
             type: 'error',
         });
     } finally {

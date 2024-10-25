@@ -8,6 +8,9 @@ import ContractView from '@/views/ContractView.vue';
 import CourseView from '@/views/CourseView.vue';
 import CourseDetail from '@/views/CourseDetail.vue';
 import ProjectDetail from '@/views/ProjectDetail.vue';
+import ContractReview from '@/views/contractReview.vue';
+import ContractCreate from '@/views/ContractCreate.vue';
+
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -39,6 +42,18 @@ const router = createRouter({
       path: '/contract',
       name: 'contract',
       component: ContractView ,
+      meta: { requiresAuth: true } 
+    },
+    {
+      path: '/contract/review',
+      name: 'contractReview',
+      component: ContractReview ,
+      meta: { requiresAuth: true } 
+    },
+    {
+      path: '/contract/create',
+      name: 'contractCreate',
+      component: ContractCreate ,
       meta: { requiresAuth: true } 
     },
     {

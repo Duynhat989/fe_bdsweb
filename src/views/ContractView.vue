@@ -1,3 +1,7 @@
+<script setup>
+import { ref } from 'vue';
+
+</script>
 <template>
   <div class="contract-page">
     <div class="header-title">
@@ -9,14 +13,14 @@
         <img src="../../public/contract_ct.png" alt="Rà soát hợp đồng" class="contract-image" />
         <h2>Rà soát hợp đồng</h2>
         <p>Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp pháp.</p>
-        <button class="contract-button">Rà soát ngay</button>
+        <a href="/contract/review" class="contract-button"><i class='bx bx-memory-card'></i> Rà soát ngay</a>
       </div>
 
       <div class="contract-box">
         <img src="../../public/create_file.png" alt="Tạo hợp đồng" class="contract-image" />
         <h2>Tạo hợp đồng</h2>
         <p>Tạo mới hợp đồng theo nhu cầu của bạn với các mẫu có sẵn và tùy chỉnh dễ dàng.</p>
-        <button class="contract-button">Tạo mới</button>
+        <a href="/contract/create" class="contract-button"><i class='bx bxs-paint' ></i>  Tạo mới</a>
       </div>
     </div>
     <div class="contract-description">
