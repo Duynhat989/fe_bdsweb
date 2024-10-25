@@ -4,6 +4,7 @@ import { useRoute } from 'vue-router';
 import { decodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
+import requestStream from '@/utils/requestStream';
 const route = useRoute();
 
 const activeTab = ref('suggest');
@@ -15,9 +16,8 @@ const threadId = ref('');
 // const conversationList = ref([]);
 const suggests = ref([]);
 const conversationList = [
- 
-];
 
+];
 const fetchAssistantData = async () => {
     try {
         if (assistantId) {
@@ -67,10 +67,98 @@ const handleSend = async () => {
         return;
     }
     try {
-        const response = await request.post(END_POINT.CONVERSATION_STREAM, {
+        conversationList.push({
+            role: "user",
+            content: message.value
+        })
+        const myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json");
+        myHeaders.append("Authorization", "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpZCI6NSwicm9sZSI6MywiaWF0IjoxNzI5NzMwMDI2fQ.8F3kPj1278hVTiH1NPhvQK5uhJbauu5rO4d5lspJL-4");
+
+        const raw = JSON.stringify({
             message: message.value,
             thread_id: threadId.value
         });
+        const requestOptions = {
+            method: "POST",
+            headers: myHeaders,
+            body: raw,
+            redirect: "follow"
+        };
+        fetch(`http://localhost:2053${END_POINT.CONVERSATION_STREAM}`, requestOptions)
+            .then((response) => {
+                const reader = response.body.getReader();
+                const decoder = new TextDecoder("utf-8");
+                let result = '';
+                // Hàm để đọc dữ liệu
+                const readStream = () => {
+                    return reader.read().then(({ done, value }) => {
+                        let textValue = decoder.decode(value)
+                        textValue = textValue.trim()
+                        textValue = textValue.split('\r\n')[textValue.split('\r\n').length - 1]
+                        console.log("textValue: ",textValue)
+                        if (textValue) {
+                            const data = JSON.parse(textValue.trim())
+                            if (data.success) {
+                                // OK
+                                conversationList[conversationList.length - 1].role != 'model' ? conversationList.push({
+                                    role: "model",
+                                    message: data.data.full
+                                }) : conversationList[conversationList.length - 1] = {
+                                    role: "model",
+                                    message: data.data.full
+                                }
+                            } else {
+                                // Báo lỗi và dừng
+                            }
+                            if (data.data.completed) {
+                                console.log(data);
+                                return;
+                            } else {
+                                console.log(data);
+                            }
+                        }
+                        readStream();
+                    });
+                };
+
+                return readStream();
+            })
+            .catch((error) => {
+                console.log(error);
+            })
+        // requestStream.post(END_POINT.CONVERSATION_STREAM, {
+        //     message: message.value,
+        //     thread_id: threadId.value
+        // }).then((response) => {
+        //     const reader = response.data;
+        //     let result = '';
+        //     res.setHeader('Content-Type', 'text/event-stream');
+
+        //     // Hàm để đọc dữ liệu
+        //     reader.on('data', (chunk) => {
+        //         const textValue = chunk.toString('utf-8');
+        //         console.log(textValue);
+        //         result += textValue;
+
+        //         // Gửi dữ liệu từng phần đến client
+        //     });
+
+        //     // Khi hoàn tất
+        //     reader.on('end', () => {
+        //         console.log(result)
+        //     });
+
+        //     // Xử lý lỗi trong quá trình đọc stream
+        //     reader.on('error', (error) => {
+        //         console.log(error)
+        //     });
+        // })
+        //     .catch((error) => {
+        //         console.log(error)
+        //     });
+
+
 
     } catch (error) {
         console.error('Send request failed:', error);
@@ -189,10 +277,12 @@ onMounted(() => {
     margin: 5px auto;
     position: relative;
 }
+
 .main-container .flex {
     display: flex;
     flex-direction: column;
 }
+
 .send-bar {
     display: flex;
     justify-content: center;
@@ -334,6 +424,7 @@ onMounted(() => {
     font-size: 14px;
     color: #999;
 }
+
 .conversation-list {
     max-height: calc(80vh - 100px);
     overflow-y: scroll;
@@ -341,6 +432,7 @@ onMounted(() => {
     -ms-overflow-style: none;
     scrollbar-width: none;
 }
+
 .content-box {
     width: 100%;
     padding: 20px;

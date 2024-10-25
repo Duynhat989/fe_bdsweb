@@ -1,7 +1,7 @@
 import { createStore } from 'vuex';
 import { login, register } from '../api/auth';
 import { useRouter } from 'vue-router';
-const router = useRouter();
+// const router = useRouter();
 
 const store = createStore({
     state: {
