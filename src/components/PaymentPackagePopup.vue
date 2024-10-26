@@ -54,9 +54,10 @@ const createInvoice = () => {
 
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
-                    <p>Gói đăng ký: {{ package.name }}</p>
-                    <p>Giá: {{ formatCurrency(package.price) }}</p>
-                    <p>Tổng: {{ formatCurrency(totalPrice) }}</p>
+                    <p>Gói đăng ký: <span> {{ package.name }}</span></p>
+                    <p>Số lượt yêu cầu: <span> {{ package.ask }}</span></p>
+                    <p>Giá: <span>{{ formatCurrency(package.price) }}</span></p>
+                    <p>Tổng: <span>{{ formatCurrency(totalPrice) }}</span></p>
 
                     <button @click="createInvoice" class="invoice-btn">Tạo hóa đơn</button>
                     <div v-if="qrCodeUrl" class="payment-qr">
@@ -127,12 +128,17 @@ h3 {
 .payment-details {
     background-color: #f9f9f9;
     border-radius: 8px;
-    padding: 15px;
+    padding: 10px;
+    font-size: 14px;
     text-align: left;
+}
+.payment-details span {
+    color: #E03C31;
 }
 
 .payment-details h4 {
-    font-size: 18px;
+    font-size: 16px;
+    font-weight: 600;
     color: #333;
 }
 
@@ -144,11 +150,11 @@ h3 {
     background-color: #ff3f3f;
     color: white;
     border: none;
-    padding: 10px 20px;
+    padding: 8px 10px;
     font-size: 14px;
-    border-radius: 5px;
+    border-radius: 10px;
     cursor: pointer;
-    margin-top: 15px;
+    margin-top: 10px;
     font-family: inherit;
 }
 

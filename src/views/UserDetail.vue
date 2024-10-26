@@ -1,24 +1,89 @@
 <script setup>
-import { ref } from 'vue';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+import { notify } from '@kyvg/vue3-notification';
+import { ref, onMounted } from 'vue';
 
-const userInfo = ref({
-    name: 'Nguyen Van A',
-    role: 'Admin',
-    package: 'Premium',
-    phone: '0123456789',
-    email: 'user@example.com',
-});
-
+const userInfo = ref({});
+const license = ref({});
+const isLoading = ref(false);
 const isEditing = ref(false);
+
+const form = ref({
+    name: userInfo.value.name || '',
+    phone: userInfo.value.phone || '',
+    email: userInfo.value.email || ''
+});
+const fetchLicense = async () => {
+    try {
+        const response = await request.get(END_POINT.LICENSE_GET);
+        license.value = response.license;
+    } catch (error) {
+        // console.error('Lỗi lấy thông tin gói:', error);
+    }
+};
+
+const fetchUser = async () => {
+    try {
+        const response = await request.get(END_POINT.USER_GET);
+        userInfo.value = response.data;
+    } catch (error) {
+        // console.error('Lỗi lấy thông tin người dùng:', error);
+    }
+};
+
 
 const toggleEdit = () => {
     isEditing.value = !isEditing.value;
+    if (isEditing.value) {
+        form.value = {
+            name: userInfo.value.name || '',
+            phone: userInfo.value.phone || '',
+            email: userInfo.value.email || ''
+        };
+    }
+};
+const updateUser = async () => {
+    isLoading.value = true;
+    try {
+        const updatedUserData = {
+            email: form.value.email,
+            name: form.value.name,
+            phone: form.value.phone
+        };
+        const response = await request.post(END_POINT.USER_UPDATE, updatedUserData);
+
+        if (response.success === true) {
+            notify({
+                title: 'Thành công',
+                text: 'Thông tin đã được cập nhật thành công!',
+                type: 'success'
+            });
+            console.log(response.data)
+            userInfo.value = response.data;
+        } else {
+            throw new Error('Cập nhật thất bại, vui lòng thử lại.');
+        }
+    } catch (error) {
+        notify({
+            title: 'Lỗi',
+            text: error.response?.data?.message || 'Cập nhật thất bại, vui lòng thử lại sau.',
+            type: 'error'
+        });
+    } finally {
+        isLoading.value = false;
+        toggleEdit();
+    }
 };
 
-const updateUser = () => {
-    console.log('User updated:', userInfo.value);
-    toggleEdit();
+const loadUser = async () => {
+    await fetchLicense();
+    await fetchUser();
 };
+
+onMounted(() => {
+    loadUser();
+});
 </script>
 
 <template>
@@ -27,26 +92,26 @@ const updateUser = () => {
             <h1 class="title">Thông tin người dùng</h1>
 
             <div class="user-info">
-                <p><strong>Name:</strong> {{ userInfo.name }}</p>
-                <p><strong>Role:</strong> {{ userInfo.role }}</p>
-                <p><strong>Gói:</strong> {{ userInfo.package }}</p>
-                <p><strong>Phone:</strong> {{ userInfo.phone }}</p>
-                <p><strong>Email:</strong> {{ userInfo.email }}</p>
+                <p><strong>Tên người dùng:</strong> {{ userInfo?.name }}</p>
+                <p><strong>Phone:</strong> {{ userInfo?.phone }}</p>
+                <p><strong>Email:</strong> {{ userInfo?.email }}</p>
+                <p><strong>Quyền:</strong> {{ userInfo?.role === 3 ? 'Người dùng' : userInfo?.role === 1 ? 'Admin' : 'Vai trò không xác định'}}</p>
+                <p><strong>Gói đang sử dụng:</strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu</p>
             </div>
             <div v-if="isEditing" class="edit-form">
                 <div class="form-box">
                     <h3>Cập nhật thông tin tài khoản</h3>
                     <label>
                         Name:
-                        <input v-model="userInfo.name" type="text" />
+                        <input v-model="form.name" type="text" />
                     </label>
                     <label>
                         Phone:
-                        <input v-model="userInfo.phone" type="text" />
+                        <input v-model="form.phone" type="text" />
                     </label>
                     <label>
                         Email:
-                        <input v-model="userInfo.email" type="email" />
+                        <input v-model="form.email" type="email" />
                     </label>
                 </div>
                 <button @click="updateUser" class="save-btn">Lưu thay đổi</button>
@@ -79,6 +144,7 @@ const updateUser = () => {
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
+    font-weight: bold;
 }
 
 .user-info p {
@@ -96,11 +162,12 @@ const updateUser = () => {
     background-color: #ff3f3f;
     color: white;
     border: none;
-    padding: 4px 16px;
+    padding: 5px 16px;
     font-size: 14px;
     border-radius: 5px;
     cursor: pointer;
     margin-top: 15px;
+    font-family: inherit;
 }
 
 .edit-btn:hover,
@@ -132,5 +199,6 @@ const updateUser = () => {
     border: 1px solid #ccc;
     border-radius: 5px;
     margin-top: 5px;
+    font-family: inherit;
 }
 </style>

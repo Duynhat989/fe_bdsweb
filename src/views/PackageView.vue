@@ -3,10 +3,11 @@ import { ref, onMounted } from 'vue';
 
 import { formatCurrency } from '@/utils/helps';
 import PaymentPackagePopup from '@/components/PaymentPackagePopup.vue';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
 const packages = ref([]);
 const isPopupVisible = ref(false);
 const selectedPackage = ref({});
-
 const openPopup = (pkg) => {
     selectedPackage.value = pkg;
     isPopupVisible.value = true;
@@ -15,26 +16,13 @@ const openPopup = (pkg) => {
 const closePopup = () => {
     isPopupVisible.value = false;
 };
-// Giả sử có API fetchPackages() để lấy dữ liệu gói
 const fetchPackages = async () => {
-    // Thay thế bằng API thực tế của bạn
-    packages.value = [
-        {
-            id: 1,
-            name: 'Nâng cấp VIP5',
-            description: 'Sử dụng tất cả',
-            price: '0',
-            features: 'Các tính năng cao cấp',
-        },
-        {
-            id: 2,
-            name: 'VIP Gold',
-            description: 'Truy cập không giới hạn',
-            price: '1000000',
-            features: 'Hỗ trợ 24/7, Tính năng cao cấp',
-        },
-        // Thêm nhiều gói khác nếu cần
-    ];
+    try {
+        const response = await request.get(END_POINT.PACKAGE_LIST);
+        packages.value = response.packages;
+    } catch (error) {
+        console.error('Lỗi lấy thông tin gói:', error);
+    }
 };
 
 onMounted(() => {
@@ -57,6 +45,7 @@ onMounted(() => {
                         <p class="package-description">{{ pkg.description }}</p>
                         <p class="package-price">Giá: {{ pkg.price === '0' ? 'Miễn phí' : formatCurrency(pkg.price) }}</p>
                         <p class="package-features">{{ pkg.features || 'Không có tính năng bổ sung' }}</p>
+                        <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
                         <button @click="openPopup(pkg)" class="register-btn">Đăng ký gói</button>
                     </div>
                 </div>

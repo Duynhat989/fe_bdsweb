@@ -36,6 +36,9 @@ export const END_POINT = {
     USER_UPDATE: '/api/user/update', // Cập nhật người dùng
     USER_DELETE: '/api/user/delete', // Xóa người dùng
 
+    // Users APIs
+    USER_GET: '/api/user/me', // Lấy thông tin người dùng
+    USER_UPDATE: '/api/user/edit', // Cập nhật người dùng
 
     // Users APIs
     PACKAGE_LIST: '/api/packages', // Danh sách gói
@@ -46,4 +49,7 @@ export const END_POINT = {
 
     // Setup APIs
     SETUP: '/api/setup', // Tải cài đặt
+
+    // License APIs
+    LICENSE_GET: '/api/license/me' // Lấy bản quyền
 };
