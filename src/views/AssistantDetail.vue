@@ -393,7 +393,7 @@ onMounted(() => {
         max-width: 800px;
     }
 
-    .search-container {
+    .send-container {
         width: 80%;
     }
 

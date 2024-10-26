@@ -120,8 +120,8 @@ watch(conversationList, () => {
                 <div v-for="(message, index) in conversationList" :key="index"
                     :class="{ 'user-message': message.role === 'user', 'model-message': message.role === 'model' }"
                     class="message-item">
-                    <img v-if="message.role === 'user'" src="../../public/icon.jpg" alt="User Avatar" class="avatar" />
-                    <img v-else src="../../public/icon_logo.png" alt="Model Avatar" class="avatar" />
+                    <span v-if="message.role === 'user'" class="avatar">Me</span>
+                    <img v-else src="../../public/q_a.png" alt="Model Avatar" class="avatar" />
                     <span class="copy-button" @click="copyToClipboard(message.content)"><i
                             class='bx bx-copy'></i></span>
                     <div class="message-content" :text-content="message.content">{{ message.content }}</div>
@@ -147,7 +147,7 @@ watch(conversationList, () => {
 .back-button {
     position: absolute;
     top: 20px;
-    left: 20px;
+    left: 70px;
     background-color: #fff;
     border: 1px solid #c9302c;
     padding: 8px 12px;
@@ -200,6 +200,17 @@ watch(conversationList, () => {
 .message-item .avatar {
     width: 50px;
     height: 50px;
+    border-radius: 50%;
+}
+
+.message-item span.avatar {
+    background: red;
+    text-align: center;
+    justify-content: center;
+    line-height: 50px;
+    color: #fff;
+    font-weight: 700;
+    font-size: 20px;
 }
 
 .message-content {
@@ -215,7 +226,6 @@ watch(conversationList, () => {
     opacity: 1;
 }
 
-.message-content {}
 
 .message-content.enter-active,
 .message-content.leave-active {
@@ -460,7 +470,7 @@ watch(conversationList, () => {
         max-width: 1000px;
     }
 
-    .search-container {
+    .send-container {
         width: 70%;
     }
 }
@@ -470,7 +480,7 @@ watch(conversationList, () => {
         max-width: 800px;
     }
 
-    .search-container {
+    .send-container {
         width: 80%;
     }
 
@@ -488,7 +498,7 @@ watch(conversationList, () => {
         max-width: 600px;
     }
 
-    .search-container {
+    .send-container {
         width: 90%;
     }
 
@@ -501,15 +511,34 @@ watch(conversationList, () => {
         font-size: 25px;
         line-height: 30px;
     }
+
+    .message-item .avatar {
+        width: 35px;
+        height: 35px;
+    }
+
+    .user-message .avatar {
+        right: -40px;
+    }
+
+    .model-message .avatar {
+        left: -40px;
+    }
+
 }
 
 @media (max-width: 576px) {
-    .main-container {
-        max-width: 100%;
-        padding: 10px;
+    .back-button {
+        right: 6px;
+        left: auto;
+        top: 0px;
     }
 
-    .search-container {
+    .main-container {
+        max-width: 100%;
+    }
+
+    .send-container {
         width: 100%;
     }
 
@@ -517,7 +546,7 @@ watch(conversationList, () => {
         font-size: 14px;
     }
 
-    .search-button {
+    .send-button {
         font-size: 14px;
     }
 

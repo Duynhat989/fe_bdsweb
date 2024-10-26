@@ -60,8 +60,8 @@ const handleLogOut = async () => {
             <div class="username">
               <h3>{{ user.name }}</h3>
             </div>
-            <div class="logout">
-              <span @click="handleLogOut">Đăng xuất</span>
+            <div class="logout" @click="handleLogOut">
+              <span >Đăng xuất</span>
             </div>
           </div>
         </div>
@@ -97,7 +97,7 @@ const handleLogOut = async () => {
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
 .nav {
-  padding: 10px;
+  padding: 0px 10px;
 }
 
 .hidden {
@@ -185,7 +185,7 @@ li .button span {
 
 .user_profile {
   border-top: 1px solid #ccc;
-  padding: 20px;
+  padding: 10px 20px;
   align-items: center;
   position: relative;
   display: flex;
@@ -208,7 +208,7 @@ li .button span {
   width: 100%;
   border-radius: 5px;
   left: -100%;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
+  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .logout:hover {

@@ -95,20 +95,23 @@ watch(selectedFilters, applyFilters);
     </div>
     <div class="results">
       <div class="result-box" v-for="item in filteredItems" :key="item.id">
-        <a :href="item.url" target="_blank" class="item-link">
           <img :src="item.image" alt="Property Image" class="item-image" />
-          <h3 class="item-name">{{ item.name }}</h3>
-          <p class="item-location">{{ item.location }}</p>
-          <p class="item-description">{{ item.description }}</p>
-          <p class="item-more"><strong>Giá:</strong> {{ item.price }}</p>
-          <p class="item-more"><strong>Diện tích:</strong> {{ item.area }}</p>
-          <p class="item-more">
-            <strong>Tiện ích:</strong>
-            <span v-for="(amenity, index) in item.amenities" :key="index">
-              {{ amenity }}<span v-if="index < item.amenities.length - 1">, </span>
-            </span>
-          </p>
-        </a>
+          <div class="result-detail">
+            <h3 class="item-name">{{ item.name }}</h3>
+            <p class="item-location">{{ item.location }}</p>
+            <p class="item-description">{{ item.description }}</p>
+            <p class="item-more"><strong>Giá:</strong> {{ item.price }}</p>
+            <p class="item-more"><strong>Diện tích:</strong> {{ item.area }}</p>
+            <p class="item-more">
+              <strong>Tiện ích:</strong>
+              <span v-for="(amenity, index) in item.amenities" :key="index">
+                {{ amenity }}<span v-if="index < item.amenities.length - 1">, </span>
+              </span>
+            </p>
+          </div>
+          <a :href="item.url" target="_blank" class="item-link">
+              Xem chi tiết
+          </a>
       </div>
 
     </div>
@@ -207,7 +210,9 @@ watch(selectedFilters, applyFilters);
   transition: transform 0.3s;
   cursor: pointer;
 }
-
+.result-detail {
+  min-height: 260px ;
+}
 .result-box:hover {
   border: 1px solid #c03228;
   transform: translateY(-5px);
@@ -248,7 +253,18 @@ watch(selectedFilters, applyFilters);
 .item-more strong {
   color: #c03228;
 }
-
+.item-link {
+  display: block;
+  padding: 10px 20px;
+  background-color: #c03228;
+  color: #fff;
+  text-align: center;
+  border-radius: 20px;
+  margin-top: 10px;
+}
+.item-link:hover {
+  opacity: 0.8;
+}
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .results {
