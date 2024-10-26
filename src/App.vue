@@ -10,7 +10,7 @@ const hiddenPopup = ref(false);
 
 const router = useRouter();
 const checkScreenSize = () => {
-  hiddenPopup.value = window.innerWidth < 1024;
+  hiddenPopup.value = window.innerWidth < 1024
 };
 
 onMounted(() => {
