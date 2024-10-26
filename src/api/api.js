@@ -36,6 +36,10 @@ export const END_POINT = {
     USER_UPDATE: '/api/user/update', // Cập nhật người dùng
     USER_DELETE: '/api/user/delete', // Xóa người dùng
 
+
+    // Users APIs
+    PACKAGE_LIST: '/api/packages', // Danh sách gói
+
     // Files APIs
     FILE_UPLOAD: '/api/file/upload', // Upload file
     FILE_DELETE: '/api/file/file-ZSNH47eGFS5wvCrvh12NtxzS', // Xóa file

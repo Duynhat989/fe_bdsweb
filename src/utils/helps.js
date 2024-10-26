@@ -48,3 +48,6 @@ export function formatMessage(content) {
     }
     return '';
 }
+export function getImagePath(imageName) {
+    return require(`@/assets/images/${imageName}`);
+}

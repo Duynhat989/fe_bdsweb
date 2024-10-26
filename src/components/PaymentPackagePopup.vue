@@ -1,10 +1,10 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { formatCurrency } from '@/utils/helps';
 import { generateVietQRUrl } from '@/utils/qrHelper';
-const qrCodeUrl = ref(null);
+
 const props = defineProps({
-    course: {
+    package: {
         type: Object,
         default: () => ({}),
     },
@@ -14,16 +14,24 @@ const props = defineProps({
     },
 });
 
-// Sự kiện emit từ component con sang component cha
 const emit = defineEmits(['close']);
+const totalPrice = ref(0);
+const qrCodeUrl = ref(null);
 
-const totalPrice = ref(props.course.price || 0);
-
+// Tính tổng tiền khi package thay đổi
+watch(
+    () => props.package,
+    (newPackage) => {
+        totalPrice.value = newPackage.price || 0;
+    },
+    { immediate: true }
+);
 
 const closePopup = () => {
     emit('close');
     qrCodeUrl.value = null;
 };
+
 
 const createInvoice = () => {
   const accountNumber = import.meta.env.VITE_ACCOUNT_NUMBER;
@@ -34,23 +42,22 @@ const createInvoice = () => {
 
   qrCodeUrl.value = generateVietQRUrl(bankCode, accountNumber, amount, paymentContent,accountName);
 };
-
 </script>
 
 <template>
     <div v-if="visible" class="modal-overlay">
         <div class="payment-popup">
             <div class="popup-content">
-                <button class="close-btn" @click="closePopup"><i class='bx bxs-x-circle'></i></button>
-                <h3>{{ course.name }}</h3>
-                <p>{{ course.detail }}</p>
+                <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
+                <h3>{{ package.name }}</h3>
+                <p class="package-features">{{ package.features || 'Không có tính năng bổ sung' }}</p>
+
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
-                    <p>Khóa học: {{ course.name }}</p>
-                    <p>Giá : {{ formatCurrency(course.price ) }}</p>
-                    <p>Tổng: {{ formatCurrency(totalPrice)  }}</p>
-                    <p>Nôi dung: <span class="payment-content">Nội dung</span></p>
-                    
+                    <p>Gói đăng ký: {{ package.name }}</p>
+                    <p>Giá: {{ formatCurrency(package.price) }}</p>
+                    <p>Tổng: {{ formatCurrency(totalPrice) }}</p>
+
                     <button @click="createInvoice" class="invoice-btn">Tạo hóa đơn</button>
                     <div v-if="qrCodeUrl" class="payment-qr">
                         <img :src="qrCodeUrl" alt="Mã QR thanh toán" />
@@ -60,6 +67,7 @@ const createInvoice = () => {
         </div>
     </div>
 </template>
+
 <style scoped>
 .modal-overlay {
     position: fixed;
@@ -67,7 +75,7 @@ const createInvoice = () => {
     left: 0;
     right: 0;
     bottom: 0;
-    background-color: rgba(0, 0, 0, 0.6); 
+    background-color: rgba(0, 0, 0, 0.6);
     display: flex;
     justify-content: center;
     align-items: center;
@@ -110,9 +118,10 @@ h3 {
     color: #E03C31;
 }
 
-p {
+.package-features {
     font-size: 16px;
     color: #555;
+    margin-bottom: 10px;
 }
 
 .payment-details {
@@ -129,11 +138,6 @@ p {
 
 .payment-details p {
     margin: 5px 0;
-}
-
-.payment-content {
-    font-weight: bold;
-    color: #E03C31; 
 }
 
 .invoice-btn {
@@ -165,9 +169,14 @@ p {
         opacity: 0;
         transform: scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
     }
+}
+
+canvas {
+    margin-top: 10px;
 }
 </style>

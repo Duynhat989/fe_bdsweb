@@ -11,6 +11,9 @@ import ContractCreate from '@/views/ContractCreate.vue';
 import ChatDetail from '@/views/ChatDetail.vue';
 import ContractReview from '@/views/ContractReview.vue';
 import NotFound from '@/views/NotFound.vue';
+import IntroducingPage from '@/views/IntroducingPage.vue';
+import PackageView from '@/views/PackageView.vue';
+import UserDetail from '@/views/UserDetail.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -79,6 +82,24 @@ const router = createRouter({
       path: '/course/:id',
       name: 'courseDetail',
       component: CourseDetail,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/introducing_page',
+      name: 'introducingPage',
+      component: IntroducingPage,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/package',
+      name: 'packageView',
+      component: PackageView,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/user_detail',
+      name: 'userDetail',
+      component: UserDetail,
       meta: { requiresAuth: true }
     },
     {

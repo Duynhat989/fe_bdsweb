@@ -33,7 +33,7 @@ const handleLogOut = async () => {
         <div class="logo">
           <div class="logo_web flex">
             <div class="img flex">
-              <img src="../public/icon_logo.png" alt="Logo" width="50">
+              <img src="../src/assets/images/icon_logo.png" alt="Logo" width="50">
             </div> &nbsp;&nbsp;
             <h2>Hưng thịnh</h2>
           </div>
@@ -51,6 +51,15 @@ const handleLogOut = async () => {
           <li class="menu_item">
             <a href="/course" class="button"><i class="bx bx-movie-play"></i> <span>Khóa học bất động sản</span></a>
           </li>
+          <li class="menu_item">
+            <a href="/introducing_page" class="button"><i class='bx bxs-buildings'></i> <span>Giới thiệu doanh nghiệp</span></a>
+          </li>
+          <li class="menu_item">
+            <a href="/package" class="button"><i class='bx bx-package' ></i><span>Bản quyền</span></a>
+          </li>
+          <li class="menu_item">
+            <a href="/user_detail" class="button"><i class='bx bxs-user-detail' ></i><span>Thông tin cá nhân</span></a>
+          </li>
         </ul>
         <div class="user">
           <div class="user_profile flex">
@@ -61,7 +70,7 @@ const handleLogOut = async () => {
               <h3>{{ user.name }}</h3>
             </div>
             <div class="logout" @click="handleLogOut">
-              <span >Đăng xuất</span>
+              <span>Đăng xuất</span>
             </div>
           </div>
         </div>
@@ -96,6 +105,7 @@ const handleLogOut = async () => {
   z-index: 999;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
 }
+
 .nav {
   padding: 0px 10px;
 }
@@ -112,6 +122,7 @@ const handleLogOut = async () => {
   transition: margin-left 0.3s ease;
 }
 
+.body-content.body-full,
 .body-content.no-margin {
   margin-left: 0;
 }

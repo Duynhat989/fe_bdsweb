@@ -121,7 +121,7 @@ watch(conversationList, () => {
                     :class="{ 'user-message': message.role === 'user', 'model-message': message.role === 'model' }"
                     class="message-item">
                     <span v-if="message.role === 'user'" class="avatar">Me</span>
-                    <img v-else src="../../public/q_a.png" alt="Model Avatar" class="avatar" />
+                    <img v-else src="../assets/images/q_a.png" alt="Model Avatar" class="avatar" />
                     <span class="copy-button" @click="copyToClipboard(message.content)"><i
                             class='bx bx-copy'></i></span>
                     <div class="message-content" :text-content="message.content">{{ message.content }}</div>

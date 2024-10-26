@@ -38,15 +38,15 @@ const handleClick = (routeName) => {
     </div>
     <div class="content">
       <div class="left-box">
-        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="../public/q_a.png" />
-        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="../public/contract.png" />
-        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="../public/search_home.png" />
-        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="../public/course.png" />
+        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="src/assets/images/q_a.png" />
+        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="src/assets/images/contract.png" />
+        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="src/assets/images/search_home.png" />
+        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="src/assets/images/course.png" />
       </div>
 
       <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
-          <img src="../../public/icon_logo1.png" alt="icon logo">
+          <img src="../assets/images/icon_logo1.png" alt="icon logo">
         </div>
         <div class="tabs">
           <button class="tab-button" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">Đăng nhập
