@@ -1,56 +1,74 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, onMounted, nextTick, watch } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
-import { decodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
-
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
+import { notify } from '@kyvg/vue3-notification';
+
 const route = useRoute();
 const router = useRouter();
 
-const activeTab = ref('suggest');
-const encodedId = route.params.id;
-const assistantId = decodeId(encodedId);
-const assistantData = ref([]);
 const message = ref('');
 const threadId = ref('');
 const conversationList = ref([]);
-const suggests = ref([]);
 const loading = ref(false);
+const conversationContainer = ref(null);
 
-const fetchAssistantData = async () => {
+const goBack = () => {
+    router.back();
+};
+const copyToClipboard = (text) => {
+    if (!text) return;
+    navigator.clipboard.writeText(text).then(
+        () => {
+            notify({
+                title: 'Thành công',
+                text: 'Copy text thành công!',
+                type: 'success',
+            });
+        },
+        (err) => {
+            notify({
+                title: 'Lỗi',
+                text: 'Copy text Lỗi!',
+                type: 'error',
+            });
+        }
+    );
+};
+
+const scrollToBottom = () => {
+    nextTick(() => {
+        if (conversationContainer.value) {
+            conversationContainer.value.scrollTop = conversationContainer.value.scrollHeight;
+        }
+    });
+};
+
+// Danh sách tin nhắn
+const fetchConversationList = async () => {
     try {
-        if (assistantId) {
-            const response = await request.post(END_POINT.ASSISTANT_FIND, { id: assistantId });
-            assistantData.value = response.data;
-            suggests.value = JSON.parse(response.data.suggests || '[]');
+        if (threadId) {
+            const response = await request.post(END_POINT.CONVERSATION_LIST, { thread_id: threadId.value });
+            conversationList.value = response.data.messages;
         } else {
-            console.error('ID không hợp lệ');
+            notify({
+                title: 'Lỗi',
+                text: `ID không hợp lệ`,
+                type: 'error',
+            });
         }
     } catch (error) {
-        console.error('Lỗi khi tải dữ liệu:', error);
-    }
-};
-// Tạo phiên tin nhắn mới
-const fetchConversationNew = async () => {
-    try {
-        if (assistantId) {
-            const response = await request.post(END_POINT.CONVERSATION_THREAD, { assistant_id: assistantId });
-            threadId.value = response.data.id
-        } else {
-            console.error('ID không hợp lệ');
-        }
-    } catch (error) {
-        console.error('Lỗi khi tải dữ liệu:', error);
+        notify({
+            title: 'Lỗi',
+            text: `Lỗi khi tải dữ liệu`,
+            type: 'error',
+        });
     }
 };
 
 
-const executeAction = (suggest) => {
-    message.value = suggest;
-    handleSend();
-};
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
         return;
@@ -64,81 +82,56 @@ const handleSend = async () => {
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
         conversationList.value = await handleResponseStream(response, conversationList);
         message.value = "";
-        router.push({
-            path: `/chat/${threadId.value}`
-        });
     } catch (error) {
-        console.error('Send request failed:', error);
+        notify({
+            title: 'Lỗi',
+            text: `Lỗi khi tải gửi tin`,
+            type: 'error',
+        });
     } finally {
         loading.value = false;
     }
 };
 
-
-const history = ref([
-    { id: 1, description: 'History entry 1' },
-    { id: 2, description: 'History entry 2' },
-    { id: 3, description: 'History entry 3' }
-]);
-
 const loadConversation = async () => {
-    if (!assistantId) {
-        router.push('/404');
-        return;
-    }
-    await fetchAssistantData();
-    await fetchConversationNew();
+    await fetchConversationList();
 };
 
-onMounted(() => {
-    loadConversation();
 
+onMounted(() => {
+    threadId.value = route.params.id;
+    loadConversation();
 });
+
+watch(conversationList, () => {
+    scrollToBottom();
+}, { deep: true });
+
 </script>
 <template>
     <div class="main-container">
         <div class="flex">
+            <button class="back-button" @click="goBack"><i class='bx bx-arrow-back'></i> Back</button>
             <div class="header-title">
-                <h1 class="title">{{ assistantData.name }}</h1>
-                <p>{{ assistantData.detail }}</p>
+                <h1 class="title">Bạn cần hỗ trợ gì?</h1>
             </div>
-            <div class="content-box">
-                <div class="tabs">
-                    <div class="tab" :class="{ active: activeTab === 'suggest' }" @click="activeTab = 'suggest'">
-                        Gợi ý
-                    </div>
-                    <div v-if="history.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
-                        @click="activeTab = 'history'">
-                        Lịch sử
-                    </div>
-                </div>
-                <div class="content">
-                    <div v-if="activeTab === 'suggest'" class="content-center">
-                        <div class="actions">
-                            <button v-for="(suggest, index) in suggests" :key="index" @click="executeAction(suggest)"
-                                class="action-card">
-                                <div class="icon">
-                                    <i class="bx bx-message-square-dots"></i>
-                                </div>
-                                <div class="title">{{ suggest }}</div>
-                            </button>
-                        </div>
-                    </div>
-
-                    <div v-if="activeTab === 'history'" class="content-center">
-                        <div class="history" v-if="history.length > 0">
-                            <div class="history-item" v-for="item in history" :key="item.id" @click="openHistory(item)">
-                                <div class="description">{{ item.description }}</div>
-                            </div>
-                        </div>
-                        <span v-else>Không có lịch sử để hiển thị.</span>
-                    </div>
+            <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
+                class="conversation-list">
+                <div v-for="(message, index) in conversationList" :key="index"
+                    :class="{ 'user-message': message.role === 'user', 'model-message': message.role === 'model' }"
+                    class="message-item">
+                    <img v-if="message.role === 'user'" src="../../public/icon.jpg" alt="User Avatar" class="avatar" />
+                    <img v-else src="../../public/icon_logo.png" alt="Model Avatar" class="avatar" />
+                    <span class="copy-button" @click="copyToClipboard(message.content)"><i
+                            class='bx bx-copy'></i></span>
+                    <div class="message-content" :text-content="message.content">{{ message.content }}</div>
                 </div>
             </div>
             <div class="send-bar">
                 <div class="send-container">
                     <div class="input-wrapper">
-                        <input type="text" @keydown.enter="handleSend" v-model="message" placeholder="Nhập yêu cầu hỗ trợ..." />
+                        <input type="text" v-model="message" @keydown.enter="handleSend"
+                            placeholder="Nhập yêu cầu hỗ trợ..." />
                         <span class="send-icon">🔍</span>
                     </div>
                     <button class="send-button" @click="handleSend" :disabled="loading">
@@ -151,10 +144,29 @@ onMounted(() => {
     </div>
 </template>
 <style scoped>
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 20px;
+    background-color: #fff;
+    border: 1px solid #c9302c;
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: #c9302c;
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: #e03d31;
+    color: #fff;
+}
+
 .header-title {
     text-align: center;
     margin-top: 40px;
-    margin-bottom: 40px;
 }
 
 .header-title .title {
@@ -166,20 +178,60 @@ onMounted(() => {
 }
 
 .user-message {
+    background-color: #fff;
+    text-align: right;
+}
+
+.model-message {
     background-color: #f0f0f0;
     text-align: left;
 }
 
-.model-message {
-    background-color: #d0f0ff;
-    text-align: right;
-}
-
 .message-item {
     margin: 8px auto;
-    padding: 10px;
-    border-radius: 5px;
+    padding: 10px 15px;
+    border-radius: 10px;
     width: 80%;
+    position: relative;
+    font-size: 15px;
+    line-height: 21px;
+}
+
+.message-item .avatar {
+    width: 50px;
+    height: 50px;
+}
+
+.message-content {
+    font-size: 15px;
+    line-height: 21px;
+    font-smoothing: antialiased;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    text-rendering: optimizeLegibility;
+    transition: opacity 0.2s ease-in-out;
+    white-space: pre-wrap;
+
+    opacity: 1;
+}
+
+.message-content {}
+
+.message-content.enter-active,
+.message-content.leave-active {
+    transition: opacity 0.2s;
+}
+
+.message-content.enter,
+.message-content.leave-to {
+    opacity: 0;
+}
+
+.copy-button {
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 5px;
+    transition: background-color 0.3s ease;
 }
 
 .main-container {
@@ -270,7 +322,6 @@ onMounted(() => {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     width: calc((100% - 20px)/2);
-    max-width: 250px;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -336,9 +387,35 @@ onMounted(() => {
     color: #999;
 }
 
+.conversation-list {
+    max-height: calc(85vh - 100px);
+    overflow-y: scroll;
+    transition: all 1s;
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+}
+
+.avatar {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+}
+
+.user-message .avatar {
+    right: -60px;
+}
+
+.model-message .avatar {
+    left: -60px;
+}
+
 .content-box {
     width: 100%;
-    margin-top: 10px;
+    padding: 20px;
+    margin-top: 20px;
     position: relative;
     order: 2;
 }
@@ -383,7 +460,7 @@ onMounted(() => {
         max-width: 1000px;
     }
 
-    .send-container {
+    .search-container {
         width: 70%;
     }
 }
@@ -411,7 +488,7 @@ onMounted(() => {
         max-width: 600px;
     }
 
-    .send-container {
+    .search-container {
         width: 90%;
     }
 
@@ -432,7 +509,7 @@ onMounted(() => {
         padding: 10px;
     }
 
-    .send-container {
+    .search-container {
         width: 100%;
     }
 
@@ -440,7 +517,7 @@ onMounted(() => {
         font-size: 14px;
     }
 
-    .send-button {
+    .search-button {
         font-size: 14px;
     }
 

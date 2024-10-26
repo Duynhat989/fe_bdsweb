@@ -11,7 +11,6 @@ const viewType = ref('list');
 const assistants = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
-
 const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
@@ -140,7 +139,6 @@ onMounted(() => {
 }
 
 .main-container {
-  max-width: 1200px;
   padding: 0 5%;
   margin: 5px auto;
   position: relative;
@@ -270,7 +268,7 @@ onMounted(() => {
   display: block;
   padding: 10px;
   text-align: center;
-  margin: 0 10px;
+  margin: 10px 10px;
 }
 
 .slide-card img {

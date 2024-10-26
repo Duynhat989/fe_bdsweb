@@ -1,20 +1,11 @@
-
 <script setup>
 import { ref, computed, watch } from 'vue';
-import { encodeId } from '@/utils/encoding';
 import { useRouter } from 'vue-router';
 
 const router = useRouter();
 
-const goToDetail = (id) => {
-  const encodedId = encodeId(id);
-  router.push(`/project-detail/${encodedId}`);
-};
-
 const filters = ref([
   { name: 'category', label: 'Danh mục', options: ['Biệt thự', 'Căn hộ', 'Đất nền'] },
-  { name: 'groupType', label: 'Nhóm loại', options: ['Loại A', 'Loại B', 'Loại C'] },
-  { name: 'locationType', label: 'Nội quy ngoại', options: ['Trong nước', 'Nước ngoài'] },
   { name: 'landType', label: 'Mẫu đất', options: ['Đất thổ cư', 'Đất nông nghiệp'] },
   { name: 'propertyType', label: 'Loại hình', options: ['Nhà ở', 'Kinh doanh'] },
   { name: 'attribute', label: 'Thuộc tính', options: ['Có sổ đỏ', 'Gần trung tâm', 'Gần trường học'] },
@@ -42,19 +33,26 @@ const items = ref([
     landType: 'Đất thổ cư',
     propertyType: 'Nhà ở',
     attribute: 'Có sổ đỏ',
+    price: '50 tỷ VND',
+    area: '500 m²',
+    amenities: ['Hồ bơi', 'Sân vườn', 'Nhà để xe', 'Phòng tập gym'],
   },
   {
     id: 2,
     name: 'Căn hộ cao cấp',
     image: 'https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg',
     location: 'Quận 7, TP.HCM',
-    description: 'Căn hộ nằm trong khu vực yên tĩnh, nhiều tiện ích xung quanh.',
+    description: 'Căn hộ nằm trong khu vực yên tĩnh, nhiều tiện ích xung quanh.Căn hộ nằm trong khu vực yên tĩnh, nhiều tiện ích xung quanh.',
     category: 'Căn hộ',
     groupType: 'Loại B',
     locationType: 'Trong nước',
     landType: 'Đất thổ cư',
     propertyType: 'Nhà ở',
     attribute: 'Gần trường học',
+    url: 'https://chatgpt.com/c/671bd691-a08c-8010-975c-d6fd08abadf7',
+    price: '50 tỷ VND',
+    area: '500 m²',
+    amenities: ['Hồ bơi', 'Sân vườn', 'Nhà để xe', 'Phòng tập gym'],
   },
 ]);
 
@@ -96,19 +94,30 @@ watch(selectedFilters, applyFilters);
       </div>
     </div>
     <div class="results">
-      <div class="result-box" v-for="item in filteredItems" :key="item.id"  @click="goToDetail(item.id)">
-        <img :src="item.image" alt="Property Image" class="item-image" />
-        <h3 class="item-name">{{ item.name }}</h3>
-        <p class="item-location">{{ item.location }}</p>
-        <p class="item-description">{{ item.description }}</p>
+      <div class="result-box" v-for="item in filteredItems" :key="item.id">
+        <a :href="item.url" target="_blank" class="item-link">
+          <img :src="item.image" alt="Property Image" class="item-image" />
+          <h3 class="item-name">{{ item.name }}</h3>
+          <p class="item-location">{{ item.location }}</p>
+          <p class="item-description">{{ item.description }}</p>
+          <p class="item-more"><strong>Giá:</strong> {{ item.price }}</p>
+          <p class="item-more"><strong>Diện tích:</strong> {{ item.area }}</p>
+          <p class="item-more">
+            <strong>Tiện ích:</strong>
+            <span v-for="(amenity, index) in item.amenities" :key="index">
+              {{ amenity }}<span v-if="index < item.amenities.length - 1">, </span>
+            </span>
+          </p>
+        </a>
       </div>
+
     </div>
   </div>
 </template>
 
 <style scoped>
 .real-estate-search {
-  max-width: 1200px;
+  max-width: 1300px;
   margin: 0 auto;
   padding: 20px;
   text-align: center;
@@ -223,10 +232,21 @@ watch(selectedFilters, applyFilters);
   color: #777;
   margin-bottom: 10px;
 }
-
+.item-more,
 .item-description {
   font-size: 14px;
   color: #555;
+}
+.item-description {
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: justify;
+}
+.item-more strong {
+  color: #c03228;
 }
 
 /* Responsive Styles */
@@ -234,6 +254,7 @@ watch(selectedFilters, applyFilters);
   .results {
     grid-template-columns: repeat(3, 1fr);
   }
+
   .filters {
     gap: 10px;
     margin: 10px 0;
@@ -244,6 +265,7 @@ watch(selectedFilters, applyFilters);
   .results {
     grid-template-columns: repeat(2, 1fr);
   }
+
   .filters {
     gap: 10px;
     margin: 10px 0;

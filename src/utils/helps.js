@@ -26,3 +26,25 @@ export function extractVideoId(url) {
 export function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'VND');
 }
+
+/**
+ * Formats the message content by replacing \n with <br />
+ * to support multiline text display.
+ * @param {string} content - The message content to format.
+ * @returns {string} - The formatted message with line breaks.
+ */
+export function formatMessage(content) {
+    if (content) {
+        // Escape các ký tự đặc biệt để tránh lỗi bảo mật
+        const escapedContent = content
+            .replace(/&/g, "&amp;")
+            .replace(/</g, "&lt;")
+            .replace(/>/g, "&gt;")
+            .replace(/"/g, "&quot;")
+            .replace(/'/g, "&#039;");
+
+        // Thay thế các ký tự xuống dòng bằng thẻ <br />
+        return escapedContent.replace(/\n/g, '<br />');
+    }
+    return '';
+}

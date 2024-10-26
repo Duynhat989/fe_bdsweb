@@ -14,19 +14,8 @@ const encodedId = route.params.id;
 const courseId = decodeId(encodedId);
 const courseDetail = ref({});
 const watched = ref([]);
-
-// const fetchCourseData = async () => {
-//     try {
-//         if (courseId) {
-//             const response = await request.post(END_POINT.COURSE_FIND, { id: courseId });
-//             courseDetail.value = response.data;
-//         } else {
-//             console.error('ID không hợp lệ');
-//         }
-//     } catch (error) {
-//         console.error('Lỗi khi tải dữ liệu khóa học:', error);
-//     }
-// };
+const defaultImage = ref('');
+const isFirstLoad = ref(true);
 
 const fetchMyCourses = async () => {
     try {
@@ -35,19 +24,27 @@ const fetchMyCourses = async () => {
         const courseData = response.data.find(courseItem => courseItem.course.id === courseId);
         if (courseData) {
             watched.value = JSON.parse(courseData.watched);
-            courseDetail.value = courseData.course;
+            courseDetail.value = {
+                ...courseData.course,
+                lessons: courseData.course.lessons.sort((a, b) => a.indexRow - b.indexRow),
+            };
+            if (courseDetail.value.lessons.length > 0) {
+                defaultImage.value = courseDetail.value.lessons[0].image;
+                currentVideo.value = courseDetail.value.lessons[0];
+            }
         }
     } catch (error) {
         console.error('Lỗi lấy danh sách trợ lý:', error);
-    }
+    } 
 };
 
 const playVideo = (url, index) => {
     currentVideo.value = url;
     selectedLessonIndex.value = index;
+    isFirstLoad.value = false;
 };
 const loadConversation = async () => {
-    await fetchMyCourses();   
+    await fetchMyCourses();
 
 };
 onMounted(() => {
@@ -64,13 +61,13 @@ onMounted(() => {
 
         <div class="content">
             <div class="video-section">
-                <div v-if="currentVideo" class="video-player">
+                <div v-if="isFirstLoad || !currentVideo" class="video-placeholder">
+                    <p>Chọn bài giảng để xem video</p>
+                    <img :src="defaultImage" alt="Hình ảnh khóa học">
+                </div>
+                <div v-else class="video-player">
                     <iframe :src="getEmbedUrl(currentVideo)" title="Video bài giảng" frameborder="0"
                         allowfullscreen></iframe>
-                </div>
-                <div v-else class="video-placeholder">
-                    <p>Chọn bài giảng để xem video</p>
-                    <img src="https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg" alt="Hình ảnh khóa học">
                 </div>
             </div>
             <div class="lessons-section">
@@ -81,7 +78,7 @@ onMounted(() => {
                         <div class="lesson-info">
                             <span class="lesson-index">{{ index + 1 }}</span>
                             <span>{{ lesson.name }}</span>
-                            <span class="icon" v-if="watched.includes( index + 1)">
+                            <span class="icon" v-if="watched.includes(index + 1)">
                                 <i class='bx bxs-movie-play'></i>
                             </span>
                         </div>
@@ -100,7 +97,6 @@ onMounted(() => {
 
 <style scoped>
 .course-detail {
-    max-width: 1200px;
     padding: 40px 5%;
     margin: 40px auto;
 }
@@ -136,19 +132,23 @@ onMounted(() => {
     display: flex;
     gap: 20px;
 }
+
 .detail {
     margin-top: 30px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     padding: 20px;
 }
+
 .detail p {
     color: #E03C31;
     font-size: 18px;
     font-weight: bold;
 }
+
 .detail .detail-ct {
     margin-top: 15px;
 }
+
 .video-section {
     flex: 3;
     display: flex;
@@ -179,12 +179,14 @@ onMounted(() => {
     font-size: 18px;
     color: #555;
 }
+
 .video-placeholder img {
     margin-top: 20px;
     width: 100%;
     object-fit: contain;
-    max-height: 500px;
+    max-height: 400px;
 }
+
 .lessons-section {
     flex: 2;
     background: #fff;
@@ -194,11 +196,13 @@ onMounted(() => {
     max-height: 600px;
     overflow-y: scroll;
 }
+
 .lessons-section h2 {
     font-size: 20px;
     font-weight: bold;
     color: #D62929;
 }
+
 .lesson-list {
     list-style: none;
     padding: 0;

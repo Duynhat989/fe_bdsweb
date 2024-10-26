@@ -1,34 +1,62 @@
-import axios from 'axios';
-
-const requestStream = axios.create({
-    baseURL: import.meta.env.VITE_API_URL,
-    timeout: 10000,
-    maxBodyLength: Infinity,
-    headers: {
-        'Access-Control-Allow-Origin': '*',
-        'Content-Type': 'application/json'
-    },
-    responseType: 'stream'
-});
-
-requestStream.interceptors.request.use(config => {
+export const sendMessageRequest = async (messageValue, threadId, END_POINT) => {
+    const myHeaders = new Headers();
+    myHeaders.append("Content-Type", "application/json");
     const token = localStorage.getItem('token');
     if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
+        myHeaders.append("Authorization", `Bearer ${token}`);
     }
-    return config;
-}, error => Promise.reject(error));
 
-requestStream.interceptors.response.use(
-    response => response.data,
-    error => {
-        if (error.response?.status === 401) {
-            localStorage.removeItem('user');
-            localStorage.removeItem('token');
-            window.location.href = '/login';
+    const raw = JSON.stringify({
+        message: messageValue,
+        thread_id: threadId
+    });
+
+    const requestOptions = {
+        method: "POST",
+        headers: myHeaders,
+        body: raw,
+        redirect: "follow"
+    };
+
+    const response = await fetch(`${import.meta.env.VITE_API_URL}${END_POINT.CONVERSATION_STREAM}`, requestOptions);
+    return response;
+};
+export const handleResponseStream = async (response, conversationList) => {
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder("utf-8");
+
+    const readStream = async () => {
+        let done, value;
+        while ({ done, value } = await reader.read(), !done) {
+            let textValue = decoder.decode(value);
+            textValue = textValue.trim().split('\r\n').pop();
+
+            if (textValue) {
+                try {
+                    const data = JSON.parse(textValue); 
+                    if (data.success) {
+                        if (conversationList.value[conversationList.value.length - 1]?.role !== 'model') {
+                            conversationList.value.push({
+                                role: "model",
+                                content: data.data.full
+                            });
+                        } else {
+                            conversationList.value[conversationList.value.length - 1].content = data.data.full;
+                        }
+                    } else {
+                        return conversationList.value; 
+                    }
+
+                    if (data.data.completed) {
+                        return conversationList.value; 
+                    }
+                } catch (error) {
+                    console.error("Failed to parse JSON:", error, textValue); // Log the parsing error
+                }
+            }
         }
-        return Promise.reject(error);
-    }
-);
+        return conversationList.value; 
+    };
 
-export default requestStream;
+    return await readStream();
+};

@@ -47,6 +47,7 @@ const resolveIssues = () => {
 
         <div v-if="reviewResults" class="results-section">
             <h2>Kết quả rà soát</h2>
+            <p>Tên hợp đồng: Hợp đồng bất động sản</p>
             <p><strong>Trạng thái:</strong> {{ reviewResults.status }}</p>
             <p><strong>Những điều khoản có vấn đề:</strong></p>
             <ul>

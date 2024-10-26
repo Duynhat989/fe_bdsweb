@@ -1,75 +1,63 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import store from '@/store';
-
-import { useRouter, RouterView } from 'vue-router'
+import { useRouter, RouterView } from 'vue-router';
 import { Notifications } from "@kyvg/vue3-notification";
 
 const isLogin = computed(() => store.getters.isLogin);
 const user = computed(() => store.getters.getUser);
 const hiddenPopup = ref(false);
-const isBodyFull = ref(false);
 
 const router = useRouter();
-// check screen < 1024
 const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024;
 };
-watch(hiddenPopup, (newType) => {
-  if (newType === true && window.innerWidth < 576) {
-    isBodyFull.value = false;
-  } else {
-    isBodyFull.value = true;
-  }
-});
 
 onMounted(() => {
   checkScreenSize();
   window.addEventListener('resize', checkScreenSize);
 });
-const handleLogOut = async (event) => {
+const handleLogOut = async () => {
   try {
-    await new Promise(resolve => setTimeout(resolve, 1000));
     await store.dispatch('logout');
     router.push('/');
   } catch (error) {
-    // errorMessage.value = 'Đăng xuất lỗi.';
+    console.error('Logout failed');
   }
 };
 </script>
-
 <template>
-  <div :class="hiddenPopup ? 'body flex hidden' : 'body flex'">
-    <div class="body-bar" :class="{ 'body-bar__full': isBodyFull }" v-if="isLogin">
+  <div class="app-container">
+    <div class="body-bar" :class="{ hidden: hiddenPopup }" v-if="isLogin">
       <div class="nav">
         <div class="logo">
-          <div class="logo_web flex" style="justify-items: center;">
-            <div class="img flex" style="align-items: center;">
-              <img src="../public/icon_logo.png" alt="" width="50">
-            </div> &nbsp; &nbsp;
+          <div class="logo_web flex">
+            <div class="img flex">
+              <img src="../public/icon_logo.png" alt="Logo" width="50">
+            </div> &nbsp;&nbsp;
             <h2>Hưng thịnh</h2>
           </div>
         </div>
         <ul class="menu">
           <li class="menu_item">
-            <a href="/assistant" class="button"><i class='bx bx-equalizer'></i> <span>Hỏi đáp trợ lý</span></a>
+            <a href="/assistant" class="button"><i class="bx bx-equalizer"></i> <span>Hỏi đáp trợ lý</span></a>
           </li>
           <li class="menu_item">
-            <a href="/contract" class="button"><i class='bx bx-file'></i> <span>Rà soát & tạo mới hợp đồng</span></a>
+            <a href="/contract" class="button"><i class="bx bx-file"></i> <span>Rà soát & tạo mới hợp đồng</span></a>
           </li>
           <li class="menu_item">
-            <a href="/search" class="button"><i class='bx bx-search-alt'></i> <span>Tìm kiếm bất động sản</span></a>
+            <a href="/search" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm bất động sản</span></a>
           </li>
           <li class="menu_item">
-            <a href="/course" class="button"><i class='bx bx-movie-play'></i> <span>Khóa học bất động sản</span></a>
+            <a href="/course" class="button"><i class="bx bx-movie-play"></i> <span>Khóa học bất động sản</span></a>
           </li>
         </ul>
         <div class="user">
           <div class="user_profile flex">
-            <div class="avata flex" style="align-items: center;">
-              <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="" width="30" height="30">
-            </div>
-            <div class="username" style="padding-left: 10px;">
+            <div class="avatar flex">
+              <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="User Avatar" width="30">
+            </div> &nbsp;&nbsp;
+            <div class="username">
               <h3>{{ user.name }}</h3>
             </div>
             <div class="logout">
@@ -78,95 +66,61 @@ const handleLogOut = async (event) => {
           </div>
         </div>
       </div>
-      <div class="menu_icon" v-if="hiddenPopup" @click="hiddenPopup = !hiddenPopup">
+      <div class="menu_icon top" v-if="hiddenPopup" @click="hiddenPopup = !hiddenPopup">
         <i style="font-size: 2em; color: #e03d31;" class='bx bx-menu-alt-left'></i>
       </div>
-      <div class="menu_icon center" v-else @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em; color: #e03d31;" class='bx bx-caret-left-circle'></i>
+      <div class="menu_icon" v-else @click="hiddenPopup = !hiddenPopup">
+        <i style="font-size: 2em; color: #e03d31;" class='bx bx-horizontal-left'></i>
       </div>
     </div>
-    <div class="body-content" :class="!isLogin ? 'body-full' : ''">
+    <div class="body-content" :class="[{ 'body-full': !isLogin }, { 'no-margin': hiddenPopup }]">
       <RouterView />
     </div>
     <notifications />
   </div>
 </template>
-
 <style scoped>
-.body {
-  /* height: 100dvh; */
-}
-
-.flex {
+.app-container {
   display: flex;
-}
-
-.nav {
   height: 100vh;
-  width: 300px;
-  box-shadow: 1px 2px 5px 1px rgba(128, 128, 128, 0.281);
-  padding: 10px;
-  background-color: #ececec;
-  transition: all 0.3s;
-  position: relative;
+  overflow: hidden;
 }
 
 .body-bar {
-  position: relative;
+  width: 300px;
+  background-color: #f5f5f5;
+  border-right: 1px solid #ddd;
+  position: fixed;
+  height: 100vh;
+  transition: transform 0.3s ease;
   z-index: 999;
-  transition: all 0.5s;
+  box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
+}
+.nav {
+  padding: 10px;
 }
 
-.menu_icon {
-  position: absolute;
-  top: 10px;
-  right: calc(-2em - 10px);
-  z-index: 9;
-  cursor: pointer;
-  z-index: 9999;
-}
-
-.center {
-  top: 42%;
-}
-
-.hidden .nav {
-  width: 0 !important;
-  visibility: hidden;
-  opacity: 0;
-  padding: 0;
-  height: 0;
-}
-
-.hidden .body-content {
-  width: 100% !important;
+.hidden {
+  transform: translateX(-300px);
 }
 
 .body-content {
-  width: calc(100% - 250px);
+  flex-grow: 1;
+  overflow-y: auto;
+  height: 100vh;
+  margin-left: 300px;
+  transition: margin-left 0.3s ease;
 }
 
-.body-full {
-  width: 100%;
-}
-
-.logo {
-  height: 100px;
-}
-
-.logo_web {
-  align-items: center;
+.body-content.no-margin {
+  margin-left: 0;
 }
 
 .menu {
-  height: calc(100% - 180px);
-  padding: 0;
-  margin: 0;
-}
-
-li {
   list-style: none;
-  margin-top: 10px;
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
 }
 
 .menu_item {
@@ -179,6 +133,7 @@ li {
   background-color: #e03d31;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
+
 
 .menu_item:hover {
   background-color: #f4d1ce;
@@ -207,28 +162,34 @@ li .button span {
   padding-left: 5px;
 }
 
+.logo_web {
+  display: flex;
+  align-items: center;
+  padding: 5px 10px;
+  margin-bottom: 30px;
+  border-bottom: 1px solid #ccc;
+}
+
 .user {
-  height: 50px;
-  background-color: #fff;
   position: absolute;
   bottom: 0;
-  right: 0;
   left: 0;
+  width: 100%;
   cursor: pointer;
-  color: #e03d31;
-  transition: all 1s;
-  box-shadow: rgba(0, 0, 0, 0.25) 0px 54px 55px, rgba(0, 0, 0, 0.12) 0px -12px 30px, rgba(0, 0, 0, 0.12) 0px 4px 6px, rgba(0, 0, 0, 0.17) 0px 12px 13px, rgba(0, 0, 0, 0.09) 0px -3px 5px;
 }
 
 .user:hover {
   border-color: #fff;
   color: #111;
 }
+
 .user_profile {
-  border: 1px solid rgba(170, 170, 170, 0.226);
-  padding: 10px;
+  border-top: 1px solid #ccc;
+  padding: 20px;
   align-items: center;
   position: relative;
+  display: flex;
+  background-color: #f5f5f5;
 }
 
 .user:hover .logout {
@@ -255,30 +216,31 @@ li .button span {
   color: #ececec;
 }
 
-
-@media (max-width: 768px) {
-  .menu_icon.center {
-    right: calc(-2em - -35px);
-  }
-
-
+.menu_icon {
+  position: absolute;
+  right: 5px;
+  cursor: pointer;
+  z-index: 11;
+  top: 36px;
 }
 
-@media (max-width: 576px) {
-  .main-container {
-    max-width: 100%;
+.menu_icon.top {
+  right: -15%;
+  top: 20px;
+}
+
+.avatar {
+  display: flex;
+  align-items: center;
+}
+
+@media (max-width: 1024px) {
+  .body-bar.hidden {
+    transform: translateX(-300px);
   }
 
-  .body-bar__full,
-  .body-bar__full .nav {
-    width: 100%;
-  }
-
-  .body-bar__full+.body-content {
-    display: none;
-  }
-  .center {
-    top: 10px;
+  .body-content {
+    margin-left: 0;
   }
 }
 </style>

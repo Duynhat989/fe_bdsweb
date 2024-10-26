@@ -3,11 +3,9 @@ import PaymentPopup from '@/components/PaymentPopup.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
-import { notify } from '@kyvg/vue3-notification';
 import { encodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
-import { formatCurrency } from '@/utils/helps';
 const router = useRouter();
 const activeTab = ref('all');
 const showPaymentPopup = ref(false);
@@ -92,9 +90,6 @@ onMounted(() => {
           <div class="course-content">
             <h3 class="course-title">{{ course.name }}</h3>
             <p class="course-detail">{{ course.detail }}</p>
-            <div class="course-pricing">
-              <span class="price">{{ formatCurrency(course.price) }}</span>
-            </div>
             <div class="course-status">
               <span :class="{ active: course.status === 1, inactive: course.status !== 1 }">
                 {{ course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
@@ -119,9 +114,6 @@ onMounted(() => {
           <div class="course-content">
             <h3 class="course-title">{{ value.course.name }}</h3>
             <p class="course-detail">{{ value.course.detail }}</p>
-            <div class="course-pricing">
-              <span class="price">{{ formatCurrency(value.course.price) }}</span>
-            </div>
             <div class="course-status">
               <span :class="{ active: value.course.status === 1, inactive: value.course.status !== 1 }">
                 {{ value.course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
@@ -143,7 +135,7 @@ onMounted(() => {
 <style scoped>
 .courses-page {
   margin: 40px auto;
-  max-width: 1200px;
+  max-width: 1400px;
   padding: 40px 5%;
 }
 

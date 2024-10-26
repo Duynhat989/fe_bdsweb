@@ -7,9 +7,10 @@ import SearchView from '@/views/SearchView.vue';
 import ContractView from '@/views/ContractView.vue';
 import CourseView from '@/views/CourseView.vue';
 import CourseDetail from '@/views/CourseDetail.vue';
-import ProjectDetail from '@/views/ProjectDetail.vue';
-import ContractReview from '@/views/contractReview.vue';
 import ContractCreate from '@/views/ContractCreate.vue';
+import ChatDetail from '@/views/ChatDetail.vue';
+import ContractReview from '@/views/ContractReview.vue';
+import NotFound from '@/views/NotFound.vue';
 
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
@@ -22,7 +23,7 @@ const router = createRouter({
         if (store.getters.isLogin) {
           next('/assistant');
         } else {
-          next(); 
+          next();
         }
       }
     },
@@ -30,55 +31,60 @@ const router = createRouter({
       path: '/assistant',
       name: 'assistant',
       component: AssistantView,
-      meta: { requiresAuth: true } 
+      meta: { requiresAuth: true }
     },
     {
       path: '/assistant/:id',
       name: 'assistantDetail',
       component: AssistantDetail,
-      meta: { requiresAuth: true } 
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/chat/:id',
+      name: 'chatDetail',
+      component: ChatDetail,
+      meta: { requiresAuth: true }
     },
     {
       path: '/contract',
       name: 'contract',
-      component: ContractView ,
-      meta: { requiresAuth: true } 
+      component: ContractView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/contract/review',
       name: 'contractReview',
-      component: ContractReview ,
-      meta: { requiresAuth: true } 
+      component: ContractReview,
+      meta: { requiresAuth: true }
     },
     {
       path: '/contract/create',
       name: 'contractCreate',
-      component: ContractCreate ,
-      meta: { requiresAuth: true } 
+      component: ContractCreate,
+      meta: { requiresAuth: true }
     },
     {
       path: '/search',
       name: 'search',
-      component: SearchView ,
-      meta: { requiresAuth: true } 
-    },
-    {
-      path: '/project-detail/:id',
-      name: 'projectDetail',
-      component: ProjectDetail ,
-      meta: { requiresAuth: true } 
+      component: SearchView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/course',
       name: 'course',
-      component: CourseView ,
-      meta: { requiresAuth: true } 
+      component: CourseView,
+      meta: { requiresAuth: true }
     },
     {
       path: '/course/:id',
       name: 'courseDetail',
-      component: CourseDetail ,
-      meta: { requiresAuth: true } 
+      component: CourseDetail,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/:catchAll(.*)',
+      name: 'NotFound',
+      component: NotFound
     }
   ]
 })
@@ -87,7 +93,7 @@ router.beforeEach((to, from, next) => {
   const isLogin = store.getters.isLogin;
   if (to.meta.requiresAuth && !isLogin) {
     localStorage.setItem('intendedRoute', to.fullPath);
-    next('/login'); 
+    next('/');
   } else {
     next();
   }
