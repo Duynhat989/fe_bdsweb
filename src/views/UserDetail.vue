@@ -3,6 +3,7 @@ import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { notify } from '@kyvg/vue3-notification';
 import { ref, onMounted } from 'vue';
+import store from '@/store';
 
 const userInfo = ref({});
 const license = ref({});
@@ -59,8 +60,10 @@ const updateUser = async () => {
                 text: 'Thông tin đã được cập nhật thành công!',
                 type: 'success'
             });
-            console.log(response.data)
             userInfo.value = response.data;
+            const storedUser = JSON.parse(localStorage.getItem('user')); 
+            storedUser.name = response.data.name;
+            store.commit('setUser', storedUser);
         } else {
             throw new Error('Cập nhật thất bại, vui lòng thử lại.');
         }
@@ -95,8 +98,10 @@ onMounted(() => {
                 <p><strong>Tên người dùng:</strong> {{ userInfo?.name }}</p>
                 <p><strong>Phone:</strong> {{ userInfo?.phone }}</p>
                 <p><strong>Email:</strong> {{ userInfo?.email }}</p>
-                <p><strong>Quyền:</strong> {{ userInfo?.role === 3 ? 'Người dùng' : userInfo?.role === 1 ? 'Admin' : 'Vai trò không xác định'}}</p>
-                <p><strong>Gói đang sử dụng:</strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu</p>
+                <p><strong>Quyền:</strong> {{ userInfo?.role === 3 ? 'Người dùng' : userInfo?.role === 1 ? 'Admin' :
+                    'Vai trò không xác định' }}</p>
+                <p><strong>Gói đang sử dụng:</strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
+                </p>
             </div>
             <div v-if="isEditing" class="edit-form">
                 <div class="form-box">
