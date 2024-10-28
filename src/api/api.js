@@ -51,5 +51,8 @@ export const END_POINT = {
     SETUP: '/api/setup', // Tải cài đặt
 
     // License APIs
-    LICENSE_GET: '/api/license/me' // Lấy bản quyền
+    LICENSE_GET: '/api/license/me', // Lấy bản quyền
+    
+    // Mainten APIs
+    MAINTENANCE: '/api/bao-tri' // kiểm tra bảo trì
 };

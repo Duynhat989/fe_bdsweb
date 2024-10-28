@@ -4,7 +4,8 @@ import store from '@/store';
 import { useRouter, RouterView } from 'vue-router';
 import NotificationModule from "./components/module/NotificationModule.vue";
 import useNotification from "./composables/useNotification";
-
+import MaintenancePage from "./views/MaintenancePage.vue";
+import { checkMaintenanceStatus , isMaintenance} from "./utils/maintenanceCheck";
 const notificationRef = ref(null)
 const { setNotificationComponent } = useNotification()
 
@@ -17,6 +18,7 @@ const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024
 };
 onMounted(() => {
+  checkMaintenanceStatus()
   checkScreenSize();
   window.addEventListener('resize', checkScreenSize);
   setNotificationComponent(notificationRef.value)
@@ -31,7 +33,8 @@ const handleLogOut = async () => {
 };
 </script>
 <template>
-  <div class="app-container">
+  <MaintenancePage v-if="isMaintenance" />
+  <div v-else class="app-container">
     <div class="body-bar" :class="{ hidden: hiddenPopup }" v-if="isLogin">
       <div class="nav">
         <div class="logo">

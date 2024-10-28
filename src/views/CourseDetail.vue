@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-const currentVideo = ref(null);
-const selectedLessonIndex = ref(null);
+
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { useRoute } from 'vue-router';
@@ -16,7 +15,8 @@ const courseDetail = ref({});
 const watched = ref([]);
 const defaultImage = ref('');
 const isFirstLoad = ref(true);
-
+const currentVideo = ref(null);
+const selectedLessonIndex = ref(null);
 const fetchMyCourses = async () => {
     try {
         const response = await request.get(END_POINT.COURSE_ME);
@@ -28,14 +28,11 @@ const fetchMyCourses = async () => {
                 ...courseData.course,
                 lessons: courseData.course.lessons.sort((a, b) => a.indexRow - b.indexRow),
             };
-            if (courseDetail.value.lessons.length > 0) {
-                defaultImage.value = courseDetail.value.lessons[0].image;
-                currentVideo.value = courseDetail.value.lessons[0];
-            }
+            defaultImage.value = courseDetail.value.image;
         }
     } catch (error) {
         console.error('Lỗi lấy danh sách trợ lý:', error);
-    } 
+    }
 };
 
 const playVideo = (url, index) => {
@@ -66,236 +63,296 @@ onMounted(() => {
                     <img :src="defaultImage" alt="Hình ảnh khóa học">
                 </div>
                 <div v-else class="video-player">
-                    <iframe :src="getEmbedUrl(currentVideo)" title="Video bài giảng" frameborder="0"
-                        allowfullscreen></iframe>
+                    <iframe :src="getEmbedUrl(currentVideo)" title="Video bài giảng" frameborder="0" allowfullscreen>
+                    </iframe>
                 </div>
             </div>
+
             <div class="lessons-section">
-                <h2>Nội dung khóa học</h2>
+                <h2 class="section-title">Nội dung khóa học</h2>
                 <ul class="lesson-list">
                     <li v-for="(lesson, index) in courseDetail.lessons" :key="index" class="lesson-item"
                         :class="{ active: selectedLessonIndex === index }" @click="playVideo(lesson.url_video, index)">
                         <div class="lesson-info">
-                            <span class="lesson-index">{{ index + 1 }}</span>
-                            <span>{{ lesson.name }}</span>
-                            <span class="icon" v-if="watched.includes(index + 1)">
-                                <i class='bx bxs-movie-play'></i>
-                            </span>
+                            <div class="lesson-thumbnail">
+                                <img :src="lesson.image" :alt="lesson.name">
+                                <button class="play-button">
+                                    <i class='bx bx-play-circle'></i>
+                                </button>
+                            </div>
+                            <div class="lesson-content">
+                                <div class="lesson-header">
+                                    <span class="watched-status" v-if="watched.includes(lesson.id)">
+                                        <i class='bx bxs-check-circle'></i>
+                                    </span>
+                                </div>
+                                <h3 class="lesson-title">{{ lesson.name }}</h3>
+                                <p class="lesson-description">{{ lesson.detail }}</p>
+                            </div>
                         </div>
                     </li>
                 </ul>
             </div>
         </div>
+
         <div class="detail">
-            <p>Nội dung mô tả</p>
-            <div class="detail-ct">
+            <h2 class="detail-title">Nội dung mô tả</h2>
+            <div class="detail-content">
                 {{ courseDetail.detail }}
             </div>
         </div>
     </div>
 </template>
-
 <style scoped>
 .course-detail {
-    padding: 40px 5%;
-    margin: 40px auto;
+  margin: 0 auto;
+  margin-top: 40px;
+  padding: 0 5%;
 }
 
 .course-header {
-    display: flex;
-    gap: 20px;
-    margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
-.course-image {
-    width: 150px;
-    height: 150px;
-    object-fit: cover;
-}
-
-.course-info {
-    flex: 1;
-}
-
-.course-info .title {
-    font-size: 30px;
-    font-weight: bold;
-    margin-bottom: 10px;
-}
-
-.course-price {
-    color: #E03C31;
-    font-weight: bold;
+.title {
+  font-size: 28px;
+  font-weight: 600;
+  color: #1a1a1a;
 }
 
 .content {
-    display: flex;
-    gap: 20px;
-}
-
-.detail {
-    margin-top: 30px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    padding: 20px;
-}
-
-.detail p {
-    color: #E03C31;
-    font-size: 18px;
-    font-weight: bold;
-}
-
-.detail .detail-ct {
-    margin-top: 15px;
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+  gap: 24px;
+  margin-bottom: 32px;
 }
 
 .video-section {
-    flex: 3;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    background-color: #f0f0f0;
-    padding: 20px;
-    border-radius: 8px;
-}
-
-.video-player {
-    width: 100%;
-    position: relative;
-    padding-bottom: 56.25%;
-    height: 0;
-}
-
-.video-player iframe {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+  background: #000;
+  border-radius: 12px;
+  overflow: hidden;
+  aspect-ratio: 16/9;
 }
 
 .video-placeholder {
-    text-align: center;
-    font-size: 18px;
-    color: #555;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  background: #f5f5f5;
+}
+
+.video-placeholder p {
+  margin-bottom: 16px;
+  font-size: 18px;
+  font-weight: bold;
+  color: #E03C31;
 }
 
 .video-placeholder img {
-    margin-top: 20px;
-    width: 100%;
-    object-fit: contain;
-    max-height: 400px;
+  max-width: 100%;
+  max-height: 400px;
+  height: ;
+  object-fit: cover;
+  border-radius: 8px;
+}
+
+.video-player {
+  height: 100%;
+}
+
+.video-player iframe {
+  width: 100%;
+  height: 100%;
 }
 
 .lessons-section {
-    flex: 2;
-    background: #fff;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    max-height: 600px;
-    overflow-y: scroll;
+  background: #fff;
+  border-radius: 12px;
+  padding: 20px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
 }
 
-.lessons-section h2 {
-    font-size: 20px;
-    font-weight: bold;
-    color: #D62929;
+.section-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1a1a1a;
 }
 
 .lesson-list {
-    list-style: none;
-    padding: 0;
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  max-height: 600px;
+  overflow-y: auto;
 }
 
 .lesson-item {
-    padding: 10px;
-    border-bottom: 1px solid #ddd;
-    cursor: pointer;
-    transition: background 0.3s;
-}
-
-.lesson-item.active {
-    color: #E03C31;
+  padding: 16px;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: all 0.3s ease;
+  margin-bottom: 12px;
+  border: 1px solid #eee;
 }
 
 .lesson-item:hover {
-    color: #E03C31;
-    background: #f0f0f0;
+  background: #f8f9fa;
+  transform: translateY(-2px);
+  border: 1px solid #E03C31;
+}
+
+.lesson-item.active {
+  background: #e3f2fd;
+  border-color: #90caf9;
 }
 
 .lesson-info {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    position: relative;
+  display: flex;
+  gap: 16px;
 }
 
-.lesson-info .icon {
-    right: 10px;
-    top: 50%;
-    position: absolute;
-    transform: translateY(-50%);
-    color: #E03C31;
+.lesson-thumbnail {
+  position: relative;
+  width: 120px;
+  height: 68px;
+  border-radius: 8px;
+  overflow: hidden;
 }
 
-.lesson-index {
-    font-weight: bold;
+.lesson-thumbnail img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
-.list::-webkit-scrollbar-track {
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, 0.3);
-    border-radius: 10px;
-    background-color: #F5F5F5;
+.play-button {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  background: rgba(0, 0, 0, 0.6);
+  border: none;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
 }
 
-::-webkit-scrollbar {
-    width: 12px;
-    background-color: #F5F5F5;
+.lesson-item:hover .play-button {
+  opacity: 1;
 }
 
-::-webkit-scrollbar-thumb {
-    border-radius: 10px;
-    -webkit-box-shadow: inset 0 0 6px rgba(0, 0, 0, .3);
-    background-color: #D62929;
+.play-button i {
+  color: white;
+  font-size: 24px;
 }
 
-/* Responsive Styles */
-@media (max-width: 1200px) {
-    .course-detail {
-        max-width: 1000px;
-        padding: 0 20px;
-    }
+.lesson-content {
+  flex: 1;
 }
 
-@media (max-width: 1024px) {
-    .course-detail {
-        max-width: 800px;
-    }
+.lesson-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+
+.watched-status i {
+  color: #4caf50;
+  font-size: 18px;
+}
+
+.lesson-title {
+  font-size: 16px;
+  font-weight: 500;
+  color: #1a1a1a;
+  margin-bottom: 8px;
+}
+
+.lesson-description {
+  font-size: 14px;
+  color: #666;
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.detail {
+  background: #fff;
+  border-radius: 12px;
+  padding: 24px;
+  margin-top: 24px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.detail-title {
+  font-size: 20px;
+  font-weight: 600;
+  margin-bottom: 16px;
+  color: #1a1a1a;
+}
+
+.detail-content {
+  color: #444;
+  line-height: 1.6;
+}
+
+/* Scrollbar styles */
+.lesson-list::-webkit-scrollbar {
+  width: 6px;
+}
+
+.lesson-list::-webkit-scrollbar-track {
+  background: #f1f1f1;
+  border-radius: 3px;
+}
+
+.lesson-list::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 3px;
+}
+
+.lesson-list::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
+
+/* Responsive styles */
+@media (max-width: 992px) {
+  .content {
+    grid-template-columns: 1fr;
+  }
+  
+  .video-section {
+    order: 1;
+  }
+  
+  .lessons-section {
+    order: 2;
+  }
 }
 
 @media (max-width: 768px) {
-    .course-detail {
-        max-width: 700px;
-    }
-
-}
-
-@media (max-width: 576px) {
-    .course-detail {
-        width: 100%;
-    }
-
-    .content {
-        flex-direction: column;
-    }
-
-    .video-section {
-        flex: 1;
-    }
-
-    .lessons-section {
-        flex: 1;
-    }
+  .course-detail {
+    padding: 16px;
+  }
+  
+  .lesson-info {
+    flex-direction: column;
+  }
+  
+  .lesson-thumbnail {
+    width: 100%;
+    height: 120px;
+  }
 }
 </style>
