@@ -131,7 +131,7 @@ onMounted(() => {
   background: #000;
   border-radius: 12px;
   overflow: hidden;
-  aspect-ratio: 16/9;
+  aspect-ratio: 13 /9;
 }
 
 .video-placeholder {
@@ -153,7 +153,6 @@ onMounted(() => {
 .video-placeholder img {
   max-width: 100%;
   max-height: 400px;
-  height: ;
   object-fit: cover;
   border-radius: 8px;
 }
@@ -185,7 +184,7 @@ onMounted(() => {
   list-style: none;
   padding: 0;
   margin: 0;
-  max-height: 600px;
+  max-height: 570px;
   overflow-y: auto;
 }
 
