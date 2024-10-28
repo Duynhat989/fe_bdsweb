@@ -2,20 +2,24 @@
 import { ref, computed, onMounted, watch } from "vue";
 import store from '@/store';
 import { useRouter, RouterView } from 'vue-router';
-import { Notifications } from "@kyvg/vue3-notification";
+import NotificationModule from "./components/module/NotificationModule.vue";
+import useNotification from "./composables/useNotification";
+
+const notificationRef = ref(null)
+const { setNotificationComponent } = useNotification()
 
 const isLogin = computed(() => store.getters.isLogin);
 const user = computed(() => store.getters.getUser);
 const hiddenPopup = ref(false);
-
 const router = useRouter();
+
 const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024
 };
-
 onMounted(() => {
   checkScreenSize();
   window.addEventListener('resize', checkScreenSize);
+  setNotificationComponent(notificationRef.value)
 });
 const handleLogOut = async () => {
   try {
@@ -52,13 +56,14 @@ const handleLogOut = async () => {
             <a href="/course" class="button"><i class="bx bx-movie-play"></i> <span>Khóa học bất động sản</span></a>
           </li>
           <li class="menu_item">
-            <a href="/introducing_page" class="button"><i class='bx bxs-buildings'></i> <span>Giới thiệu doanh nghiệp</span></a>
+            <a href="/introducing_page" class="button"><i class='bx bxs-buildings'></i> <span>Giới thiệu doanh
+                nghiệp</span></a>
           </li>
           <li class="menu_item">
-            <a href="/package" class="button"><i class='bx bx-package' ></i><span>Bản quyền</span></a>
+            <a href="/package" class="button"><i class='bx bx-package'></i><span>Bản quyền</span></a>
           </li>
           <li class="menu_item">
-            <a href="/user_detail" class="button"><i class='bx bxs-user-detail' ></i><span>Thông tin cá nhân</span></a>
+            <a href="/user_detail" class="button"><i class='bx bxs-user-detail'></i><span>Thông tin cá nhân</span></a>
           </li>
         </ul>
         <div class="user">
@@ -85,7 +90,7 @@ const handleLogOut = async () => {
     <div class="body-content" :class="[{ 'body-full': !isLogin }, { 'no-margin': hiddenPopup }]">
       <RouterView />
     </div>
-    <notifications />
+    <NotificationModule ref="notificationRef" />
   </div>
 </template>
 <style scoped>

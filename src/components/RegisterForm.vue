@@ -2,7 +2,7 @@
 import { ref } from 'vue'
 import store from '@/store';
 import { useRouter } from 'vue-router';
-import { notify } from '@kyvg/vue3-notification';
+import useNotification from '@/composables/useNotification';
 
 const router = useRouter();
 
@@ -10,6 +10,7 @@ const name = ref('');
 const email = ref('');
 const password = ref('');
 const phone = ref('');
+const notification = useNotification();
 
 const isLoading = ref(false);
 const emit = defineEmits(['switchToForgotPassword']);
@@ -21,11 +22,9 @@ const handleLogin = async ({ email, password }) => {
     try {
         await store.dispatch('login', { email, password });
     } catch (error) {
-        notify({
-            title: 'Lỗi',
-            text: error.message || 'Đăng nhập thất bại, vui lòng thử lại.',
-            type: 'error',
-        });
+        notification.error('Lỗi!', ` Đăng nhập không thành công! Lỗi ${error}`, {
+            showActions: false
+        })
     }
 };
 const handleRegister = async (event) => {
@@ -41,17 +40,13 @@ const handleRegister = async (event) => {
         } else {
             router.push('/assistant');
         }
-        notify({
-            title: 'Thành công',
-            text: 'Đăng ký và đăng nhập thành công!',
-            type: 'success',
-        });
+        notification.success('Thành công!', 'Đăng ký thành công!', {
+            showActions: false
+        })
     } catch (error) {
-        notify({
-            title: 'Lỗi',
-            text: error.message || 'Đăng ký thất bại, vui lòng thử lại.',
-            type: 'error',
-        });
+        notification.error('Lỗi!', ` Đăng nhập không thành công! Lỗi ${error}`, {
+            showActions: false
+        })
     } finally {
         isLoading.value = false;
     }

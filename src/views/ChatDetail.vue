@@ -4,8 +4,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
-import { notify } from '@kyvg/vue3-notification';
+import useNotification from '@/composables/useNotification';
 
+const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
 
@@ -22,18 +23,14 @@ const copyToClipboard = (text) => {
     if (!text) return;
     navigator.clipboard.writeText(text).then(
         () => {
-            notify({
-                title: 'Thành công',
-                text: 'Copy text thành công!',
-                type: 'success',
-            });
+            notification.success('Thành công!', 'Copy text thành công!', {
+                showActions: false
+            })
         },
         (err) => {
-            notify({
-                title: 'Lỗi',
-                text: 'Copy text Lỗi!',
-                type: 'error',
-            });
+            notification.error('Lỗi!', ` Copy text Lỗi`, {
+                showActions: false
+            })
         }
     );
 };
@@ -52,19 +49,11 @@ const fetchConversationList = async () => {
         if (threadId) {
             const response = await request.post(END_POINT.CONVERSATION_LIST, { thread_id: threadId.value });
             conversationList.value = response.data.messages;
-        } else {
-            notify({
-                title: 'Lỗi',
-                text: `ID không hợp lệ`,
-                type: 'error',
-            });
         }
     } catch (error) {
-        notify({
-            title: 'Lỗi',
-            text: `Lỗi khi tải dữ liệu`,
-            type: 'error',
-        });
+        notification.error('Lỗi!', `Lỗi khi tải dữ liệu`, {
+            showActions: false
+        })
     }
 };
 
@@ -80,14 +69,25 @@ const handleSend = async () => {
             content: message.value
         });
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
-        conversationList.value = await handleResponseStream(response, conversationList);
-        message.value = "";
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            notification.info('Thông báo!', `${errorData.message}`, {
+                showActions: true,
+                onAction: ({ action }) => {
+                    if (action === 'info') {
+                        // Hiển thị thêm thông tin chi tiết hoặc chuyển hướng
+                    }
+                }
+            })
+        }else {
+            conversationList.value = await handleResponseStream(response, conversationList);
+            message.value = "";
+        }
     } catch (error) {
-        notify({
-            title: 'Lỗi',
-            text: `Lỗi khi tải gửi tin`,
-            type: 'error',
-        });
+        notification.error('Lỗi!', `Lỗi khi tải gửi tin! Lỗi ${error}`, {
+            showActions: false
+        })
     } finally {
         loading.value = false;
     }
@@ -96,7 +96,6 @@ const handleSend = async () => {
 const loadConversation = async () => {
     await fetchConversationList();
 };
-
 
 onMounted(() => {
     threadId.value = route.params.id;

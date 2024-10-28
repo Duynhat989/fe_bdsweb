@@ -2,8 +2,6 @@
 import { ref } from 'vue'
 import store from '@/store';
 const isLoading = ref(false);
-import { notify } from '@kyvg/vue3-notification';
-
 const email = ref('');
 
 const handleForgotPassword = async (event) => {
@@ -12,18 +10,14 @@ const handleForgotPassword = async (event) => {
         if (email.value) {
             await new Promise(resolve => setTimeout(resolve, 1000));
             await store.dispatch('forgePassword', { email: email.value });
-            notify({
-                title: 'Thành công',
-                text: 'Gửi mail thành công vui lòng check mail của bạn!',
-                type: 'success',
-            });
+            notification.success('Thành công!', 'Gửi mail thành công vui lòng check mail của bạn!', {
+                showActions: false
+            })
         }
     } catch (error) {
-        notify({
-            title: 'Lỗi',
-            text: error.message || 'Gửi mail thất bại, vui lòng thử lại.',
-            type: 'error',
-        });
+        notification.error('Lỗi!', ` Đăng nhập không thành công! Lỗi ${error}`, {
+            showActions: false
+        })
     } finally {
         isLoading.value = false;
     }

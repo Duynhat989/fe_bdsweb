@@ -1,9 +1,10 @@
 <script setup>
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
-import { notify } from '@kyvg/vue3-notification';
 import { ref, onMounted } from 'vue';
 import store from '@/store';
+import useNotification from '@/composables/useNotification';
+const notification = useNotification();
 
 const userInfo = ref({});
 const license = ref({});
@@ -55,24 +56,22 @@ const updateUser = async () => {
         const response = await request.post(END_POINT.USER_UPDATE, updatedUserData);
 
         if (response.success === true) {
-            notify({
-                title: 'Thành công',
-                text: 'Thông tin đã được cập nhật thành công!',
-                type: 'success'
-            });
+            notification.success('Thành công!', 'Thông tin đã được cập nhật thành công!', {
+                showActions: false
+            })
             userInfo.value = response.data;
-            const storedUser = JSON.parse(localStorage.getItem('user')); 
+            const storedUser = JSON.parse(localStorage.getItem('user'));
             storedUser.name = response.data.name;
             store.commit('setUser', storedUser);
         } else {
-            throw new Error('Cập nhật thất bại, vui lòng thử lại.');
+            notification.error('Lỗi!', `Cập nhật thất bại, vui lòng thử lại sau!}`, {
+                showActions: false
+            })
         }
     } catch (error) {
-        notify({
-            title: 'Lỗi',
-            text: error.response?.data?.message || 'Cập nhật thất bại, vui lòng thử lại sau.',
-            type: 'error'
-        });
+        notification.error('Lỗi!', `Cập nhật thất bại, vui lòng thử lại sau!}`, {
+            showActions: false
+        })
     } finally {
         isLoading.value = false;
         toggleEdit();

@@ -33,7 +33,7 @@ export const handleResponseStream = async (response, conversationList) => {
 
             if (textValue) {
                 try {
-                    const data = JSON.parse(textValue); 
+                    const data = JSON.parse(textValue);
                     if (data.success) {
                         if (conversationList.value[conversationList.value.length - 1]?.role !== 'model') {
                             conversationList.value.push({
@@ -44,18 +44,18 @@ export const handleResponseStream = async (response, conversationList) => {
                             conversationList.value[conversationList.value.length - 1].content = data.data.full;
                         }
                     } else {
-                        return conversationList.value; 
+                        return conversationList.value;
                     }
 
                     if (data.data.completed) {
-                        return conversationList.value; 
+                        return conversationList.value;
                     }
                 } catch (error) {
                     console.error("Failed to parse JSON:", error, textValue); // Log the parsing error
                 }
             }
         }
-        return conversationList.value; 
+        return conversationList.value;
     };
 
     return await readStream();

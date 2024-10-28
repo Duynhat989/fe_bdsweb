@@ -53,7 +53,6 @@ const itemsToShow = computed(() => {
     return 3;
   }
 });
-
 onMounted(() => {
   fetchAssistants();
 });
