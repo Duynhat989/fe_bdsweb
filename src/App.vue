@@ -1,18 +1,58 @@
 <script setup>
 import { ref, computed, onMounted, watch } from "vue";
 import store from '@/store';
-import { useRouter, RouterView } from 'vue-router';
+import { useRouter, RouterView, useRoute } from 'vue-router';
 import NotificationModule from "./components/module/NotificationModule.vue";
 import useNotification from "./composables/useNotification";
 import MaintenancePage from "./views/MaintenancePage.vue";
-import { checkMaintenanceStatus , isMaintenance} from "./utils/maintenanceCheck";
-const notificationRef = ref(null)
-const { setNotificationComponent } = useNotification()
+import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck";
+// import request from "./utils/request";
+// import { END_POINT } from "./api/api";
+import { encodeId } from '@/utils/encoding';
 
-const isLogin = computed(() => store.getters.isLogin);
-const user = computed(() => store.getters.getUser);
+const notificationRef = ref(null)
 const hiddenPopup = ref(false);
 const router = useRouter();
+const route = useRoute();
+const { setNotificationComponent } = useNotification()
+const isLogin = computed(() => store.getters.isLogin);
+const user = computed(() => store.getters.getUser);
+const currentRoute = computed(() => route.path);
+
+const assistantsSelected = ref([
+  {
+    id: 30,
+    name: "Phân tích bất động sản",
+    detail: "Phân tích bất động sản",
+    image: "Phân tích bất động sản",
+    suggests: JSON.stringify(["Đề xuất tin nhắn:"]),
+    view: 0
+  },
+  {
+    id: 31,
+    name: "Phân tích tài chính và vay ngân hàng",
+    detail: "Chi tiết về thủ tục hành chính",
+    image: "URL ảnh thủ tục hành chính",
+    suggests: JSON.stringify(["Đề xuất tin nhắn thủ tục"]),
+    view: 10
+  },
+  {
+    id: 32,
+    name: "Tổng hợp tin tức bất động sản theo yêu cầu",
+    detail: "Chi tiết về quy định mới",
+    image: "URL ảnh quy định mới",
+    suggests: JSON.stringify(["Thông báo quy định mới"]),
+    view: 5
+  },
+  {
+    id: 32,
+    name: "Đào tạo huấn luyện đội nhóm",
+    detail: "Chi tiết về quy định mới",
+    image: "URL ảnh quy định mới",
+    suggests: JSON.stringify(["Thông báo quy định mới"]),
+    view: 5
+  },
+]);
 
 const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024
@@ -31,6 +71,24 @@ const handleLogOut = async () => {
     console.error('Logout failed');
   }
 };
+// gọi api assistantsSelected
+// const fetchAssistants = async () => {
+//   try {
+//     const response = await request.get(END_POINT.ASSISTANTS_LIST);
+//     assistants.value = response.data;
+//     console.log(assistants.value);
+//   } catch (error) {
+//     console.error('Lỗi lấy danh sách trợ lý:', error);
+//   }
+// };
+// onMounted(() => {
+//   fetchAssistants();
+// });
+const handleClick = (id) => {
+  const encodedId = encodeId(id);
+  router.push(`/assistant/${encodedId}`);
+};
+
 </script>
 <template>
   <MaintenancePage v-if="isMaintenance" />
@@ -41,33 +99,34 @@ const handleLogOut = async () => {
           <div class="logo_web flex">
             <div class="img flex">
               <img src="../src/assets/images/icon_logo.png" alt="Logo" width="50">
-            </div> &nbsp;&nbsp;
-            <h2>Hưng thịnh</h2>
+            </div> &nbsp;&nbsp;&nbsp;&nbsp;
+            <h2>An Phát <br> Hưng . AI</h2>
           </div>
         </div>
         <ul class="menu">
-          <li class="menu_item">
+          <li class="menu_item" :class="{ active: currentRoute === '/assistant' }">
             <a href="/assistant" class="button"><i class="bx bx-equalizer"></i> <span>Hỏi đáp trợ lý</span></a>
           </li>
-          <li class="menu_item">
+          <li class="menu_item" :class="{ active: currentRoute === '/contract' }">
             <a href="/contract" class="button"><i class="bx bx-file"></i> <span>Rà soát & tạo mới hợp đồng</span></a>
           </li>
-          <li class="menu_item">
-            <a href="/search" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm bất động sản</span></a>
+          <li class="menu_item" :class="{ active: currentRoute === '/search' }">
+            <a href="/search" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm & So sánh bất động sản</span></a>
           </li>
-          <li class="menu_item">
+          <li v-for="assistant in assistantsSelected" :key="assistant.id" class="menu_item">
+            <a class="button" @click.prevent="handleClick(assistant.id)">
+              <i class="bx bx-message-square-detail"></i>
+              <span>{{ assistant.name }}</span>
+            </a>
+          </li>
+          <li class="menu_item" :class="{ active: currentRoute === '/course' }">
             <a href="/course" class="button"><i class="bx bx-movie-play"></i> <span>Khóa học bất động sản</span></a>
           </li>
-          <li class="menu_item">
-            <a href="/introducing_page" class="button"><i class='bx bxs-buildings'></i> <span>Giới thiệu doanh
-                nghiệp</span></a>
+
+          <li class="menu_item" :class="{ active: currentRoute === '/package' }">
+            <a href="/package" class="button"><i class='bx bx-package'></i><span>Gói dịch vụ</span></a>
           </li>
-          <li class="menu_item">
-            <a href="/package" class="button"><i class='bx bx-package'></i><span>Bản quyền</span></a>
-          </li>
-          <li class="menu_item">
-            <a href="/user_detail" class="button"><i class='bx bxs-user-detail'></i><span>Thông tin cá nhân</span></a>
-          </li>
+
         </ul>
         <div class="user">
           <div class="user_profile flex">
@@ -77,8 +136,21 @@ const handleLogOut = async () => {
             <div class="username">
               <h3>{{ user.name }}</h3>
             </div>
-            <div class="logout" @click="handleLogOut">
-              <span>Đăng xuất</span>
+            <div class="info">
+              <div class="menu_item" :class="{ active: currentRoute === '/introducing_page' }">
+                <a href="/introducing_page" class="button"><i style="margin-bottom: -3px;" class='bx bxs-buildings'></i>
+                  &nbsp;&nbsp;<span>Giới thiệu doanh nghiệp</span></a>
+              </div>
+              <div class="menu_item" :class="{ active: currentRoute === '/user_detail' }">
+                <a href="/user_detail" class="button"><i style="margin-bottom: -3px;" class='bx bxs-user-detail'></i>
+                  &nbsp;&nbsp; <span>Thông tin cá nhân</span></a>
+              </div>
+              <div class="menu_item" @click="handleLogOut">
+                <a href="javacript:;" class="button">
+                  <i class='bx bx-log-out'></i>&nbsp;&nbsp;
+                  <span class="button">Đăng xuất</span>
+                </a>
+              </div>
             </div>
           </div>
         </div>
@@ -140,6 +212,18 @@ const handleLogOut = async () => {
   display: flex;
   flex-direction: column;
   gap: 15px;
+  max-height: 80vh;
+  overflow-y: auto;
+  padding-right: 10px;
+}
+
+.menu::-webkit-scrollbar {
+  display: none;
+}
+
+.menu {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
 
 .menu_item {
@@ -153,12 +237,14 @@ const handleLogOut = async () => {
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-
+.menu_item.active,
 .menu_item:hover {
   background-color: #f4d1ce;
   cursor: pointer;
+
 }
 
+.menu_item.active .button,
 .menu_item:hover .button {
   color: black;
 }
@@ -179,6 +265,7 @@ li .button {
 
 li .button span {
   padding-left: 5px;
+  line-height: 18px;
 }
 
 .logo_web {
@@ -187,6 +274,12 @@ li .button span {
   padding: 5px 10px;
   margin-bottom: 30px;
   border-bottom: 1px solid #ccc;
+}
+
+.logo_web h2 {
+  font-size: 25px;
+  font-weight: bold;
+  color: #e03d31;
 }
 
 .user {
@@ -211,14 +304,14 @@ li .button span {
   background-color: #f5f5f5;
 }
 
-.user:hover .logout {
+.user:hover .info {
   left: 0px;
   bottom: 100%;
   transition: all 0.5s;
 
 }
 
-.logout {
+.info {
   position: absolute;
   bottom: 110%;
   cursor: pointer;
@@ -227,12 +320,31 @@ li .button span {
   width: 100%;
   border-radius: 5px;
   left: -100%;
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  flex-direction: column;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
-.logout:hover {
-  background-color: #e03d31;
-  color: #ececec;
+
+.info .menu_item .button {
+  padding: 6px;
+  display: flex;
+  align-items: center;
+}
+
+.user_profile:hover .menu_item .button {
+  color: #ffff;
+
+}
+
+.info .menu_item.active .button {
+  color: #111;
+}
+
+.info .menu_item:hover .button {
+  color: #111;
 }
 
 .menu_icon {

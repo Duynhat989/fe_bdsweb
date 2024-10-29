@@ -26,6 +26,7 @@ const fetchAssistantData = async () => {
             assistantData.value = response.data;
             suggests.value = JSON.parse(response.data.suggests || '[]');
         } else {
+            router.push('/404');
             console.error('ID không hợp lệ');
         }
     } catch (error) {
@@ -42,6 +43,7 @@ const fetchConversationNew = async () => {
             console.error('ID không hợp lệ');
         }
     } catch (error) {
+        router.push('/404');
         console.error('Lỗi khi tải dữ liệu:', error);
     }
 };

@@ -24,6 +24,20 @@ const fetchPackages = async () => {
         console.error('Lỗi lấy thông tin gói:', error);
     }
 };
+const getFeatureNames = (features) => {
+  if (typeof features === 'string') {
+    try {
+      features = JSON.parse(features); 
+      console.log(features);
+    } catch (error) {
+      return '';
+    }
+  }
+
+  if (!Array.isArray(features)) return '';
+
+  return features.map(feature => feature.type).join(', ');
+};
 
 onMounted(() => {
     fetchPackages();
@@ -44,7 +58,7 @@ onMounted(() => {
                         <h2 class="package-name">{{ pkg.name }}</h2>
                         <p class="package-description">{{ pkg.description }}</p>
                         <p class="package-price">Giá: {{ pkg.price === '0' ? 'Miễn phí' : formatCurrency(pkg.price) }}</p>
-                        <p class="package-features">{{ pkg.features || 'Không có tính năng bổ sung' }}</p>
+                        <p class="package-features">{{ getFeatureNames(pkg.features) || 'Không có tính năng bổ sung' }}</p>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
                         <button @click="openPopup(pkg)" class="register-btn">Đăng ký gói</button>
                     </div>

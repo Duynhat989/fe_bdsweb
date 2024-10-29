@@ -1,5 +1,5 @@
 <script setup>
-import PaymentPopup from '@/components/PaymentPopup.vue';
+import DetailPopup from '@/components/DetailPopup.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
 
@@ -8,7 +8,7 @@ import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 const router = useRouter();
 const activeTab = ref('all');
-const showPaymentPopup = ref(false);
+const showPopup = ref(false);
 const selectedCourse = ref({});
 const searchQuery = ref('');
 const courses = ref([]);
@@ -54,7 +54,7 @@ const handleCourseClick = (value) => {
 };
 const handlePayment = (course) => {
   selectedCourse.value = course;
-  showPaymentPopup.value = true;
+  showPopup.value = true;
 };
 // const handlePaymentSuccess = () => {
 //   notify({
@@ -100,7 +100,7 @@ onMounted(() => {
             </div>
           </div>
           <div class="register-overlay">
-            <button class="register-button" @click.stop="handlePayment(course)">Đăng ký ngay</button>
+            <button class="register-button" @click.stop="handlePayment(course)">Xem chi tiết</button>
           </div>
         </div>
       </div>
@@ -127,8 +127,8 @@ onMounted(() => {
       </div>
       <p v-else>Hiện tại bạn chưa có khóa học nào.</p>
     </div>
-    <PaymentPopup v-if="showPaymentPopup" :course="selectedCourse" :visible="showPaymentPopup"
-      @close="showPaymentPopup = false" />
+    <DetailPopup v-if="showPopup" :course="selectedCourse" :visible="showPopup"
+      @close="showPopup = false" />
   </div>
 </template>
 

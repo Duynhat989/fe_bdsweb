@@ -31,7 +31,7 @@ const fetchMyCourses = async () => {
             defaultImage.value = courseDetail.value.image;
         }
     } catch (error) {
-        console.error('Lỗi lấy danh sách trợ lý:', error);
+        console.error('Lỗi lấy danh sách khóa học:', error);
     }
 };
 
