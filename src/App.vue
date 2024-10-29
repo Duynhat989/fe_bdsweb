@@ -47,11 +47,10 @@ const fetchAssistants = async () => {
       request.get(END_POINT.TEAMTRAINGING)
     ]);
     assistantsSelected.value = [
-      estateAnalysis.assistant_id,
-      financialAnalysis.assistant_id,
-      teamTraining.assistant_id
+      estateAnalysis.assistant,
+      financialAnalysis.assistant,
+      teamTraining.assistant
     ];
-    console.log(assistantsSelected.value)
   } catch (error) {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
@@ -89,7 +88,7 @@ const handleClick = (id) => {
                 sản</span></a>
           </li>
           <li v-for="(assistant ,index) in assistantsSelected" :key="index" class="menu_item">
-            <a class="button" @click.prevent="handleClick(assistant)">
+            <a class="button" @click.prevent="handleClick(assistant.id)">
               <i class="bx bx-message-square-detail"></i>
               <span>{{ assistant.name }}</span>
             </a>
@@ -140,7 +139,7 @@ const handleClick = (id) => {
     <div class="body-content" :class="[{ 'body-full': !isLogin }, { 'no-margin': hiddenPopup }]">
       <RouterView />
     </div>
-    <NotificationModule ref="notificationRef" />
+    <NotificationModule ref="notificationRef"/>
   </div>
 </template>
 <style scoped>

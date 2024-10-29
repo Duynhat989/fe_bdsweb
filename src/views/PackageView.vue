@@ -1,7 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-
-import { formatCurrency } from '@/utils/helps';
+import { formatCurrency, getFeatureNames } from '@/utils/helps';
 import PaymentPackagePopup from '@/components/PaymentPackagePopup.vue';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
@@ -24,20 +23,7 @@ const fetchPackages = async () => {
         console.error('Lỗi lấy thông tin gói:', error);
     }
 };
-const getFeatureNames = (features) => {
-  if (typeof features === 'string') {
-    try {
-      features = JSON.parse(features); 
-      console.log(features);
-    } catch (error) {
-      return '';
-    }
-  }
 
-  if (!Array.isArray(features)) return '';
-
-  return features.map(feature => feature.type).join(', ');
-};
 
 onMounted(() => {
     fetchPackages();
@@ -57,8 +43,10 @@ onMounted(() => {
                     <div v-for="pkg in packages" :key="pkg.id" class="package-card">
                         <h2 class="package-name">{{ pkg.name }}</h2>
                         <p class="package-description">{{ pkg.description }}</p>
-                        <p class="package-price">Giá: {{ pkg.price === '0' ? 'Miễn phí' : formatCurrency(pkg.price) }}</p>
-                        <p class="package-features">{{ getFeatureNames(pkg.features) || 'Không có tính năng bổ sung' }}</p>
+                        <p class="package-price">Giá: {{ pkg.price === '0' ? 'Miễn phí' : formatCurrency(pkg.price) }}
+                        </p>
+                        <p class="package-features"
+                            v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></p>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
                         <button @click="openPopup(pkg)" class="register-btn">Đăng ký gói</button>
                     </div>
@@ -76,6 +64,7 @@ onMounted(() => {
     padding: 0 5%;
     margin: 20px 0;
 }
+
 .package-page {
     width: 100%;
     background-color: #ffffff;
@@ -126,7 +115,8 @@ onMounted(() => {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    width: 250px;
+    max-width: 300px;
+    width: 100%;
     text-align: center;
     color: #333;
 }
@@ -153,8 +143,14 @@ onMounted(() => {
 
 .package-features {
     font-size: 14px;
-    color: #666;
+    color: #cc4949;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
 }
+
 .register-btn {
     background-color: #ff3f3f;
     color: white;

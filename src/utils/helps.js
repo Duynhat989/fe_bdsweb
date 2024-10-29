@@ -51,3 +51,16 @@ export function formatMessage(content) {
 export function getImagePath(imageName) {
     return require(`@/assets/images/${imageName}`);
 }
+
+export function getFeatureNames(values, kt="<br>") {
+    if (typeof values === 'string') {
+        try {
+            values = JSON.parse(values);
+        } catch (error) {
+            return '';
+        }
+    }
+
+
+    return values.map(item => item.name).join(kt);
+};

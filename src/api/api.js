@@ -22,6 +22,7 @@ export const END_POINT = {
     COURSE_UPDATE: '/api/course/update', // Cập nhật khóa học
     COURSE_DELETE: '/api/course/delete', // Xóa khóa học
     COURSE_ME: '/api/course/me', // Khóa học cá nhân
+    COURSE_SIGNIN: '/api/course/signin', // Đăng kí khóa học
 
     // Lessons APIs
     LESSONS_LIST: '/api/lessons', // Danh sách bài giảng

@@ -1,8 +1,7 @@
 <script setup>
 import { ref, watch } from 'vue';
-import { formatCurrency } from '@/utils/helps';
+import { formatCurrency, getFeatureNames } from '@/utils/helps';
 import { generateVietQRUrl } from '@/utils/qrHelper';
-
 const props = defineProps({
     package: {
         type: Object,
@@ -18,7 +17,6 @@ const emit = defineEmits(['close']);
 const totalPrice = ref(0);
 const qrCodeUrl = ref(null);
 
-// Tính tổng tiền khi package thay đổi
 watch(
     () => props.package,
     (newPackage) => {
@@ -50,7 +48,7 @@ const createInvoice = () => {
             <div class="popup-content">
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ package.name }}</h3>
-                <p class="package-features">{{ package.features || 'Không có tính năng bổ sung' }}</p>
+                <p class="package-features" v-html="getFeatureNames(package.features,', ') || 'Không có tính năng bổ sung' "></p>
 
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
@@ -58,7 +56,6 @@ const createInvoice = () => {
                     <p>Số lượt yêu cầu: <span> {{ package.ask }}</span></p>
                     <p>Giá: <span>{{ formatCurrency(package.price) }}</span></p>
                     <p>Tổng: <span>{{ formatCurrency(totalPrice) }}</span></p>
-
                     <button @click="createInvoice" class="invoice-btn">Tạo hóa đơn</button>
                     <div v-if="qrCodeUrl" class="payment-qr">
                         <img :src="qrCodeUrl" alt="Mã QR thanh toán" />
@@ -120,9 +117,10 @@ h3 {
 }
 
 .package-features {
-    font-size: 16px;
+    font-size: 14px;
     color: #555;
     margin-bottom: 10px;
+    text-align: left;
 }
 
 .payment-details {

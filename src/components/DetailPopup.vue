@@ -1,9 +1,13 @@
 <script setup>
-import { ref,onMounted  } from 'vue';
-import { formatCurrency } from '@/utils/helps';
+import { ref, onMounted } from 'vue';
 import request from '@/utils/request';
 import { END_POINT } from '@/api/api';
+import useNotification from '@/composables/useNotification';
+import { useRouter } from 'vue-router';
+const notification = useNotification();
+const router = useRouter();
 const course = ref([]);
+
 const props = defineProps({
     course: {
         type: Object,
@@ -14,13 +18,7 @@ const props = defineProps({
         default: false,
     },
 });
-console.log(props.course);
-// Sự kiện emit từ component con sang component cha
 const emit = defineEmits(['close']);
-
-const totalPrice = ref(props.course.price || 0);
-
-
 const closePopup = () => {
     emit('close');
 };
@@ -31,7 +29,6 @@ const fetchFindCourses = async () => {
             course.value = response.data;
         } else {
             router.push('/404');
-            console.error('ID không hợp lệ');
         }
     } catch (error) {
         console.error('Lỗi khi tải dữ liệu:', error);
@@ -40,7 +37,40 @@ const fetchFindCourses = async () => {
 const loadCourses = async () => {
     await fetchFindCourses();
 };
-
+const createRegisterCourse = async () => {
+    try {
+        if (props.course.id) {
+            const response = await request.post(END_POINT.COURSE_SIGNIN, { course_id: props.course.id });
+            if (response.success) {
+                course.value = response.data;
+                notification.success('Thành công!', 'Đăng kí khóa học thành công!', {
+                    showActions: false
+                });
+                closePopup();
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            }
+        } else {
+            router.push('/404');
+        }
+    } catch (error) {
+        if (error.response && error.response.status === 500) {
+            notification.info('Thông báo!', `${error.response.data.message || error}`, {
+                showActions: true,
+                onAction: ({ action }) => {
+                    if (action === 'info') {
+                        router.push('/package');
+                    }
+                }
+            })
+        } else {
+            notification.error('Lỗi!', `Đăng kí khóa học không thành công! Lỗi: ${error.message || error}`, {
+                showActions: false
+            });
+        }
+    }
+};
 onMounted(() => {
     loadCourses();
 });
@@ -53,11 +83,11 @@ onMounted(() => {
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ course.name }}</h3>
                 <p>{{ course.detail }}</p>
-                
+
                 <div class="course-image">
                     <img :src="course.image" alt="Course Image" />
                 </div>
-
+                <button @click="createRegisterCourse" class="button-course">Đăng ký</button>
                 <div class="lessons">
                     <h4>Danh sách bài giảng</h4>
                     <ul>
@@ -97,8 +127,9 @@ onMounted(() => {
     position: relative;
     animation: fadeIn 0.3s ease-in-out;
 }
+
 .detail-popup::-webkit-scrollbar {
-  display: none;
+    display: none;
 }
 
 .popup-content h3 {
@@ -130,6 +161,25 @@ onMounted(() => {
     height: auto;
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+
+.button-course {
+    background-color: #ff3f3f;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    font-size: 18px;
+    border-radius: 10px;
+    cursor: pointer;
+    margin-top: 10px;
+    font-family: inherit;
+    position: absolute;
+    top: 10px;
+    left: 20px;
+}
+
+.button-course:hover {
+    opacity: 0.8;
 }
 
 .lessons {
@@ -200,6 +250,7 @@ onMounted(() => {
         opacity: 0;
         transform: scale(0.9);
     }
+
     to {
         opacity: 1;
         transform: scale(1);

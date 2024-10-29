@@ -2,7 +2,7 @@
 import DetailPopup from '@/components/DetailPopup.vue';
 import { ref, computed, onMounted } from 'vue';
 import { useRouter } from 'vue-router';
-
+import { format, isBefore  } from 'date-fns';
 import { encodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
@@ -12,6 +12,8 @@ const showPopup = ref(false);
 const selectedCourse = ref({});
 const searchQuery = ref('');
 const courses = ref([]);
+const license = ref({});
+
 const myCourses = ref([]);
 
 // Khóa học của Tôi
@@ -32,6 +34,35 @@ const fetchCourses = async () => {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
 };
+
+const fetchLicense = async () => {
+  try {
+    const response = await request.get(END_POINT.LICENSE_GET);
+    license.value = response.license;
+  } catch (error) {
+    console.error('Lỗi lấy thông tin gói:', error);
+  }
+};
+const checkAvailableCoursesInLicense = async () => {
+  try {
+    await fetchCourses();
+    await fetchLicense();
+
+    const licenseDate = license.value.date;
+    const currentDate = format(new Date(), 'yyyy-MM-dd');
+    const isExpired = isBefore(currentDate,licenseDate);
+    const licensedCourseIds = JSON.parse(license.value.pack.features).map(feature => feature.id);
+
+    courses.value = courses.value.map(course => ({
+      ...course,
+      statusUse: licensedCourseIds.includes(course.id)
+        ? isExpired ? "Khả dụng" : "Hết hạn gói": 'Gói chưa cập nhật'
+    }));
+  } catch (error) {
+    console.error('Error checking available courses in license:', error);
+  }
+};
+
 
 
 const filteredCourses = computed(() =>
@@ -56,17 +87,10 @@ const handlePayment = (course) => {
   selectedCourse.value = course;
   showPopup.value = true;
 };
-// const handlePaymentSuccess = () => {
-//   notify({
-//     title: 'Thành công',
-//     text: 'Khóa học đã được thanh toán thành công!',
-//     type: 'success',
-//   });
-// };
 
 onMounted(() => {
   fetchMyCourses();
-  fetchCourses();
+  checkAvailableCoursesInLicense();
 });
 </script>
 <template>
@@ -88,6 +112,7 @@ onMounted(() => {
         <div class="course-card" v-for="course in filteredCourses" :key="course.id">
           <img :src="course.image" alt="Course Image" class="course-image" />
           <div class="course-content">
+            <label class="label-status">{{ course.statusUse }}</label>
             <h3 class="course-title">{{ course.name }}</h3>
             <p class="course-detail">{{ course.detail }}</p>
             <div class="course-status">
@@ -109,7 +134,8 @@ onMounted(() => {
     <div v-else>
       <h2 class="section-title">Khóa học của tôi</h2>
       <div v-if="filteredMyCourses.length > 0" class="course-list">
-        <div class="course-card" v-for="value in filteredMyCourses" :key="value.course.id" @click="handleCourseClick(value)">
+        <div class="course-card" v-for="value in filteredMyCourses" :key="value.course.id"
+          @click="handleCourseClick(value)">
           <img :src="value.course.image" alt="Course Image" class="course-image" />
           <div class="course-content">
             <h3 class="course-title">{{ value.course.name }}</h3>
@@ -127,8 +153,7 @@ onMounted(() => {
       </div>
       <p v-else>Hiện tại bạn chưa có khóa học nào.</p>
     </div>
-    <DetailPopup v-if="showPopup" :course="selectedCourse" :visible="showPopup"
-      @close="showPopup = false" />
+    <DetailPopup v-if="showPopup" :course="selectedCourse" :visible="showPopup" @close="showPopup = false" />
   </div>
 </template>
 
@@ -230,6 +255,39 @@ onMounted(() => {
 
 .course-content {
   padding: 10px;
+}
+
+.label-status {
+  background-color: #fff;
+  background-image: none;
+  background-repeat: repeat no-repeat;
+  border-radius: 15px 225px 255px 15px 15px 255px 225px 15px;
+  border-style: solid;
+  border-width: 2px;
+  box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
+  box-sizing: border-box;
+  color: #dc3545;
+  cursor: pointer;
+  display: inline-block;
+  line-height: 16px;
+  padding: 5px;
+  transition: all 235ms ease-in-out;
+  border-bottom-left-radius: 15px 255px;
+  border-bottom-right-radius: 225px 15px;
+  border-top-left-radius: 255px 15px;
+  border-top-right-radius: 15px 225px;
+  position: absolute;
+  top: 10px;
+  right: 10px;
+}
+
+.label-status:hover {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 8px -5px;
+  transform: translate3d(0, 2px, 0);
+}
+
+.label-status:focus {
+  box-shadow: rgba(0, 0, 0, .3) 2px 8px 4px -6px;
 }
 
 .course-title {
