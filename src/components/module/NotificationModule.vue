@@ -41,7 +41,10 @@ const closeNotification = (id) => {
 }
 
 const handleAction = (id, action) => {
-    emit('action', { id, action })
+    const notification = notifications.value.find(n => n.id === id);
+    if (notification && typeof notification.onAction === 'function') {
+        notification.onAction({ action }); 
+    }
     closeNotification(id)
 }
 

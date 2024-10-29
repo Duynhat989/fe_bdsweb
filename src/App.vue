@@ -6,8 +6,8 @@ import NotificationModule from "./components/module/NotificationModule.vue";
 import useNotification from "./composables/useNotification";
 import MaintenancePage from "./views/MaintenancePage.vue";
 import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck";
-// import request from "./utils/request";
-// import { END_POINT } from "./api/api";
+import request from "./utils/request";
+import { END_POINT } from "./api/api";
 import { encodeId } from '@/utils/encoding';
 
 const notificationRef = ref(null)
@@ -19,40 +19,7 @@ const isLogin = computed(() => store.getters.isLogin);
 const user = computed(() => store.getters.getUser);
 const currentRoute = computed(() => route.path);
 
-const assistantsSelected = ref([
-  {
-    id: 30,
-    name: "Phân tích bất động sản",
-    detail: "Phân tích bất động sản",
-    image: "Phân tích bất động sản",
-    suggests: JSON.stringify(["Đề xuất tin nhắn:"]),
-    view: 0
-  },
-  {
-    id: 31,
-    name: "Phân tích tài chính và vay ngân hàng",
-    detail: "Chi tiết về thủ tục hành chính",
-    image: "URL ảnh thủ tục hành chính",
-    suggests: JSON.stringify(["Đề xuất tin nhắn thủ tục"]),
-    view: 10
-  },
-  {
-    id: 32,
-    name: "Tổng hợp tin tức bất động sản theo yêu cầu",
-    detail: "Chi tiết về quy định mới",
-    image: "URL ảnh quy định mới",
-    suggests: JSON.stringify(["Thông báo quy định mới"]),
-    view: 5
-  },
-  {
-    id: 32,
-    name: "Đào tạo huấn luyện đội nhóm",
-    detail: "Chi tiết về quy định mới",
-    image: "URL ảnh quy định mới",
-    suggests: JSON.stringify(["Thông báo quy định mới"]),
-    view: 5
-  },
-]);
+const assistantsSelected = ref([]);
 
 const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024
@@ -72,23 +39,30 @@ const handleLogOut = async () => {
   }
 };
 // gọi api assistantsSelected
-// const fetchAssistants = async () => {
-//   try {
-//     const response = await request.get(END_POINT.ASSISTANTS_LIST);
-//     assistants.value = response.data;
-//     console.log(assistants.value);
-//   } catch (error) {
-//     console.error('Lỗi lấy danh sách trợ lý:', error);
-//   }
-// };
-// onMounted(() => {
-//   fetchAssistants();
-// });
+const fetchAssistants = async () => {
+  try {
+    const [estateAnalysis, financialAnalysis, teamTraining] = await Promise.all([
+      request.get(END_POINT.ESTATEANALYSIS),
+      request.get(END_POINT.FINANCIALANALYSIS),
+      request.get(END_POINT.TEAMTRAINGING)
+    ]);
+    assistantsSelected.value = [
+      estateAnalysis.assistant_id,
+      financialAnalysis.assistant_id,
+      teamTraining.assistant_id
+    ];
+    console.log(assistantsSelected.value)
+  } catch (error) {
+    console.error('Lỗi lấy danh sách trợ lý:', error);
+  }
+};
+onMounted(() => {
+  fetchAssistants();
+});
 const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
 };
-
 </script>
 <template>
   <MaintenancePage v-if="isMaintenance" />
@@ -111,10 +85,11 @@ const handleClick = (id) => {
             <a href="/contract" class="button"><i class="bx bx-file"></i> <span>Rà soát & tạo mới hợp đồng</span></a>
           </li>
           <li class="menu_item" :class="{ active: currentRoute === '/search' }">
-            <a href="/search" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm & So sánh bất động sản</span></a>
+            <a href="/search" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm & So sánh bất động
+                sản</span></a>
           </li>
-          <li v-for="assistant in assistantsSelected" :key="assistant.id" class="menu_item">
-            <a class="button" @click.prevent="handleClick(assistant.id)">
+          <li v-for="(assistant ,index) in assistantsSelected" :key="index" class="menu_item">
+            <a class="button" @click.prevent="handleClick(assistant)">
               <i class="bx bx-message-square-detail"></i>
               <span>{{ assistant.name }}</span>
             </a>

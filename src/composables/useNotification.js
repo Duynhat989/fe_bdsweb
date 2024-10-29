@@ -30,7 +30,23 @@ export const useNotification = () => {
     }
 
     const info = (title, message, options = {}) => {
-        notify({ title, message, type: 'info', ...options })
+        // notify({ title, message, type: 'info', ...options })
+        notify({ 
+            title, 
+            message, 
+            type: 'info',
+            showActions: true,
+            duration: 0,
+            onAction: (action) => {
+                if (action === 'info') {
+                    router.push('/')
+                }
+                if (options.onAction) {
+                    options.onAction(action)
+                }
+            },
+            ...options 
+        })
     }
 
     return {

@@ -54,5 +54,11 @@ export const END_POINT = {
     LICENSE_GET: '/api/license/me', // Lấy bản quyền
     
     // Mainten APIs
-    MAINTENANCE: '/api/bao-tri' // kiểm tra bảo trì
+    MAINTENANCE: '/api/setup/status', // kiểm tra bảo trì
+
+    // Assistants selected APIs
+
+    ESTATEANALYSIS: '/api/nav/estateAnalysis',
+    FINANCIALANALYSIS: '/api/nav/financialAnalysis',
+    TEAMTRAINGING: '/api/nav/teamTraining',
 };

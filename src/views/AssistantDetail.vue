@@ -4,8 +4,9 @@ import { useRoute, useRouter } from 'vue-router';
 import { decodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
-
+import useNotification from '@/composables/useNotification';
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
+const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
 
@@ -64,8 +65,20 @@ const handleSend = async () => {
             content: message.value
         });
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
-        conversationList.value = await handleResponseStream(response, conversationList);
-        message.value = "";
+        if (!response.ok) {
+            const errorData = await response.json();
+            notification.info('Thông báo!', `${errorData.message}`, {
+                showActions: true,
+                onAction: ({ action }) => {
+                    if (action === 'info') {
+                        router.push('/package');
+                    }
+                }
+            })
+        }else {
+            conversationList.value = await handleResponseStream(response, conversationList);
+            message.value = "";
+        }
         router.push({
             path: `/chat/${threadId.value}`
         });

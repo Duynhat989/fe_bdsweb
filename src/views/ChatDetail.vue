@@ -76,11 +76,11 @@ const handleSend = async () => {
                 showActions: true,
                 onAction: ({ action }) => {
                     if (action === 'info') {
-                        // Hiển thị thêm thông tin chi tiết hoặc chuyển hướng
+                        router.push('/package');
                     }
                 }
             })
-        }else {
+        } else {
             conversationList.value = await handleResponseStream(response, conversationList);
             message.value = "";
         }
