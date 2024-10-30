@@ -24,21 +24,6 @@ const assistantsSelected = ref([]);
 const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024
 };
-onMounted(() => {
-  checkMaintenanceStatus()
-  checkScreenSize();
-  window.addEventListener('resize', checkScreenSize);
-  setNotificationComponent(notificationRef.value)
-});
-const handleLogOut = async () => {
-  try {
-    await store.dispatch('logout');
-    router.push('/');
-  } catch (error) {
-    console.error('Logout failed');
-  }
-};
-// gọi api assistantsSelected
 const fetchAssistants = async () => {
   try {
     const [estateAnalysis, financialAnalysis, teamTraining] = await Promise.all([
@@ -55,16 +40,30 @@ const fetchAssistants = async () => {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
 };
-onMounted(() => {
-  fetchAssistants();
-});
+
+const handleLogOut = async () => {
+  try {
+    await store.dispatch('logout');
+    router.push('/');
+  } catch (error) {
+    console.error('Logout failed');
+  }
+};
 const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
 };
+
+onMounted(() => {
+  checkMaintenanceStatus();
+  fetchAssistants();
+  checkScreenSize();
+  setNotificationComponent(notificationRef.value);
+  window.addEventListener('resize', checkScreenSize);
+});
 </script>
 <template>
-  <MaintenancePage v-if="isMaintenance" />
+  <MaintenancePage v-if="isMaintenance"/>
   <div v-else class="app-container">
     <div class="body-bar" :class="{ hidden: hiddenPopup }" v-if="isLogin">
       <div class="nav">
