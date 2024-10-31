@@ -1,81 +1,22 @@
 <script setup>
-import { ref, computed } from 'vue';
-// const contracts = ref([]);
-const contracts = ref([
-    {
-        id: 1,
-        name: "Hợp Đồng Dịch Vụ",
-        detail: "Hợp đồng dịch vụ với các điều khoản chi tiết về cung cấp dịch vụ.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Dịch+Vụ",
-        view: 120,
-    },
-    {
-        id: 2,
-        name: "Hợp Đồng Lao Động",
-        detail: "Hợp đồng lao động cho nhân viên toàn thời gian.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Lao+Động",
-        view: 90,
-    },
-    {
-        id: 3,
-        name: "Hợp Đồng Thuê Nhà",
-        detail: "Hợp đồng thuê nhà bao gồm các điều khoản về thanh toán và bảo trì.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Thuê+Nhà",
-        view: 150,
-    },
-    {
-        id: 4,
-        name: "Hợp Đồng Bán Hàng",
-        detail: "Hợp đồng bán hàng với chi tiết về sản phẩm và điều kiện thanh toán.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Bán+Hàng",
-        view: 200,
-    },
-    {
-        id: 5,
-        name: "Hợp Đồng Đối Tác",
-        detail: "Hợp đồng hợp tác giữa các bên với các điều khoản rõ ràng.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Đối+Tác",
-        view: 80,
-    },
-    {
-        id: 6,
-        name: "Hợp Đồng Chuyển Nhượng",
-        detail: "Hợp đồng chuyển nhượng quyền sở hữu tài sản.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Chuyển+Nhượng",
-        view: 110,
-    },
-    {
-        id: 7,
-        name: "Hợp Đồng Cho Thuê Thiết Bị",
-        detail: "Hợp đồng cho thuê thiết bị văn phòng và máy móc.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Cho+Thuê+Thiết+Bị",
-        view: 130,
-    },
-    {
-        id: 8,
-        name: "Hợp Đồng Dự Án",
-        detail: "Hợp đồng dự án xây dựng với các điều khoản chi tiết.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Dự+Án",
-        view: 175,
-    },
-    {
-        id: 9,
-        name: "Hợp Đồng Tư Vấn",
-        detail: "Hợp đồng tư vấn với các điều khoản dịch vụ chuyên nghiệp.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Tư+Vấn",
-        view: 95,
-    },
-    {
-        id: 10,
-        name: "Hợp Đồng Đầu Tư",
-        detail: "Hợp đồng đầu tư với các điều khoản và điều kiện cụ thể.",
-        image: "https://via.placeholder.com/300x180.png?text=Hợp+Đồng+Đầu+Tư",
-        view: 140,
-    },
-]);
+import { ref, computed, onMounted } from 'vue';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+import ContractCreatePopup from '@/components/ContractCreatePopup.vue';
+const contracts = ref([]);
+const showPopup = ref(false);
+const selectedContract = ref({});
+const fetchContracts = async () => {
+    try {
+        const response = await request.get(END_POINT.CONTRACTS_LIST);
+        contracts.value = response.contracts;
+    } catch (error) {
+        console.error('Lỗi lấy danh sách hợp đồng:', error);
+    }
+};
+
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
-// call api
 const paginatedItems = computed(() => {
     const start = (currentPage.value - 1) * itemsPerPage.value;
     const end = start + itemsPerPage.value;
@@ -86,13 +27,17 @@ const changePage = (page) => {
         currentPage.value = page;
     }
 };
-const handleClick = (id) => {
-    //   const encodedId = encodeId(id);
-    //   router.push(`/contract/${encodedId}`);
+const handleClick = (contract) => {
+    selectedContract.value = contract;
+    showPopup.value = true;
 };
 const totalPages = computed(() => {
     return Math.ceil(contracts.value.length / itemsPerPage.value);
 });
+onMounted(() => {
+    fetchContracts();
+});
+
 </script>
 <template>
     <div class="create-contract">
@@ -103,12 +48,11 @@ const totalPages = computed(() => {
         <div class="main-content">
             <div class="contract-list">
                 <div class="contract-card list-card" v-for="contract in paginatedItems" :key="contract.id"
-                    @click="handleClick(contract.id)">
+                    @click="handleClick(contract)">
                     <img :src="contract.image" alt="contract Image" class="contract-image" />
                     <div class="contract-content">
                         <h3 class="contract-title">{{ contract.name }}</h3>
-                        <p class="contract-detail">{{ contract.detail }}</p>
-                        <span class="contract-view">Lượt xem: {{ contract.view }}</span>
+                        <p class="contract-detail">{{ contract.description }}</p>
                     </div>
                 </div>
                 <div class="pagination">
@@ -118,6 +62,9 @@ const totalPages = computed(() => {
                 </div>
             </div>
         </div>
+        <ContractCreatePopup v-if="showPopup" :contract="selectedContract" :visible="showPopup"
+            @close="showPopup = false" />
+
     </div>
 </template>
 
@@ -213,29 +160,23 @@ const totalPages = computed(() => {
     text-overflow: ellipsis;
 }
 
-.contract-view {
-    font-size: 12px;
-    color: #777;
-}
-
 .pagination {
-  width: 100%;
-  margin-top: 20px;
+    width: 100%;
+    margin-top: 20px;
 }
 
 .pagination span {
-  padding: 10px 15px;
-  background-color: #ccc;
-  color: #111;
-  margin: 0px 5px;
-  cursor: pointer;
+    padding: 10px 15px;
+    background-color: #ccc;
+    color: #111;
+    margin: 0px 5px;
+    cursor: pointer;
 }
 
 .pagination span.active,
 .pagination span:hover {
-  background-color: #e03d31;
+    background-color: #e03d31;
 
-  color: #fff;
+    color: #fff;
 }
-
 </style>

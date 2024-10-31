@@ -53,7 +53,7 @@ export const END_POINT = {
 
     // License APIs
     LICENSE_GET: '/api/license/me', // Lấy bản quyền
-    
+
     // Mainten APIs
     MAINTENANCE: '/api/setup/status', // kiểm tra bảo trì
 
@@ -62,4 +62,9 @@ export const END_POINT = {
     ESTATEANALYSIS: '/api/nav/estateAnalysis',
     FINANCIALANALYSIS: '/api/nav/financialAnalysis',
     TEAMTRAINGING: '/api/nav/teamTraining',
+
+    // Contracts APIs
+    CONTRACTS_LIST: '/api/contracts', // Danh sách Hợp đồng
+    CONTRACT_FIND: '/api/contract/find', // Tìm Hợp đồng
+
 };
