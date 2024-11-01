@@ -1,15 +1,15 @@
 <script setup>
-import { ref, onMounted } from 'vue';
+import { ref, computed, onMounted } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { decodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import useNotification from '@/composables/useNotification';
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
+import AddPromptPopup from '@/components/AddPromptPopup.vue';
 const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
-
 const activeTab = ref('suggest');
 const encodedId = route.params.id;
 const assistantId = decodeId(encodedId);
@@ -18,8 +18,26 @@ const message = ref('');
 const threadId = ref('');
 const conversationList = ref([]);
 const suggests = ref([]);
+const historys = ref([]);
 const loading = ref(false);
+const messageInput = ref(null); 
+const currentHistoryPage = ref(1);
+const currentPromptPage = ref(1);
+const itemsPromptPage = ref(10);
+const itemsHistoryPage = ref(10);
 
+const totalHistory = ref(0);
+const totalPrompts = ref(0);
+const prompts = ref([]);
+
+const showPopup = ref(false);
+
+const addPrompt = () => {
+    showPopup.value = true;
+};
+const addPromptToList = (newPrompt) => {
+    prompts.value.push(newPrompt.value); 
+};
 const fetchAssistantData = async () => {
     try {
         if (assistantId) {
@@ -48,11 +66,98 @@ const fetchConversationNew = async () => {
         console.error('Lỗi khi tải dữ liệu:', error);
     }
 };
+const fetchHistorys = async (page = currentHistoryPage.value, limit = itemsHistoryPage.value) => {
+    try {
+        if (assistantId) {
+            const response = await request.post(`${END_POINT.HISTORYS_LIST}?page=${parseInt(page, 10)}&limit=${parseInt(limit, 10)}`, {
+                assistant_id: assistantId,
+            });
+            historys.value = response.data
+            totalHistory.value = response.total;
+            currentHistoryPage.value = response.page;
+            itemsHistoryPage.value = response.limit;
+        } else {
+            console.error('ID không hợp lệ');
+        }
+    } catch (error) {
+        router.push('/404');
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
+const fetchPrompts = async (page = currentPromptPage.value, limit = itemsPromptPage.value) => {
+    try {
+        if (assistantId) {
+            const response = await request.post(END_POINT.PROMPTS_LIST, {
+                assistant_id: assistantId,
+                page: parseInt(page, 10),
+                limit: parseInt(limit, 10)
+            });
+            prompts.value = response.prompts
+            totalPrompts.value = response.total;
+            currentPromptPage.value = response.page;
+            itemsPromptPage.value = response.limit;
+        } else {
+            console.error('ID không hợp lệ');
+        }
+    } catch (error) {
+        router.push('/404');
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
 
+const totalHistoryPages = computed(() => Math.ceil(totalHistory.value / itemsHistoryPage.value));
+const totalPromptPages = computed(() => Math.ceil(totalPrompts.value / itemsPromptPage.value));
+
+
+const changeHistoryPage = (page) => {
+    if (page >= 1 && page <= totalHistoryPages.value) {
+        currentHistoryPage.value = page;
+        fetchHistorys(currentHistoryPage.value, itemsHistoryPage.value);
+    }
+};
+
+const changePromptPage = (page) => {
+    if (page >= 1 && page <= totalPromptPages.value) {
+        currentPromptPage.value = page;
+        fetchPrompts(currentPromptPage.value, itemsPromptPage.value);
+    }
+};
 
 const executeAction = (suggest) => {
     message.value = suggest;
     handleSend();
+};
+const executePrompt = (suggest) => {
+    message.value = suggest.prompt_text;
+    messageInput.value.focus();
+};
+const deletePrompt = async (id) => {
+    let data = JSON.stringify({
+        "id": id
+    });
+    const confirmDelete = confirm("Bạn có chắc muốn xóa prompt này không?");
+    if (confirmDelete) {
+        try {
+            const response = await request.delete(END_POINT.PROMPT_DELETE, { data: data });
+            const index = prompts.value.findIndex(a => a.id === id);
+            if (index !== -1) {
+                prompts.value.splice(index, 1,);
+            }
+            if (response.success) {
+                notification.success('Thành công!', 'Xóa prompt thành công!', {
+                    showActions: false
+                });
+            } else {
+                notification.error('Lỗi!', `Xóa prompt không thành công!`, {
+                    showActions: false
+                });
+            }
+        } catch (error) {
+            notification.error('Lỗi!', `Xóa prompt không thành công! Lỗi: ${error.message || error}`, {
+                showActions: false
+            });
+        }
+    }
 };
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
@@ -64,6 +169,7 @@ const handleSend = async () => {
             role: "user",
             content: message.value
         });
+        await fetchConversationNew();
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
         if (!response.ok) {
             const errorData = await response.json();
@@ -75,7 +181,7 @@ const handleSend = async () => {
                     }
                 }
             })
-        }else {
+        } else {
             conversationList.value = await handleResponseStream(response, conversationList);
             message.value = "";
         }
@@ -89,25 +195,24 @@ const handleSend = async () => {
     }
 };
 
-
-const history = ref([
-    { id: 1, description: 'History entry 1' },
-    { id: 2, description: 'History entry 2' },
-    { id: 3, description: 'History entry 3' }
-]);
-
+const openHistory = (thread_id) => {
+    const threadId = thread_id.replace('thread_', '');
+    router.push({
+        path: `/chat/${threadId}`
+    });
+};
 const loadConversation = async () => {
     if (!assistantId) {
         router.push('/404');
         return;
     }
     await fetchAssistantData();
-    await fetchConversationNew();
+    await fetchPrompts();
+    await fetchHistorys();
 };
 
 onMounted(() => {
     loadConversation();
-
 });
 </script>
 <template>
@@ -122,7 +227,7 @@ onMounted(() => {
                     <div class="tab" :class="{ active: activeTab === 'suggest' }" @click="activeTab = 'suggest'">
                         Gợi ý
                     </div>
-                    <div v-if="history.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
+                    <div v-if="historys.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
                         @click="activeTab = 'history'">
                         Lịch sử
                     </div>
@@ -138,22 +243,50 @@ onMounted(() => {
                                 <div class="title">{{ suggest }}</div>
                             </button>
                         </div>
+                        <div class="prompts">
+                            <div class="prompt-controls">
+                                <button @click="addPrompt" class="add-btn">Thêm Prompt</button>
+                            </div>
+                            <button v-for="(prompt, index) in prompts" :key="prompt.id" @click="executePrompt(prompt)"
+                                class="prompt-card">
+                                <div class="prompt-icon">
+                                    <i class="bx bx-credit-card-front"></i>
+                                </div>
+                                <div class="prompt-content">
+                                    <div class="prompt-title">{{ prompt.prompt_text }}</div>
+                                    <button @click.stop="deletePrompt(prompt.id)" class="delete-btn">Xóa</button>
+                                </div>
+                            </button>
+                            <div class="pagination">
+                                <span v-for="page in totalPromptPages" :key="page" @click="changePromptPage(page)"
+                                    :class="{ active: currentPromptPage == page }" class="page-number">
+                                    {{ page }}
+                                </span>
+                            </div>
+                        </div>
                     </div>
 
                     <div v-if="activeTab === 'history'" class="content-center">
-                        <div class="history" v-if="history.length > 0">
-                            <div class="history-item" v-for="item in history" :key="item.id" @click="openHistory(item)">
-                                <div class="description">{{ item.description }}</div>
+                        <div class="history" v-if="historys.length > 0">
+                            <div class="history-item" v-for="item in historys" :key="item.id"
+                                @click="openHistory(item.thread_idid)">
+                                {{ item.name }}
                             </div>
                         </div>
-                        <span v-else>Không có lịch sử để hiển thị.</span>
+                        <div class="pagination">
+                            <span v-for="page in totalHistoryPages " :key="page" @click="changeHistoryPage(page)"
+                                :class="{ active: currentHistoryPage == page }" class="page-number">
+                                {{ page }}
+                            </span>
+                        </div>
                     </div>
                 </div>
             </div>
             <div class="send-bar">
                 <div class="send-container">
                     <div class="input-wrapper">
-                        <input type="text" @keydown.enter="handleSend" v-model="message" placeholder="Nhập yêu cầu hỗ trợ..." />
+                        <input type="text" @keydown.enter="handleSend" v-model="message"
+                            placeholder="Nhập yêu cầu hỗ trợ..."  ref="messageInput"/>
                         <span class="send-icon">🔍</span>
                     </div>
                     <button class="send-button" @click="handleSend" :disabled="loading">
@@ -163,6 +296,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
+        <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :visible="showPopup" @close="showPopup = false" @promptAdded="addPromptToList"/>
     </div>
 </template>
 <style scoped>
@@ -319,6 +453,93 @@ onMounted(() => {
     margin-bottom: 4px;
 }
 
+.prompts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    margin-top: 30px;
+    padding: 55px 20px 20px 20px;
+    border-radius: 15px;
+    position: relative;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
+}
+
+.prompt-controls {
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: flex-end;
+    position: absolute;
+    right: 10px;
+    top: 10px;
+}
+
+.add-btn {
+    background-color: #E03C31;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    padding: 8px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.add-btn:hover {
+    opacity: 0.8;
+}
+
+.prompt-card {
+    display: flex;
+    align-items: center;
+    background-color: #f8f9fa;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    padding: 10px;
+    width: calc((100% - 30px)/4);
+
+    position: relative;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.prompt-card:hover {
+    background-color: #e9ecef;
+}
+
+.promt-icon {
+    margin-right: 10px;
+    font-size: 24px;
+    color: #007bff;
+}
+
+.prompt-content {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.prompt-title {
+    font-size: 16px;
+    font-weight: bold;
+    margin-bottom: 5px;
+}
+
+.delete-btn {
+    align-self: flex-end;
+    background-color: #ff4d4f;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
+
+.delete-btn:hover {
+    background-color: #ff7875;
+}
+
 .history {
     display: flex;
     flex-direction: column;
@@ -334,21 +555,35 @@ onMounted(() => {
     transition: background-color 0.2s ease;
     width: 80%;
     margin: 0 auto;
+
 }
 
 .history-item:hover {
     background-color: #f1f1f1;
+    color: #c9302c;
+}
+.prompts .pagination {
+    text-align: left;
+}
+.pagination {
+    width: 100%;
+    margin-top: 20px;
+    text-align: center;
 }
 
-.history-item .description {
-    font-size: 14px;
-    font-weight: bold;
-    color: #333;
+.pagination span {
+    padding: 10px 15px;
+    background-color: #ccc;
+    color: #111;
+    margin: 0px 5px;
+    cursor: pointer;
 }
 
-.history-item .last-message {
-    font-size: 14px;
-    color: #999;
+.pagination span.active,
+.pagination span:hover {
+    background-color: #e03d31;
+
+    color: #fff;
 }
 
 .content-box {

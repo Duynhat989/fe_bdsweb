@@ -1,8 +1,8 @@
 <script setup>
 import DetailPopup from '@/components/DetailPopup.vue';
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, watch  } from 'vue';
 import { useRouter } from 'vue-router';
-import { format, isBefore  } from 'date-fns';
+import { format, isBefore } from 'date-fns';
 import { encodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
@@ -15,6 +15,9 @@ const courses = ref([]);
 const license = ref({});
 
 const myCourses = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const total = ref(0);
 
 // Khóa học của Tôi
 const fetchMyCourses = async () => {
@@ -25,15 +28,44 @@ const fetchMyCourses = async () => {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
 };
-
-const fetchCourses = async () => {
+const checkAvailableCoursesInLicense = async () => {
   try {
-    const response = await request.get(END_POINT.COURSES_LIST);
+    await fetchLicense();
+    const licenseDate = license.value.date;
+    const currentDate = format(new Date(), 'yyyy-MM-dd');
+    const isExpired = isBefore(currentDate, licenseDate);
+    const licensedCourseIds = JSON.parse(license.value.pack.features).map(feature => feature.id);
+
+    courses.value = courses.value.map(course => ({
+      ...course,
+      statusUse: licensedCourseIds.includes(course.id)
+        ? isExpired ? "Khả dụng" : "Hết hạn gói" : 'Gói chưa cập nhật'
+    }));
+  } catch (error) {
+    console.error('Error checking available courses in license:', error);
+  }
+};
+
+const fetchCourses = async (page = currentPage.value, limit = itemsPerPage.value) => {
+  try {
+    const response = await request.get(END_POINT.COURSES_LIST, {
+      params: {
+        page,
+        limit
+      }
+    });
     courses.value = response.courses;
+    total.value = response?.total ?? 1;
+    currentPage.value = response?.page ?? 1;
+    itemsPerPage.value = response?.limit ?? 10;
+    checkAvailableCoursesInLicense();
   } catch (error) {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
 };
+watch(searchQuery, async (newSearch) => {
+    //  api tìm kiếm
+})
 
 const fetchLicense = async () => {
   try {
@@ -43,34 +75,7 @@ const fetchLicense = async () => {
     console.error('Lỗi lấy thông tin gói:', error);
   }
 };
-const checkAvailableCoursesInLicense = async () => {
-  try {
-    await fetchCourses();
-    await fetchLicense();
 
-    const licenseDate = license.value.date;
-    const currentDate = format(new Date(), 'yyyy-MM-dd');
-    const isExpired = isBefore(currentDate,licenseDate);
-    const licensedCourseIds = JSON.parse(license.value.pack.features).map(feature => feature.id);
-
-    courses.value = courses.value.map(course => ({
-      ...course,
-      statusUse: licensedCourseIds.includes(course.id)
-        ? isExpired ? "Khả dụng" : "Hết hạn gói": 'Gói chưa cập nhật'
-    }));
-  } catch (error) {
-    console.error('Error checking available courses in license:', error);
-  }
-};
-
-
-
-const filteredCourses = computed(() =>
-  courses.value.filter(course =>
-    course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    course.detail.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-);
 
 const filteredMyCourses = computed(() =>
   myCourses.value.filter(courseItem =>
@@ -87,10 +92,19 @@ const handlePayment = (course) => {
   selectedCourse.value = course;
   showPopup.value = true;
 };
+const totalPages = computed(() => {
+  return Math.ceil(total.value / itemsPerPage.value);
+});
 
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    fetchCourses(currentPage.value, itemsPerPage.value);
+  }
+};
 onMounted(() => {
+  fetchCourses();
   fetchMyCourses();
-  checkAvailableCoursesInLicense();
 });
 </script>
 <template>
@@ -109,7 +123,7 @@ onMounted(() => {
     <div v-if="activeTab === 'all'">
       <h2 class="section-title">Danh sách khóa học</h2>
       <div class="course-list">
-        <div class="course-card" v-for="course in filteredCourses" :key="course.id">
+        <div class="course-card" v-for="course in courses" :key="course.id">
           <img :src="course.image" alt="Course Image" class="course-image" />
           <div class="course-content">
             <label class="label-status">{{ course.statusUse }}</label>
@@ -128,6 +142,12 @@ onMounted(() => {
             <button class="register-button" @click.stop="handlePayment(course)">Xem chi tiết</button>
           </div>
         </div>
+      </div>
+      <div class="pagination">
+        <span v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage == page }"
+          class="page-number">
+          {{ page }}
+        </span>
       </div>
     </div>
 
@@ -227,6 +247,26 @@ onMounted(() => {
   flex-wrap: wrap;
   gap: 20px;
   margin-top: 20px;
+}
+
+.pagination {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.pagination span {
+  padding: 10px 15px;
+  background-color: #ccc;
+  color: #111;
+  margin: 0px 5px;
+  cursor: pointer;
+}
+
+.pagination span.active,
+.pagination span:hover {
+  background-color: #e03d31;
+
+  color: #fff;
 }
 
 .course-card {

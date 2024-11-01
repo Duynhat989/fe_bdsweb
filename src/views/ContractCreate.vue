@@ -6,25 +6,31 @@ import ContractCreatePopup from '@/components/ContractCreatePopup.vue';
 const contracts = ref([]);
 const showPopup = ref(false);
 const selectedContract = ref({});
-const fetchContracts = async () => {
+const currentPage = ref(1);
+const itemsPerPage = ref(10);
+const total = ref(0);
+
+const fetchContracts = async (page = currentPage.value, limit = itemsPerPage.value) => {
     try {
-        const response = await request.get(END_POINT.CONTRACTS_LIST);
+        const response = await request.get(END_POINT.CONTRACTS_LIST, {
+            params: {
+                page,
+                limit
+            }
+        });
         contracts.value = response.contracts;
+        total.value = response?.total ?? 1;
+        currentPage.value = response?.page ?? 1;
+        itemsPerPage.value = response?.limit ?? 10;
     } catch (error) {
         console.error('Lỗi lấy danh sách hợp đồng:', error);
     }
 };
 
-const currentPage = ref(1);
-const itemsPerPage = ref(8);
-const paginatedItems = computed(() => {
-    const start = (currentPage.value - 1) * itemsPerPage.value;
-    const end = start + itemsPerPage.value;
-    return contracts.value.slice(start, end);
-});
 const changePage = (page) => {
-    if (page > 0 && page <= totalPages.value) {
+    if (page >= 1 && page <= totalPages.value) {
         currentPage.value = page;
+        fetchContracts(currentPage.value, itemsPerPage.value);
     }
 };
 const handleClick = (contract) => {
@@ -32,7 +38,7 @@ const handleClick = (contract) => {
     showPopup.value = true;
 };
 const totalPages = computed(() => {
-    return Math.ceil(contracts.value.length / itemsPerPage.value);
+    return Math.ceil(total.value / itemsPerPage.value);
 });
 onMounted(() => {
     fetchContracts();
@@ -47,7 +53,7 @@ onMounted(() => {
         </div>
         <div class="main-content">
             <div class="contract-list">
-                <div class="contract-card list-card" v-for="contract in paginatedItems" :key="contract.id"
+                <div class="contract-card list-card" v-for="contract in contracts" :key="contract.id"
                     @click="handleClick(contract)">
                     <img :src="contract.image" alt="contract Image" class="contract-image" />
                     <div class="contract-content">
@@ -57,7 +63,7 @@ onMounted(() => {
                 </div>
                 <div class="pagination">
                     <span @click="changePage(page)" v-for="(page, index) in totalPages"
-                        :class="{ active: currentPage === page }" class="page-number">
+                        :class="{ active: currentPage == page }" class="page-number">
                         {{ page }}</span>
                 </div>
             </div>
@@ -70,8 +76,7 @@ onMounted(() => {
 
 <style scoped>
 .create-contract {
-    margin: 0 auto;
-    text-align: center;
+    margin: 5px auto;
     padding: 0 5%;
 }
 
@@ -96,7 +101,7 @@ onMounted(() => {
 
 .contract-list {
     display: flex;
-    margin: 30px auto;
+    margin: 30px 0;
     flex-wrap: wrap;
     gap: 15px;
 }

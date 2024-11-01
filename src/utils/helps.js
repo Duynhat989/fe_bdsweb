@@ -64,3 +64,11 @@ export function getFeatureNames(values, kt="<br>") {
 
     return values.map(item => item.name).join(kt);
 };
+export function parseJSON (str) {
+    try {
+        return JSON.parse(str || '[]');
+    } catch (e) {
+        console.error("Chuỗi JSON không hợp lệ:", str);
+        return [];
+    }
+};

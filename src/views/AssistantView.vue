@@ -10,16 +10,26 @@ const router = useRouter();
 const viewType = ref('list');
 const assistants = ref([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(8);
+const itemsPerPage = ref(10);
+const total = ref(0);
+
 const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
 };
 
-const fetchAssistants = async () => {
+const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value) => {
   try {
-    const response = await request.get(END_POINT.ASSISTANTS_LIST);
+    const response = await request.get(END_POINT.ASSISTANTS_LIST, {
+      params: {
+        page,
+        limit
+      }
+    });
     assistants.value = response.data;
+    total.value = response?.total ?? 1;
+    currentPage.value = response?.page ?? 1;
+    itemsPerPage.value = response?.limit ?? 10;
   } catch (error) {
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
@@ -28,19 +38,14 @@ const fetchAssistants = async () => {
 const setView = (type) => {
   viewType.value = type;
 };
-const paginatedItems = computed(() => {
-  const start = (currentPage.value - 1) * itemsPerPage.value;
-  const end = start + itemsPerPage.value;
-  return assistants.value.slice(start, end);
-});
-
 const totalPages = computed(() => {
-  return Math.ceil(assistants.value.length / itemsPerPage.value);
+  return Math.ceil(total.value / itemsPerPage.value);
 });
 
 const changePage = (page) => {
-  if (page > 0 && page <= totalPages.value) {
+  if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
+    fetchAssistants(currentPage.value, itemsPerPage.value);
   }
 };
 
@@ -53,8 +58,11 @@ const itemsToShow = computed(() => {
     return 3;
   }
 });
+const loadAssistants = async () => {
+    await fetchAssistants();
+};
 onMounted(() => {
-  fetchAssistants();
+  loadAssistants();
 });
 
 </script>
@@ -70,7 +78,7 @@ onMounted(() => {
     </div>
     <div class="main-content">
       <div v-if="viewType === 'list'" class="assistant-list">
-        <div class="assistant-card list-card" v-for="assistant in paginatedItems" :key="assistant.id"
+        <div class="assistant-card list-card" v-for="assistant in assistants" :key="assistant.id"
           @click="handleClick(assistant.id)">
           <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
           <div class="assistant-content">
@@ -80,9 +88,10 @@ onMounted(() => {
           </div>
         </div>
         <div class="pagination">
-          <span @click="changePage(page)" v-for="(page, index) in totalPages" :class="{ active: currentPage === page }"
-            class="page-number">
-            {{ page }}</span>
+          <span v-for="page in totalPages" :key="page" @click="changePage(page)"
+            :class="{ active: currentPage === page }" class="page-number">
+            {{ page }}
+          </span>
         </div>
       </div>
       <carousel v-if="viewType === 'slide' && assistants.length > 0" :items-to-show="itemsToShow"

@@ -15,6 +15,7 @@ export const END_POINT = {
     CONVERSATION_THREAD: '/api/conversation/thread', // Tạo phiên tin nhắn mới
     CONVERSATION_STREAM: '/api/conversation/stream', // Gửi luồng tin nhắn
     CONVERSATION_LIST: '/api/conversation', // Danh sách tin nhắn
+    HISTORYS_LIST: '/api/historys', // Danh sách lịch sử chat
     // Courses APIs
     COURSES_LIST: '/api/courses', // Danh sách khóa học
     COURSE_FIND: '/api/course/find', // Tìm khóa học
@@ -67,4 +68,7 @@ export const END_POINT = {
     CONTRACTS_LIST: '/api/contracts', // Danh sách Hợp đồng
     CONTRACT_FIND: '/api/contract/find', // Tìm Hợp đồng
 
+    PROMPTS_LIST: '/api/prompts', // Danh sách Promts
+    PROMPT_DELETE: '/api/prompt/delete', // Xóa Promts
+    PROMPT_CREATE: '/api/prompt/create', // Xóa Promts
 };
