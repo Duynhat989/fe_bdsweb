@@ -20,7 +20,7 @@ const conversationList = ref([]);
 const suggests = ref([]);
 const historys = ref([]);
 const loading = ref(false);
-const messageInput = ref(null); 
+const messageInput = ref(null);
 const currentHistoryPage = ref(1);
 const currentPromptPage = ref(1);
 const itemsPromptPage = ref(10);
@@ -36,7 +36,7 @@ const addPrompt = () => {
     showPopup.value = true;
 };
 const addPromptToList = (newPrompt) => {
-    prompts.value.push(newPrompt.value); 
+    prompts.value.push(newPrompt.value);
 };
 const fetchAssistantData = async () => {
     try {
@@ -286,7 +286,7 @@ onMounted(() => {
                 <div class="send-container">
                     <div class="input-wrapper">
                         <input type="text" @keydown.enter="handleSend" v-model="message"
-                            placeholder="Nhập yêu cầu hỗ trợ..."  ref="messageInput"/>
+                            placeholder="Nhập yêu cầu hỗ trợ..." ref="messageInput" />
                         <span class="send-icon">🔍</span>
                     </div>
                     <button class="send-button" @click="handleSend" :disabled="loading">
@@ -296,7 +296,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :visible="showPopup" @close="showPopup = false" @promptAdded="addPromptToList"/>
+        <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :visible="showPopup" @close="showPopup = false"
+            @promptAdded="addPromptToList" />
     </div>
 </template>
 <style scoped>
@@ -562,9 +563,11 @@ onMounted(() => {
     background-color: #f1f1f1;
     color: #c9302c;
 }
+
 .prompts .pagination {
     text-align: left;
 }
+
 .pagination {
     width: 100%;
     margin-top: 20px;
@@ -639,6 +642,10 @@ onMounted(() => {
 }
 
 @media (max-width: 992px) {
+    .content-center {
+        width: 90%;
+    }
+
     .main-container {
         max-width: 800px;
     }
@@ -653,6 +660,10 @@ onMounted(() => {
 
     .input-wrapper input {
         font-size: 16px;
+    }
+
+    .prompt-card {
+        width: calc((100% - 20px) / 3);
     }
 }
 
@@ -673,6 +684,10 @@ onMounted(() => {
     .header-title .title {
         font-size: 25px;
         line-height: 30px;
+    }
+
+    .prompt-card {
+        width: calc((100% - 10px) / 2);
     }
 }
 
@@ -695,6 +710,10 @@ onMounted(() => {
     }
 
     .history-item {
+        width: 100%;
+    }
+
+    .prompt-card {
         width: 100%;
     }
 }

@@ -210,6 +210,8 @@ watch(conversationList, () => {
     color: #fff;
     font-weight: 700;
     font-size: 20px;
+    display: flex;
+    align-items: center;
 }
 
 .message-content {
