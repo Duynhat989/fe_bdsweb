@@ -57,11 +57,11 @@ const createPrompt = async () => {
         let response;
         response = await request.post(props.isEdit ? END_POINT.PROMPT_UPDATE : END_POINT.PROMPT_CREATE, dataToSubmit);
         if (response.success) {
-            promptSuccess.value = response.data;
+            promptSuccess.value = props.isEdit ? dataToSubmit : response.data;
             notification.success('Thành công!', props.isEdit ? 'Cập nhật prompt thành công!' : 'Thêm mới prompt thành công!', {
                 showActions: false
             });
-            emit('promptAdded', { prompt: promptSuccess.value })
+            emit('promptAdded', { prompt: promptSuccess.value , isEdit: props.isEdit})
             closePopup();
         }
     } catch (error) {
@@ -81,7 +81,7 @@ const createPrompt = async () => {
                 <form @submit.prevent="createPrompt">
                     <label>{{ isEdit ? 'Chỉnh sửa prompt' : 'Thêm prompt' }}</label>
                     <input v-model="promptData.name" placeholder="Nhập tên prompt" required />
-                    <input v-model="promptData.prompt_text" placeholder="Nhập nội dung prompt" required />
+                    <textarea v-model="promptData.prompt_text"></textarea>
                     <button type="submit" class="button-prompt">{{ isEdit ? 'Chỉnh sửa' : 'Tạo prompt' }}</button>
                 </form>
             </div>
@@ -140,7 +140,7 @@ label {
     margin-bottom: 8px;
     color: #333;
 }
-
+textarea,
 input {
     margin-top: 10px;
     width: 100%;
@@ -151,7 +151,9 @@ input {
     font-size: 16px;
     color: #333;
 }
-
+textarea {
+    height: 200px;
+}
 .button-prompt {
     background-color: #318be0;
     color: white;

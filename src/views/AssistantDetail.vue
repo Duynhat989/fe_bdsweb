@@ -44,7 +44,7 @@ const editPrompt = async (prompt) => {
     selectePrompt.value = prompt;
     isEdit.value = true
 };
-const addPromptToList = ({ prompt }) => {
+const addPromptToList = ({ prompt ,isEdit}) => {
     if (isEdit) {
         const index = prompts.value.findIndex(p => p.id === prompt.id);
         if (index !== -1) {
@@ -272,7 +272,7 @@ onMounted(() => {
                                     </div>
                                     <div class="prompt-content">
                                         <div class="prompt-title">{{ prompt.name }}</div>
-                                        <div class="prompt-description">Nội dung prompt: {{ prompt.prompt_text }}</div>
+                                        <div class="prompt-description">{{ prompt.prompt_text }}</div>
                                         <div class="prompt-action">
                                             <button @click.stop="editPrompt(prompt)" class="delete-btn">
                                                 <i class='bx bx-edit-alt'></i>
@@ -531,6 +531,7 @@ onMounted(() => {
     gap: 4px;
     width: calc((100% - 30px)/ 4);
     flex-direction: column;
+    cursor: pointer;
 }
 
 .prompt-icon img {
@@ -553,6 +554,12 @@ onMounted(() => {
     font-size: 14px;
     color: #666;
     margin-bottom: 8px;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: justify;
 }
 
 .prompt-action {
