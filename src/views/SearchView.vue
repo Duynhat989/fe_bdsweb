@@ -145,7 +145,7 @@ watch(selectedFilters, applyFilters);
 
 .title {
   font-size: 24px;
-  color: #c03228;
+  color: var(--color-primary);
   font-weight: bold;
   margin-bottom: 10px;
 }
@@ -180,7 +180,7 @@ watch(selectedFilters, applyFilters);
 }
 
 .filter-apply {
-  background-color: #c03228;
+  background-color: var(--color-primary);
   color: white;
   border: none;
   padding: 10px 20px;
@@ -214,7 +214,7 @@ watch(selectedFilters, applyFilters);
   min-height: 260px ;
 }
 .result-box:hover {
-  border: 1px solid #c03228;
+  border: 1px solid var(--color-primary);
   transform: translateY(-5px);
 }
 
@@ -251,12 +251,12 @@ watch(selectedFilters, applyFilters);
   text-align: justify;
 }
 .item-more strong {
-  color: #c03228;
+  color: var(--color-primary);
 }
 .item-link {
   display: block;
   padding: 10px 20px;
-  background-color: #c03228;
+  background-color: var(--color-primary);
   color: #fff;
   text-align: center;
   border-radius: 20px;

@@ -127,7 +127,7 @@ const handleSubmit = () => {
 
 .hero-content h1 {
     font-size: 48px;
-    color: #c0352b;
+    color: var(--color-primary);
     margin-bottom: 20px;
 }
 
@@ -144,7 +144,7 @@ const handleSubmit = () => {
 .services h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: #c0352b;
+    color: var(--color-primary);
 }
 
 .services-grid {
@@ -171,7 +171,7 @@ const handleSubmit = () => {
 }
 .service-card:hover {
     transform: translateY(-5px);
-    border: 1px solid #c0352b;
+    border: 1px solid var(--color-primary);
 }
 
 .service-card img {
@@ -181,7 +181,7 @@ const handleSubmit = () => {
 }
 
 .service-card h3 {
-    color: #c0352b;
+    color: var(--color-primary);
     margin-bottom: 15px;
 }
 
@@ -192,7 +192,7 @@ const handleSubmit = () => {
 .projects h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: #c0352b;
+    color: var(--color-primary);
 }
 
 .projects-grid {
@@ -210,7 +210,7 @@ const handleSubmit = () => {
 
 .project-card:hover {
     transform: translateY(-5px);
-    border: 1px solid #c0352b;
+    border: 1px solid var(--color-primary);
 }
 
 .project-card img {
@@ -266,7 +266,7 @@ const handleSubmit = () => {
 
 /* Buttons */
 .primary-btn {
-    background: #c0352b;
+    background: var(--color-primary);
     color: white;
     padding: 12px 30px;
     border: none;
@@ -277,11 +277,11 @@ const handleSubmit = () => {
 }
 
 .primary-btn:hover {
-    background: #c0352b;
+    background: var(--color-primary);
 }
 
 .secondary-btn {
-    background: #c0352b;
+    background: var(--color-primary);
     color: white;
     padding: 8px 20px;
     border: none;

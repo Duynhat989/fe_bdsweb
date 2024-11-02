@@ -52,7 +52,7 @@
 .header-title .title {
   font-size: 40px;
   font-weight: bold;
-  color: #e03d31;
+  color: var(--color-primary);
   line-height: 40px;
 }
 
@@ -105,7 +105,7 @@
 }
 
 .contract-button {
-  background-color: #e03d31;
+  background-color: var(--color-primary);
   color: #fff;
   border: none;
   padding: 10px 20px;

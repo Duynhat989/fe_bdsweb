@@ -138,7 +138,7 @@ onMounted(() => {
     font-size: 24px;
     font-weight: bold;
     text-align: center;
-    color: red;
+    color: var(--color-primary);
 }
 
 .popup-content p {
@@ -164,7 +164,7 @@ onMounted(() => {
 }
 
 .button-course {
-    background-color: #ff3f3f;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     padding: 10px 15px;

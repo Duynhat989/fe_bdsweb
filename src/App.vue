@@ -129,10 +129,10 @@ onMounted(() => {
         </div>
       </div>
       <div class="menu_icon top" v-if="hiddenPopup" @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em; color: #e03d31;" class='bx bx-menu-alt-left'></i>
+        <i style="font-size: 2em; color: var(--color-primary);" class='bx bx-menu-alt-left'></i>
       </div>
       <div class="menu_icon" v-else @click="hiddenPopup = !hiddenPopup">
-        <i style="font-size: 2em; color: #e03d31;" class='bx bx-horizontal-left'></i>
+        <i style="font-size: 2em; color: var(--color-primary);" class='bx bx-horizontal-left'></i>
       </div>
     </div>
     <div class="body-content" :class="[{ 'body-full': !isLogin }, { 'no-margin': hiddenPopup }]">
@@ -206,15 +206,15 @@ onMounted(() => {
   transition: all 0.5s;
   border-radius: 10px;
   color: #fff;
-  background-color: #e03d31;
+  background-color: var(--color-primary);
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }
 
 .menu_item.active,
 .menu_item:hover {
-  background-color: #f4d1ce;
+  opacity: 0.8;
   cursor: pointer;
-
+  background-color: #cef4f2;
 }
 
 .menu_item.active .button,
@@ -252,7 +252,7 @@ li .button span {
 .logo_web h2 {
   font-size: 25px;
   font-weight: bold;
-  color: #e03d31;
+  color: var(--color-primary);
 }
 
 .user {

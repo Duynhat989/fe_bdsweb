@@ -209,7 +209,7 @@ p {
 .button-contract {
     width: fit-content;
     padding: 10px;
-    background-color: #ff3f3f;
+    background-color: var(--color-primary);
     border: none;
     border-radius: 4px;
     color: white;

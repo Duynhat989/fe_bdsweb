@@ -243,7 +243,7 @@ onMounted(() => {
                                 <div class="title">{{ suggest }}</div>
                             </button>
                         </div>
-                        <div class="prompts">
+                        <div class="prompts" v-if="prompts.length > 0">
                             <div class="prompt-controls">
                                 <button @click="addPrompt" class="add-btn">Thêm Prompt</button>
                             </div>
@@ -310,7 +310,7 @@ onMounted(() => {
 .header-title .title {
     font-size: 30px;
     font-weight: bold;
-    color: #e03d31;
+    color: var(--color-primary);
     line-height: 40px;
     margin-bottom: 10px;
 }
@@ -388,7 +388,7 @@ onMounted(() => {
 }
 
 .send-button {
-    background-color: #d9534f;
+    background-color: var(--color-primary);
     color: #fff;
     border: none;
     padding: 8px 10px 4px 10px;
@@ -400,6 +400,7 @@ onMounted(() => {
 
 .send-button:hover {
     background-color: #c9302c;
+    opacity: 0.8;
 }
 
 .actions {
@@ -437,7 +438,7 @@ onMounted(() => {
 
 .action-card:focus {
     outline: none;
-    border-color: #007bff;
+    border-color: var(--color-primary);
     box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.25);
 }
 
@@ -475,7 +476,7 @@ onMounted(() => {
 }
 
 .add-btn {
-    background-color: #E03C31;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     border-radius: 5px;
@@ -510,7 +511,7 @@ onMounted(() => {
 .promt-icon {
     margin-right: 10px;
     font-size: 24px;
-    color: #007bff;
+    color: var(--color-primary);
 }
 
 .prompt-content {
@@ -527,7 +528,7 @@ onMounted(() => {
 
 .delete-btn {
     align-self: flex-end;
-    background-color: #ff4d4f;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     border-radius: 4px;
@@ -584,7 +585,7 @@ onMounted(() => {
 
 .pagination span.active,
 .pagination span:hover {
-    background-color: #e03d31;
+    background-color: var(--color-primary);
 
     color: #fff;
 }
@@ -616,8 +617,8 @@ onMounted(() => {
 }
 
 .tab.active {
-    background: rgb(229, 57, 53);
-    background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
+    background: var(--color-primary);
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);
     color: white;
 }
 

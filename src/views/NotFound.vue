@@ -44,7 +44,7 @@
 .error-title {
     font-size: 36px;
     font-weight: bold;
-    color: #E03C31;
+    color: var(--color-primary);
     margin-bottom: 20px;
 }
 
@@ -56,7 +56,7 @@
 
 .back-home-link {
     display: inline-block;
-    background-color: #E03C31;
+    background-color: var(--color-primary);
     color: #ffffff;
     padding: 12px 24px;
     border-radius: 5px;

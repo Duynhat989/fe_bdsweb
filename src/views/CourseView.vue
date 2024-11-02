@@ -192,7 +192,7 @@ onMounted(() => {
 .header-title .title {
   font-size: 30px;
   font-weight: bold;
-  color: #e03d31;
+  color: var(--color-primary);
   line-height: 40px;
 }
 
@@ -217,8 +217,8 @@ onMounted(() => {
 }
 
 .tabs button.active {
-  background: rgb(229, 57, 53);
-  background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
+  background: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);
   color: white;
 }
 
@@ -264,7 +264,7 @@ onMounted(() => {
 
 .pagination span.active,
 .pagination span:hover {
-  background-color: #e03d31;
+  background-color: var(--color-primary);
 
   color: #fff;
 }
@@ -306,7 +306,7 @@ onMounted(() => {
   border-width: 2px;
   box-shadow: rgba(0, 0, 0, .2) 15px 28px 25px -18px;
   box-sizing: border-box;
-  color: #dc3545;
+  color: var(--color-primary);
   cursor: pointer;
   display: inline-block;
   line-height: 16px;
@@ -387,7 +387,7 @@ onMounted(() => {
 }
 
 .register-button {
-  background-color: #f04a4a;
+  background-color: var(--color-primary);
   color: #fff;
   border: none;
   padding: 6px 10px;
@@ -399,7 +399,7 @@ onMounted(() => {
 }
 
 .register-button:hover {
-  background-color: #d43d3d;
+  background-color: var(--color-primary);
 }
 
 /* Responsive Styles */

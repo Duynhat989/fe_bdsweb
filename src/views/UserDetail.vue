@@ -144,7 +144,7 @@ onMounted(() => {
 }
 
 .title {
-    color: #ff3f3f;
+    color: var(--color-primary);
     font-size: 24px;
     margin-bottom: 20px;
     text-align: center;
@@ -163,7 +163,7 @@ onMounted(() => {
 
 .edit-btn,
 .save-btn {
-    background-color: #ff3f3f;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     padding: 5px 16px;
@@ -176,12 +176,12 @@ onMounted(() => {
 
 .edit-btn:hover,
 .save-btn:hover {
-    background-color: #e63939;
+    background-color: var(--color-primary);
 }
 
 .form-box {
     margin-top: 15px;
-    border: 1px solid #e63939;
+    border: 1px solid var(--color-primary);
     border-radius: 20px;
     padding: 20px;
 }

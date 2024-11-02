@@ -148,18 +148,18 @@ watch(conversationList, () => {
     top: 20px;
     left: 70px;
     background-color: #fff;
-    border: 1px solid #c9302c;
+    border: 1px solid var(--color-primary);
     padding: 8px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
-    color: #c9302c;
+    color: var(--color-primary);
     font-weight: bold;
     transition: background-color 0.3s ease;
 }
 
 .back-button:hover {
-    background-color: #e03d31;
+    background-color: var(--color-primary);
     color: #fff;
 }
 
@@ -203,7 +203,7 @@ watch(conversationList, () => {
 }
 
 .message-item span.avatar {
-    background: red;
+    background: var(--color-primary);
     text-align: center;
     justify-content: center;
     line-height: 50px;
@@ -301,7 +301,7 @@ watch(conversationList, () => {
 }
 
 .send-button {
-    background-color: #d9534f;
+    background-color: var(--color-primary);
     color: #fff;
     border: none;
     padding: 8px 10px 4px 10px;
@@ -312,7 +312,7 @@ watch(conversationList, () => {
 }
 
 .send-button:hover {
-    background-color: #c9302c;
+    opacity: 0.7;
 }
 
 .actions {
@@ -451,8 +451,8 @@ watch(conversationList, () => {
 }
 
 .tab.active {
-    background: rgb(229, 57, 53);
-    background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
+    background: var(--color-primary);
+    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);
     color: white;
 }
 

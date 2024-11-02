@@ -71,6 +71,6 @@ p {
 }
 
 p strong {
-  color: #c03228;
+  color: var(--color-primary);
 }
 </style>

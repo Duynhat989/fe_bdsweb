@@ -77,7 +77,7 @@ const resolveIssues = () => {
 .header-title .title {
   font-size: 30px;
   font-weight: bold;
-  color: #e03d31;
+  color: var(--color-primary);
   line-height: 40px;
 }
 
@@ -112,7 +112,7 @@ const resolveIssues = () => {
     align-items: center;
     justify-content: center;
     background-color: #e8f0fe;
-    border: 2px dashed #c03228;
+    border: 2px dashed var(--color-primary);
     border-radius: 8px;
     padding: 15px;
     cursor: pointer;
@@ -135,7 +135,7 @@ const resolveIssues = () => {
 }
 
 .review-button {
-    background-color: #c03228;
+    background-color: var(--color-primary);
     color: white;
     padding: 12px 24px;
     border: none;
@@ -147,6 +147,7 @@ const resolveIssues = () => {
 
 .review-button:hover {
     background-color: #a02620;
+    opacity: 0.8;
 }
 
 .review-button:disabled {
@@ -164,7 +165,7 @@ const resolveIssues = () => {
 }
 .results-section h2 {
   font-size: 24px;
-  color: #c03228;
+  color: var(--color-primary);
   margin-bottom: 15px;
 }
 
@@ -202,7 +203,7 @@ const resolveIssues = () => {
   font-size: 18px;
 }
 .resolve-button {
-    background-color: #c03228;
+    background-color: var(--color-primary);
     color: white;
     padding: 10px 20px;
     border: none;

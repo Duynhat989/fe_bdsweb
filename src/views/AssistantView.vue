@@ -74,7 +74,7 @@ onMounted(() => {
     </div>
     <div class="header-title">
       <h1 class="title">Hỏi đáp trợ lý</h1>
-      <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản Hưng Thịnh.</p>
+      <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
     </div>
     <div class="main-content">
       <div v-if="viewType === 'list'" class="assistant-list">
@@ -142,7 +142,7 @@ onMounted(() => {
 .header-title .title {
   font-size: 30px;
   font-weight: bold;
-  color: #e03d31;
+  color: var(--color-primary);
   line-height: 40px;
 }
 
@@ -161,7 +161,7 @@ onMounted(() => {
 }
 
 .change-type button.active {
-  background-color: #e03d31;
+  background-color: var(--color-primary);
   color: white;
 }
 
@@ -201,7 +201,7 @@ onMounted(() => {
 
 .pagination span.active,
 .pagination span:hover {
-  background-color: #e03d31;
+  background-color: var(--color-primary);
 
   color: #fff;
 }
@@ -288,7 +288,7 @@ onMounted(() => {
 .nav-left,
 .nav-right {
   padding: 5px 5px;
-  background: #e03d31;
+  background: var(--color-primary);
   color: #fff;
   display: flex;
   border-radius: 50%;

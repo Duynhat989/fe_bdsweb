@@ -82,7 +82,7 @@ onMounted(() => {
 .header-title .title {
     font-size: 30px;
     font-weight: bold;
-    color: #e03d31;
+    color: var(--color-primary);
     line-height: 40px;
     margin-bottom: 10px;
 }
@@ -124,7 +124,7 @@ onMounted(() => {
 .package-name {
     font-size: 20px;
     font-weight: bold;
-    color: #ff3f3f;
+    color: var(--color-primary);
     margin-bottom: 10px;
 }
 
@@ -143,7 +143,7 @@ onMounted(() => {
 
 .package-features {
     font-size: 14px;
-    color: #cc4949;
+    color: var(--color-primary);
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
@@ -152,7 +152,7 @@ onMounted(() => {
 }
 
 .register-btn {
-    background-color: #ff3f3f;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -164,7 +164,7 @@ onMounted(() => {
 }
 
 .register-btn:hover {
-    background-color: #e63939;
+    background-color: var(--color-primary);
     opacity: 0.8;
 }
 </style>

@@ -113,7 +113,7 @@ h3 {
     font-size: 20px;
     font-weight: bold;
     line-height: 24px;
-    color: #E03C31;
+    color: var(--color-primary);
 }
 
 .package-features {
@@ -131,7 +131,7 @@ h3 {
     text-align: left;
 }
 .payment-details span {
-    color: #E03C31;
+    color: var(--color-primary);
 }
 
 .payment-details h4 {
@@ -145,7 +145,7 @@ h3 {
 }
 
 .invoice-btn {
-    background-color: #ff3f3f;
+    background-color: var(--color-primary);
     color: white;
     border: none;
     padding: 8px 10px;

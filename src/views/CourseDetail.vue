@@ -147,7 +147,7 @@ onMounted(() => {
   margin-bottom: 16px;
   font-size: 18px;
   font-weight: bold;
-  color: #E03C31;
+  color: var(--color-primary);
 }
 
 .video-placeholder img {
@@ -200,7 +200,7 @@ onMounted(() => {
 .lesson-item:hover {
   background: #f8f9fa;
   transform: translateY(-2px);
-  border: 1px solid #E03C31;
+  border: 1px solid var(--color-primary);
 }
 
 .lesson-item.active {

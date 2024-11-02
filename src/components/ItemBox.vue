@@ -33,7 +33,7 @@ const props = defineProps({
 .item-box:hover {
   transition: all 0.5s;
   background: rgb(204, 204, 204);
-  background: linear-gradient(0deg, rgba(204, 204, 204, 1) 0%, rgba(229, 57, 53, 1) 50%);
+  background: linear-gradient(0deg, rgba(204, 204, 204, 1) 0%, var(--color-primary) 50%);
 }
 
 .item-box:hover {

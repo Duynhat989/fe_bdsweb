@@ -126,7 +126,7 @@ input {
 }
 
 .button-prompt {
-    background-color: #E03C31;
+    background-color: #318be0;
     color: white;
     padding: 10px 20px;
     border: none;

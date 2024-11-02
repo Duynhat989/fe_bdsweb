@@ -31,9 +31,9 @@ const handleClick = (routeName) => {
 <template>
   <div class="main-container">
     <div class="header-title">
-      <h1 class="title">Hưng Thịnh</h1>
+      <h1 class="title">An Phát Hưng</h1>
       <p>Hỗ trợ bạn trong việc tìm kiếm thông tin và giải đáp thắc mắc về bất động sản.</p>
-      <p>Trợ lý Hưng Thịnh giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý
+      <p>Trợ lý An Phát Hưng giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý
         trở nên dễ dàng hơn.</p>
     </div>
     <div class="content">
@@ -90,7 +90,7 @@ const handleClick = (routeName) => {
 .header-title .title {
   font-size: 50px;
   font-weight: bold;
-  color: #e03d31;
+  color: var(--color-primary);
   line-height: 56px;
 }
 
@@ -149,8 +149,8 @@ const handleClick = (routeName) => {
 }
 
 .tab-button.active {
-  background: rgb(229, 57, 53);
-  background: linear-gradient(90deg, rgba(229, 57, 53, 1) 0%, rgba(229, 57, 53, 1) 35%, rgba(44, 44, 44, 1) 100%);
+  background: var(--color-primary);
+  background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);
   color: white;
 }
 

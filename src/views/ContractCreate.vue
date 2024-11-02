@@ -89,7 +89,7 @@ onMounted(() => {
 .header-title .title {
     font-size: 30px;
     font-weight: bold;
-    color: #e03d31;
+    color: var(--color-primary);
     line-height: 40px;
 }
 
@@ -180,7 +180,7 @@ onMounted(() => {
 
 .pagination span.active,
 .pagination span:hover {
-    background-color: #e03d31;
+    background-color: var(--color-primary);
 
     color: #fff;
 }
