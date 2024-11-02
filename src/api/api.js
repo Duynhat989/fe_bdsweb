@@ -71,5 +71,6 @@ export const END_POINT = {
 
     PROMPTS_LIST: '/api/prompts', // Danh sách Promts
     PROMPT_DELETE: '/api/prompt/delete', // Xóa Promts
-    PROMPT_CREATE: '/api/prompt/create', // Xóa Promts
+    PROMPT_CREATE: '/api/prompt/create', // Create Promts
+    PROMPT_UPDATE: '/api/prompt/update', // Update Promts
 };

@@ -31,12 +31,28 @@ const totalPrompts = ref(0);
 const prompts = ref([]);
 
 const showPopup = ref(false);
+const isEdit = ref(false);
+const selectePrompt = ref(null)
 
 const addPrompt = () => {
     showPopup.value = true;
+    isEdit.value = false;
+    selectePrompt.value = null;
 };
-const addPromptToList = (newPrompt) => {
-    prompts.value.push(newPrompt.value);
+const editPrompt = async (prompt) => {
+    showPopup.value = true;
+    selectePrompt.value = prompt;
+    isEdit.value = true
+};
+const addPromptToList = ({ prompt }) => {
+    if (isEdit) {
+        const index = prompts.value.findIndex(p => p.id === prompt.id);
+        if (index !== -1) {
+            prompts.value.splice(index, 1, prompt);
+        }
+    } else {
+        prompts.value.push(prompt);
+    }
 };
 const fetchAssistantData = async () => {
     try {
@@ -159,6 +175,7 @@ const deletePrompt = async (id) => {
         }
     }
 };
+
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
         return;
@@ -248,17 +265,26 @@ onMounted(() => {
                                 <button @click="addPrompt" class="add-btn">Thêm Prompt</button>
                             </div>
                             <div v-if="prompts.length > 0" class="prompt-box">
-                                <div v-for="(prompt, index) in prompts" :key="prompt.id" class="prompt-card" @click="executePrompt(prompt)">
+                                <div v-for="(prompt, index) in prompts" :key="prompt.id" class="prompt-card"
+                                    @click="executePrompt(prompt)">
                                     <div class="prompt-icon">
                                         <img src="../assets/images/icon_logo.png" alt="">
                                     </div>
                                     <div class="prompt-content">
-                                        <div class="prompt-title">{{ prompt.prompt_text }}</div>
+                                        <div class="prompt-title">{{ prompt.name }}</div>
                                         <div class="prompt-description">Nội dung prompt: {{ prompt.prompt_text }}</div>
-                                        <button @click.stop="deletePrompt(prompt.id)"
-                                            class="delete-btn">
-                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="var(--color-primary)" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>
-                                        </button>
+                                        <div class="prompt-action">
+                                            <button @click.stop="editPrompt(prompt)" class="delete-btn">
+                                                <i class='bx bx-edit-alt'></i>
+                                            </button> &nbsp;&nbsp;&nbsp;&nbsp;
+                                            <button @click.stop="deletePrompt(prompt.id)" class="delete-btn">
+                                                <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
+                                                    viewBox="0 0 24 24">
+                                                    <path fill="var(--color-primary)"
+                                                        d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z" />
+                                                </svg>
+                                            </button>
+                                        </div>
                                     </div>
                                 </div>
                             </div>
@@ -301,8 +327,8 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :visible="showPopup" @close="showPopup = false"
-            @promptAdded="addPromptToList" />
+        <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :isEdit="isEdit" :selectePrompt="selectePrompt"
+            :visible="showPopup" @close="showPopup = false" @promptAdded="addPromptToList" />
     </div>
 </template>
 <style scoped>
@@ -474,6 +500,7 @@ onMounted(() => {
 .add-btn:hover {
     opacity: 0.8;
 }
+
 .prompts {
     display: flex;
     flex-direction: column;
@@ -485,6 +512,7 @@ onMounted(() => {
     justify-content: flex-end;
     margin-bottom: 1rem;
 }
+
 .prompt-box {
     display: flex;
     width: 100%;
@@ -509,6 +537,7 @@ onMounted(() => {
     width: 30px;
     height: 40px;
 }
+
 .prompt-content {
     flex: 1;
 }
@@ -526,11 +555,22 @@ onMounted(() => {
     margin-bottom: 8px;
 }
 
+.prompt-action {
+    display: flex;
+    align-items: center;
+}
+
 .delete-btn {
     border: none;
     cursor: pointer;
     background: #fff;
 }
+
+.delete-btn i {
+    font-size: 26px;
+    color: var(--color-primary);
+}
+
 .history {
     display: flex;
     flex-direction: column;

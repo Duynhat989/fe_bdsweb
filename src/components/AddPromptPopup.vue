@@ -1,6 +1,6 @@
 <script setup>
 import useNotification from '@/composables/useNotification';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import request from '@/utils/request';
 import { END_POINT } from '@/api/api';
 
@@ -11,6 +11,8 @@ const props = defineProps({
         type: Number,
         required: true
     },
+    selectePrompt: Object,
+    isEdit: Boolean,
     visible: {
         type: Boolean,
         required: true
@@ -23,20 +25,43 @@ const promptData = ref({
     prompt_text: '',
     name: ''
 });
-
+watch(
+    () => props.selectePrompt,
+    async (newPrompt) => {
+        if (newPrompt) {
+            console.log(props.assistantId);
+            promptData.value = {
+                assistant_id: props.assistantId,
+                ...newPrompt,
+            }
+        } else {
+            promptData.value = {
+                assistant_id: props.assistantId,
+                prompt_text: '',
+                name: ''
+            }
+        }
+    },
+    { immediate: true }
+)
 const closePopup = () => {
     emit('close');
 };
 
 const createPrompt = async () => {
     try {
-        const response = await request.post(END_POINT.PROMPT_CREATE, promptData.value);
+        const dataToSubmit = {
+            ...promptData.value,
+            ...(props.isEdit && { id: props.selectePrompt.id })
+        };
+        let response;
+        response = await request.post(props.isEdit ? END_POINT.PROMPT_UPDATE : END_POINT.PROMPT_CREATE, dataToSubmit);
         if (response.success) {
             promptSuccess.value = response.data;
-            notification.success('Thành công!', 'Tạo prompt thành công!', {
+            notification.success('Thành công!', props.isEdit ? 'Cập nhật prompt thành công!' : 'Thêm mới prompt thành công!', {
                 showActions: false
             });
-            emit('promptAdded', promptSuccess); 
+            emit('promptAdded', { prompt: promptSuccess.value })
             closePopup();
         }
     } catch (error) {
@@ -54,10 +79,10 @@ const createPrompt = async () => {
             <div class="popup-content">
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <form @submit.prevent="createPrompt">
-                    <label>Thêm nội dung</label>
+                    <label>{{ isEdit ? 'Chỉnh sửa prompt' : 'Thêm prompt' }}</label>
                     <input v-model="promptData.name" placeholder="Nhập tên prompt" required />
                     <input v-model="promptData.prompt_text" placeholder="Nhập nội dung prompt" required />
-                    <button type="submit" class="button-prompt">Tạo prompt</button>
+                    <button type="submit" class="button-prompt">{{ isEdit ? 'Chỉnh sửa' : 'Tạo prompt' }}</button>
                 </form>
             </div>
         </div>
@@ -71,7 +96,7 @@ const createPrompt = async () => {
     left: 0;
     width: 100%;
     height: 100%;
-    background-color: rgba(0, 0, 0, 0.5); 
+    background-color: rgba(0, 0, 0, 0.5);
     display: flex;
     align-items: center;
     justify-content: center;
@@ -147,10 +172,10 @@ input {
         opacity: 0;
         transform: scale(0.95);
     }
+
     to {
         opacity: 1;
         transform: scale(1);
     }
 }
-
 </style>
