@@ -67,6 +67,7 @@ export const END_POINT = {
     // Contracts APIs
     CONTRACTS_LIST: '/api/contracts', // Danh sách Hợp đồng
     CONTRACT_FIND: '/api/contract/find', // Tìm Hợp đồng
+    CONTRACT_EXPORT: '/api/contract/export', // Tạo hợp đồng
 
     PROMPTS_LIST: '/api/prompts', // Danh sách Promts
     PROMPT_DELETE: '/api/prompt/delete', // Xóa Promts

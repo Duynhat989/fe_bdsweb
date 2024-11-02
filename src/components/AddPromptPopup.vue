@@ -20,7 +20,8 @@ const props = defineProps({
 const emit = defineEmits(['close', 'promptAdded']);
 const promptData = ref({
     assistant_id: props.assistantId,
-    prompt_text: ''
+    prompt_text: '',
+    name: ''
 });
 
 const closePopup = () => {
@@ -53,7 +54,8 @@ const createPrompt = async () => {
             <div class="popup-content">
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <form @submit.prevent="createPrompt">
-                    <label for="prompt_text">Thêm nội dung</label>
+                    <label>Thêm nội dung</label>
+                    <input v-model="promptData.name" placeholder="Nhập tên prompt" required />
                     <input v-model="promptData.prompt_text" placeholder="Nhập nội dung prompt" required />
                     <button type="submit" class="button-prompt">Tạo prompt</button>
                 </form>

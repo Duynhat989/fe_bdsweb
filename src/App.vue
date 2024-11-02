@@ -121,7 +121,7 @@ onMounted(() => {
               <div class="menu_item" @click="handleLogOut">
                 <a href="javacript:;" class="button">
                   <i class='bx bx-log-out'></i>&nbsp;&nbsp;
-                  <span class="button">Đăng xuất</span>
+                  <span >Đăng xuất</span>
                 </a>
               </div>
             </div>
@@ -295,7 +295,7 @@ li .button span {
   left: -100%;
   display: flex;
   justify-content: center;
-  gap: 15px;
+  gap: 10px;
   flex-direction: column;
   box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
 }

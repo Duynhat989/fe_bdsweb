@@ -243,20 +243,25 @@ onMounted(() => {
                                 <div class="title">{{ suggest }}</div>
                             </button>
                         </div>
-                        <div class="prompts" v-if="prompts.length > 0">
+                        <div class="prompts">
                             <div class="prompt-controls">
                                 <button @click="addPrompt" class="add-btn">Thêm Prompt</button>
                             </div>
-                            <button v-for="(prompt, index) in prompts" :key="prompt.id" @click="executePrompt(prompt)"
-                                class="prompt-card">
-                                <div class="prompt-icon">
-                                    <i class="bx bx-credit-card-front"></i>
+                            <div v-if="prompts.length > 0" class="prompt-box">
+                                <div v-for="(prompt, index) in prompts" :key="prompt.id" class="prompt-card" @click="executePrompt(prompt)">
+                                    <div class="prompt-icon">
+                                        <img src="../assets/images/icon_logo.png" alt="">
+                                    </div>
+                                    <div class="prompt-content">
+                                        <div class="prompt-title">{{ prompt.prompt_text }}</div>
+                                        <div class="prompt-description">Nội dung prompt: {{ prompt.prompt_text }}</div>
+                                        <button @click.stop="deletePrompt(prompt.id)"
+                                            class="delete-btn">
+                                            <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28" viewBox="0 0 24 24"><path fill="var(--color-primary)" d="M7 21q-.825 0-1.412-.587T5 19V6H4V4h5V3h6v1h5v2h-1v13q0 .825-.587 1.413T17 21zm2-4h2V8H9zm4 0h2V8h-2z"/></svg>
+                                        </button>
+                                    </div>
                                 </div>
-                                <div class="prompt-content">
-                                    <div class="prompt-title">{{ prompt.prompt_text }}</div>
-                                    <button @click.stop="deletePrompt(prompt.id)" class="delete-btn">Xóa</button>
-                                </div>
-                            </button>
+                            </div>
                             <div class="pagination">
                                 <span v-for="page in totalPromptPages" :key="page" @click="changePromptPage(page)"
                                     :class="{ active: currentPromptPage == page }" class="page-number">
@@ -455,26 +460,6 @@ onMounted(() => {
     margin-bottom: 4px;
 }
 
-.prompts {
-    display: flex;
-    flex-wrap: wrap;
-    gap: 10px;
-    margin-top: 30px;
-    padding: 55px 20px 20px 20px;
-    border-radius: 15px;
-    position: relative;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-
-.prompt-controls {
-    margin-bottom: 15px;
-    display: flex;
-    justify-content: flex-end;
-    position: absolute;
-    right: 10px;
-    top: 10px;
-}
-
 .add-btn {
     background-color: var(--color-primary);
     color: white;
@@ -489,59 +474,63 @@ onMounted(() => {
 .add-btn:hover {
     opacity: 0.8;
 }
+.prompts {
+    display: flex;
+    flex-direction: column;
+    padding: 1rem;
+}
+
+.prompt-controls {
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 1rem;
+}
+.prompt-box {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    flex-wrap: wrap;
+}
 
 .prompt-card {
     display: flex;
     align-items: center;
-    background-color: #f8f9fa;
+    padding: 8px;
     border: 1px solid #ddd;
     border-radius: 8px;
-    padding: 10px;
-    width: calc((100% - 30px)/4);
-
-    position: relative;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.prompt-card:hover {
-    background-color: #e9ecef;
-}
-
-.promt-icon {
-    margin-right: 10px;
-    font-size: 24px;
-    color: var(--color-primary);
-}
-
-.prompt-content {
-    display: flex;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    gap: 4px;
+    width: calc((100% - 30px)/ 4);
     flex-direction: column;
-    width: 100%;
+}
+
+.prompt-icon img {
+    width: 30px;
+    height: 40px;
+}
+.prompt-content {
+    flex: 1;
 }
 
 .prompt-title {
-    font-size: 16px;
     font-weight: bold;
-    margin-bottom: 5px;
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.prompt-date,
+.prompt-description {
+    font-size: 14px;
+    color: #666;
+    margin-bottom: 8px;
 }
 
 .delete-btn {
-    align-self: flex-end;
-    background-color: var(--color-primary);
-    color: white;
     border: none;
-    border-radius: 4px;
-    padding: 4px 8px;
-    font-size: 12px;
     cursor: pointer;
-    transition: background-color 0.3s ease;
+    background: #fff;
 }
-
-.delete-btn:hover {
-    background-color: #ff7875;
-}
-
 .history {
     display: flex;
     flex-direction: column;

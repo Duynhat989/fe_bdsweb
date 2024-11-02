@@ -9,7 +9,7 @@ const notification = useNotification();
 const router = useRouter();
 
 const InputForm = ref([]);
-const contractSuccess = ref([]);
+const link = ref(null);
 
 const contractData = ref({
     name: '',
@@ -38,7 +38,7 @@ watch(
     (newContract) => {
         if (newContract) {
             contractData.value = { ...newContract };
-            
+
             InputForm.value = parseJSON(contractData.value.input);
             InputForm.value.forEach((input) => {
                 if (input.type === 'select' && input.value.length > 0 && !input.selectedValue) {
@@ -56,17 +56,24 @@ watch(
 const createContract = async () => {
     try {
         if (props.contract.id) {
-            // load api tạo hợp đồng
-            if (response.success) {
-                contractSuccess.value = response.data;
-                notification.success('Thành công!', 'Tạo hợp đồng thành công!', {
-                    showActions: false
-                });
-                closePopup();
-                setTimeout(() => {
-                    window.location.reload();
-                }, 2000);
-            }
+            const replaceData = InputForm.value.reduce((acc, field) => {
+                acc[field.keyword] = field.type === "select" ? field.selectedValue : field.value;
+                return acc;
+            }, {});
+
+            const payload = {
+                id: props.contract.id,
+                replaceData: replaceData
+            };
+            const response = await request.post(END_POINT.CONTRACT_EXPORT, payload, {
+                responseType: 'blob'
+            });
+            const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+            link.value = window.URL.createObjectURL(blob);
+            
+            notification.success('Thành công!', 'Hợp đồng đã được tải xuống thành công!', {
+                showActions: false
+            });
         } else {
             router.push('/404');
         }
@@ -105,7 +112,7 @@ const createContract = async () => {
                             <input v-else type="text" :id="'field-' + index" v-model="input.value"
                                 :placeholder="input.placeholder || 'Điền thông tin'" :required="input.required" />
                         </div>
-
+                        <a class="button-link" :href="link" v-if="link" download="Hop_dong.docx">Tải file</a> &nbsp;&nbsp;
                         <button type="submit" class="button-contract">Tạo hợp đồng</button>
                     </form>
                 </div>
@@ -137,6 +144,7 @@ const createContract = async () => {
     box-shadow: 0px 4px 12px rgba(0, 0, 0, 0.3);
     animation: fadeIn 0.3s ease-out;
     overflow: auto;
+    height: 80vh;
 }
 
 .detail-popup::-webkit-scrollbar {
@@ -160,7 +168,6 @@ const createContract = async () => {
     flex-direction: column;
     gap: 10px;
 }
-
 h3 {
     margin: 0;
     font-size: 1.5em;
@@ -188,7 +195,10 @@ p {
     gap: 25px;
     margin-bottom: 15px;
 }
-
+.button-link {
+    color: var(--color-primary);
+    text-decoration: underline;
+}
 .form-group label {
     font-weight: bold;
     color: #333;

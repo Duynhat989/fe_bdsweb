@@ -138,6 +138,7 @@ onMounted(() => {
 
 .contract-content {
     padding: 10px;
+    width: 100%;
 }
 
 .contract-title {
@@ -151,7 +152,7 @@ onMounted(() => {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
-    text-align: justify;
+    text-align: center;
 }
 
 .contract-detail {
