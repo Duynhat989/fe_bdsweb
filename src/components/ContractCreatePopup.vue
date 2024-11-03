@@ -10,7 +10,7 @@ const router = useRouter();
 
 const InputForm = ref([]);
 const link = ref(null);
-
+const isLoading = ref(false);
 const contractData = ref({
     name: '',
     description: '',
@@ -54,6 +54,7 @@ watch(
 );
 
 const createContract = async () => {
+    isLoading.value = true;
     try {
         if (props.contract.id) {
             const replaceData = InputForm.value.reduce((acc, field) => {
@@ -70,7 +71,7 @@ const createContract = async () => {
             });
             const blob = new Blob([response], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
             link.value = window.URL.createObjectURL(blob);
-            
+
             notification.success('Thành công!', 'Hợp đồng đã được tải xuống thành công!', {
                 showActions: false
             });
@@ -81,6 +82,15 @@ const createContract = async () => {
         const message = error.response?.data?.message || error.message;
         notification.error('Lỗi!', `Tạo hợp đồng không thành công! Lỗi: ${message}`, {
             showActions: false
+        });
+    } finally {
+        isLoading.value = false;
+        InputForm.value.forEach(field => {
+            if (field.type === "select") {
+                field.selectedValue = null; 
+            } else {
+                field.value = ""; 
+            }
         });
     }
 };
@@ -112,8 +122,24 @@ const createContract = async () => {
                             <input v-else type="text" :id="'field-' + index" v-model="input.value"
                                 :placeholder="input.placeholder || 'Điền thông tin'" :required="input.required" />
                         </div>
-                        <a class="button-link" :href="link" v-if="link" download="Hop_dong.docx">Tải file</a> &nbsp;&nbsp;
-                        <button type="submit" class="button-contract">Tạo hợp đồng</button>
+                        <a class="button-link" :href="link" v-if="link" download="Hop_dong.docx">Tải file</a>
+                        &nbsp;&nbsp;
+
+                        <button type="submit" :disabled="isLoading" class="button-contract">
+                            <span v-if="isLoading">
+                                <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em"
+                                    height="1em" viewBox="0 0 24 24">
+                                    <path fill="currentColor"
+                                        d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
+                                        opacity="0.5" />
+                                    <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+                                        <animateTransform attributeName="transform" dur="1s" from="0 12 12"
+                                            repeatCount="indefinite" to="360 12 12" type="rotate" />
+                                    </path>
+                                </svg>
+                                Đăng tạo hợp đồng ...</span>
+                            <span v-else>Tạo hợp đồng</span>
+                        </button>
                     </form>
                 </div>
             </div>
@@ -168,6 +194,7 @@ const createContract = async () => {
     flex-direction: column;
     gap: 10px;
 }
+
 h3 {
     margin: 0;
     font-size: 1.5em;
@@ -195,10 +222,12 @@ p {
     gap: 25px;
     margin-bottom: 15px;
 }
+
 .button-link {
     color: var(--color-primary);
     text-decoration: underline;
 }
+
 .form-group label {
     font-weight: bold;
     color: #333;
