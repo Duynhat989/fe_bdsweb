@@ -75,22 +75,13 @@ export const sendMessageRequest = async (messageValue, threadId, END_POINT) => {
 //     return await readStream();
 // };
 export const handleResponseStream = async (response, conversationList) => {
-    // Kiểm tra xem response có ok không
     if (!response.ok) {
-
         throw new Error(await response.text());
     }
-
     const decoder = new TextDecoder('utf-8');
-
-
-    // Dùng for await...of để đọc từng chunk dữ liệu từ response.body
     for await (const chunk of response.body) {
-        // Giải mã chunk và nối vào fullData
-        console.log("Dat ----------")
         try {
             let dat = decoder.decode(chunk, { stream: true });
-            console.log("Dat: ", JSON.stringify(dat.trim()))
             let arayDat = dat.trim().split('\r\n\r\n')
 
             if (arayDat.length > 1) {
@@ -102,7 +93,6 @@ export const handleResponseStream = async (response, conversationList) => {
             } catch (error) {
                 newData = JSON.parse(arayDat[arayDat.length - 2])
             } // Chuyển đổi dòng dữ liệu thành đối tượng JSON
-            console.log(newData)
             let isDuplicate = conversationList[conversationList.length - 1].role == 'model'
             if (isDuplicate) {
                 conversationList[conversationList.length - 1].content = newData.data.full
@@ -110,37 +100,7 @@ export const handleResponseStream = async (response, conversationList) => {
         } catch (error) {
 
         }
-
-
-        console.log("SDFSDFDSF", conversationList)
-
-        // fullData += decoder.decode(chunk, { stream: true });
-
-        // // Tách các dòng dữ liệu (nếu có)
-        // const lines = fullData.split('\n').filter(line => line.trim() !== '');
-        // console.log(lines)
-        // // Xử lý từng dòng dữ liệu
-        // for (const line of lines) {
-        //     try {
-        //         const jsonData = JSON.parse(line); // Chuyển đổi dòng dữ liệu thành đối tượng JSON
-
-        //         // Kiểm tra nếu dữ liệu đã tồn tại trong conversationList
-        //         const isDuplicate = conversationList.some(item => item.full === jsonData.data.full);
-
-        //         if (!isDuplicate) {
-        //             // Thêm dữ liệu vào conversationList
-        //             conversationList.push(jsonData.data);
-        //         }
-        //     } catch (error) {
-        //         console.error('Error parsing JSON:', error); // Xử lý lỗi khi chuyển đổi
-        //     }
-        // }
-
-        // // Cập nhật lại fullData để loại bỏ các dòng đã xử lý
-        // fullData = lines[lines.length - 1]; // Giữ lại phần dữ liệu không hoàn chỉnh
     }
-
-    // Trả về conversationList đã được cập nhật
     return conversationList;
 };
 

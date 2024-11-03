@@ -125,9 +125,10 @@ watch(conversationList, () => {
                     class="message-item">
                     <span v-if="message.role === 'user'" class="avatar">Me</span>
                     <img v-else src="../assets/images/q_a.png" alt="Model Avatar" class="avatar" />
-                    <span class="copy-button" @click="copyToClipboard(message.content)"><i
-                            class='bx bx-copy'></i></span>
-                    <div class="message-content" :text-content="message.content">{{ message.content }}</div>
+                    <span class="copy-button" @click="copyToClipboard(message.content)">
+                        <i class='bx bx-copy'></i>
+                    </span>
+                    <div class="message-content" :text-content="message.content" ><span> <i v-show="loading && message.role === 'model'" class='bx bx-loader bx-spin'></i></span>{{ message.content }}</div>
                 </div>
             </div>
             <div class="send-bar">
@@ -229,18 +230,6 @@ watch(conversationList, () => {
     white-space: pre-wrap;
     opacity: 1;
 }
-
-
-/* .message-content.enter-active,
-.message-content.leave-active {
-    transition: opacity 0.2s;
-}
-
-.message-content.enter,
-.message-content.leave-to {
-    opacity: 0;
-} */
-
 .copy-button {
     cursor: pointer;
     font-size: 16px;
