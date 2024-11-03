@@ -115,7 +115,7 @@ onMounted(() => {
     border-radius: 10px;
     padding: 20px;
     box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
-    max-width: 300px;
+    max-width: 400px;
     width: 100%;
     text-align: center;
     color: #333;
@@ -145,7 +145,7 @@ onMounted(() => {
     font-size: 14px;
     color: var(--color-primary);
     display: -webkit-box;
-    -webkit-line-clamp: 2;
+    -webkit-line-clamp: 5;
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;

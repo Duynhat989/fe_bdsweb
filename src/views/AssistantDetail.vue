@@ -5,8 +5,9 @@ import { decodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import useNotification from '@/composables/useNotification';
-import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
 import AddPromptPopup from '@/components/AddPromptPopup.vue';
+import store from '@/store';
+
 const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
@@ -44,7 +45,7 @@ const editPrompt = async (prompt) => {
     selectePrompt.value = prompt;
     isEdit.value = true
 };
-const addPromptToList = ({ prompt ,isEdit}) => {
+const addPromptToList = ({ prompt, isEdit }) => {
     if (isEdit) {
         const index = prompts.value.findIndex(p => p.id === prompt.id);
         if (index !== -1) {
@@ -182,26 +183,8 @@ const handleSend = async () => {
     }
     loading.value = true;
     try {
-        conversationList.value.push({
-            role: "user",
-            content: message.value
-        });
-        await fetchConversationNew();
-        const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
-        if (!response.ok) {
-            const errorData = await response.json();
-            notification.info('Thông báo!', `${errorData.message}`, {
-                showActions: true,
-                onAction: ({ action }) => {
-                    if (action === 'info') {
-                        router.push('/package');
-                    }
-                }
-            })
-        } else {
-            conversationList.value = await handleResponseStream(response, conversationList);
-            message.value = "";
-        }
+        await fetchConversationNew()
+        store.commit('setMessage', message.value);
         router.push({
             path: `/chat/${threadId.value}`
         });
@@ -224,6 +207,7 @@ const loadConversation = async () => {
         return;
     }
     await fetchAssistantData();
+
     await fetchPrompts();
     await fetchHistorys();
 };
@@ -257,7 +241,7 @@ onMounted(() => {
                                 <div class="icon">
                                     <i class="bx bx-message-square-dots"></i>
                                 </div>
-                                <div class="title">{{ suggest }}</div>
+                                <p class="title">{{ suggest }}</p>
                             </button>
                         </div>
                         <div class="prompts">
@@ -457,7 +441,6 @@ onMounted(() => {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    white-space: nowrap;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -476,14 +459,17 @@ onMounted(() => {
 .action-card .icon {
     font-size: 24px;
     color: #666;
-    margin-bottom: 8px;
+    margin: 0 auto;
+    margin-bottom: 4px;
 }
 
 .action-card .title {
     font-size: 16px;
     font-weight: bold;
+    line-height: 20px;
     color: #333;
     margin-bottom: 4px;
+    width: fit-content;
 }
 
 .add-btn {

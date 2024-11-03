@@ -28,9 +28,13 @@ export const handleResponseStream = async (response, conversationList) => {
     const readStream = async () => {
         let done, value;
         while ({ done, value } = await reader.read(), !done) {
+            console.log(value,'value');
             let textValue = decoder.decode(value);
-            textValue = textValue.trim().split('\r\n').pop();
-
+            console.log(textValue,'textValue');
+            
+            console.log(textValue.trim().split('\r\n\r\n'))
+            textValue = textValue.trim().split('\r\n\r\n').pop();
+            console.log(textValue)
             if (textValue) {
                 try {
                     const data = JSON.parse(textValue);

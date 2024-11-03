@@ -26,18 +26,24 @@ const checkScreenSize = () => {
 };
 const fetchAssistants = async () => {
   try {
-    const [estateAnalysis, financialAnalysis, teamTraining] = await Promise.all([
+    const [estateAnalysis, financialAnalysis, teamTraining, newsSummary] = await Promise.all([
       request.get(END_POINT.ESTATEANALYSIS),
       request.get(END_POINT.FINANCIALANALYSIS),
-      request.get(END_POINT.TEAMTRAINGING)
+      request.get(END_POINT.TEAMTRAINGING),
+      request.get(END_POINT.NEWSSUMMARY)
     ]);
     assistantsSelected.value = [
       estateAnalysis.assistant,
       financialAnalysis.assistant,
-      teamTraining.assistant
+      teamTraining.assistant,
+      newsSummary.assistant
     ];
   } catch (error) {
-    console.error('Lỗi lấy danh sách trợ lý:', error);
+    if (error.response && error.response.status === 500) {
+      console.error('Lỗi 500: Lỗi máy chủ trong quá trình lấy danh sách trợ lý:', error);
+    } else {
+      console.error('Lỗi lấy danh sách trợ lý:', error);
+    }
   }
 };
 
@@ -56,9 +62,11 @@ const handleClick = (id) => {
 
 onMounted(() => {
   checkMaintenanceStatus();
-  fetchAssistants();
   checkScreenSize();
   setNotificationComponent(notificationRef.value);
+  if (isLogin.value) {
+    fetchAssistants();
+  }
   window.addEventListener('resize', checkScreenSize);
 });
 </script>
@@ -119,10 +127,10 @@ onMounted(() => {
                   &nbsp;&nbsp; <span>Thông tin cá nhân</span></a>
               </div>
               <div class="menu_item" @click="handleLogOut">
-                <a href="javacript:;" class="button">
+                <div class="button">
                   <i class='bx bx-log-out'></i>&nbsp;&nbsp;
                   <span >Đăng xuất</span>
-                </a>
+                </div>
               </div>
             </div>
           </div>

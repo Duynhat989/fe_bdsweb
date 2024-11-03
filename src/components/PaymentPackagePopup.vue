@@ -2,6 +2,14 @@
 import { ref, watch } from 'vue';
 import { formatCurrency, getFeatureNames } from '@/utils/helps';
 import { generateVietQRUrl } from '@/utils/qrHelper';
+
+const qrCodeUrl = ref(null);
+const totalPrice = ref(0);
+const accountNumber = import.meta.env.VITE_ACCOUNT_NUMBER;
+const bankCode = import.meta.env.VITE_BANK_CODE;
+const accountName = import.meta.env.VITE_ACCOUNT_NAME;
+const paymentContent = ref('');
+
 const props = defineProps({
     package: {
         type: Object,
@@ -14,9 +22,6 @@ const props = defineProps({
 });
 
 const emit = defineEmits(['close']);
-const totalPrice = ref(0);
-const qrCodeUrl = ref(null);
-
 watch(
     () => props.package,
     (newPackage) => {
@@ -30,15 +35,9 @@ const closePopup = () => {
     qrCodeUrl.value = null;
 };
 
-
-const createInvoice = () => {
-  const accountNumber = import.meta.env.VITE_ACCOUNT_NUMBER;
-  const paymentContent = import.meta.env.VITE_PAYMENT_CONTENT;
-  const bankCode = import.meta.env.VITE_BANK_CODE;
-  const accountName = import.meta.env.VITE_ACCOUNT_NAME;
-  const amount = totalPrice.value;
-
-  qrCodeUrl.value = generateVietQRUrl(bankCode, accountNumber, amount, paymentContent,accountName);
+const createInvoice = async () => {
+    paymentContent.value = `APH${props.package.id}CO${Math.floor(1000 + Math.random() * 9000)}`;
+    qrCodeUrl.value = await generateVietQRUrl(bankCode, accountNumber, totalPrice.value, paymentContent.value, accountName);
 };
 </script>
 
@@ -48,14 +47,21 @@ const createInvoice = () => {
             <div class="popup-content">
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ package.name }}</h3>
-                <p class="package-features" v-html="getFeatureNames(package.features,', ') || 'Không có tính năng bổ sung' "></p>
-
+                <p class="package-features"
+                    v-html="getFeatureNames(package.features, ', ') || 'Không có tính năng bổ sung'"></p>
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
                     <p>Gói đăng ký: <span> {{ package.name }}</span></p>
                     <p>Số lượt yêu cầu: <span> {{ package.ask }}</span></p>
-                    <p>Giá: <span>{{ formatCurrency(package.price) }}</span></p>
-                    <p>Tổng: <span>{{ formatCurrency(totalPrice) }}</span></p>
+                    <p>Giá: <span>{{ formatCurrency(totalPrice) }}</span></p>
+                    <p>Nội dung chuyển : <span>{{ paymentContent }}</span></p>
+                    <div class="recipient-info">
+                        <h4>Thông tin người nhận</h4>
+                        <p>Ngân hàng: <span>{{ bankCode }}</span></p>
+                        <p>Số tài khoản: <span>{{ accountNumber }}</span></p>
+                        <p>Tên tài khoản: <span>{{ accountName }}</span></p>
+                    </div>
+
                     <button @click="createInvoice" class="invoice-btn">Tạo hóa đơn</button>
                     <div v-if="qrCodeUrl" class="payment-qr">
                         <img :src="qrCodeUrl" alt="Mã QR thanh toán" />
@@ -130,6 +136,7 @@ h3 {
     font-size: 14px;
     text-align: left;
 }
+
 .payment-details span {
     color: var(--color-primary);
 }
@@ -142,6 +149,22 @@ h3 {
 
 .payment-details p {
     margin: 5px 0;
+}
+
+.recipient-info {
+    margin-top: 20px;
+    padding: 10px;
+    border-top: 1px solid #ddd;
+}
+
+.recipient-info h4 {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.recipient-info p {
+    margin: 5px 0;
+    color: #555;
 }
 
 .invoice-btn {

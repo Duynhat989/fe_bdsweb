@@ -5,7 +5,8 @@ const store = createStore({
     state: {
         user: JSON.parse(localStorage.getItem('user')) || null,
         token: localStorage.getItem('token') || null,
-        isLogin: !!localStorage.getItem('token') 
+        isLogin: !!localStorage.getItem('token') ,
+        message: ""
     },
     mutations: {
         setUser(state, user) {
@@ -23,7 +24,10 @@ const store = createStore({
             state.isLogin = false;
             localStorage.removeItem('user');
             localStorage.removeItem('token');
-        }
+        },
+        setMessage(state, message) {
+            state.message = message;
+        },
     },
     actions: {
         async login({ commit }, credentials) {

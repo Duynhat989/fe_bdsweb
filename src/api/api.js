@@ -63,6 +63,7 @@ export const END_POINT = {
     ESTATEANALYSIS: '/api/nav/estateAnalysis',
     FINANCIALANALYSIS: '/api/nav/financialAnalysis',
     TEAMTRAINGING: '/api/nav/teamTraining',
+    NEWSSUMMARY: '/api/nav/newsSummary',
 
     // Contracts APIs
     CONTRACTS_LIST: '/api/contracts', // Danh sách Hợp đồng

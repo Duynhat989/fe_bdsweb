@@ -1,34 +1,29 @@
 <script setup>
-import { ref, onMounted, nextTick, watch } from 'vue';
+import { ref, onMounted, nextTick, watch, computed } from 'vue';
 import { useRoute, useRouter } from 'vue-router';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
 import useNotification from '@/composables/useNotification';
+import store from '@/store';
 
 const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
-
-const message = ref('');
-const threadId = ref('');
 const conversationList = ref([]);
 const loading = ref(false);
 const conversationContainer = ref(null);
+const message = ref('');
+const messageOld = computed(() => store.state.message);
+const threadId = computed(() => route.params.id);
 
-const goBack = () => {
-    router.back();
-};
+const goBack = () => router.back();
+
 const copyToClipboard = (text) => {
     if (!text) return;
     navigator.clipboard.writeText(text).then(
         () => {
             notification.success('Thành công!', 'Copy text thành công!', {
-                showActions: false
-            })
-        },
-        (err) => {
-            notification.error('Lỗi!', ` Copy text Lỗi`, {
                 showActions: false
             })
         }
@@ -57,7 +52,6 @@ const fetchConversationList = async () => {
     }
 };
 
-
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
         return;
@@ -82,6 +76,7 @@ const handleSend = async () => {
             })
         } else {
             conversationList.value = await handleResponseStream(response, conversationList);
+            store.commit('setMessage', "");
             message.value = "";
         }
     } catch (error) {
@@ -92,13 +87,15 @@ const handleSend = async () => {
         loading.value = false;
     }
 };
-
 const loadConversation = async () => {
     await fetchConversationList();
+    if (messageOld.value?.trim()) {
+        message.value = messageOld.value;
+        await handleSend();
+    }
 };
 
 onMounted(() => {
-    threadId.value = route.params.id;
     loadConversation();
 });
 
@@ -223,12 +220,11 @@ watch(conversationList, () => {
     text-rendering: optimizeLegibility;
     transition: opacity 0.2s ease-in-out;
     white-space: pre-wrap;
-
     opacity: 1;
 }
 
 
-.message-content.enter-active,
+/* .message-content.enter-active,
 .message-content.leave-active {
     transition: opacity 0.2s;
 }
@@ -236,7 +232,7 @@ watch(conversationList, () => {
 .message-content.enter,
 .message-content.leave-to {
     opacity: 0;
-}
+} */
 
 .copy-button {
     cursor: pointer;
