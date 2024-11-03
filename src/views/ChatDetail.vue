@@ -57,10 +57,13 @@ const handleSend = async () => {
         return;
     }
     loading.value = true;
-    try {
-        conversationList.value.push({
+    conversationList.value.push({
             role: "user",
             content: message.value
+        });
+        conversationList.value.push( {
+            role:"model",
+            content:''
         });
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
 
@@ -75,10 +78,14 @@ const handleSend = async () => {
                 }
             })
         } else {
-            conversationList.value = await handleResponseStream(response, conversationList);
+            conversationList.value = await handleResponseStream(response, conversationList.value);
             store.commit('setMessage', "");
             message.value = "";
+
+            console.log(conversationList)
         }
+    try {
+        
     } catch (error) {
         notification.error('Lỗi!', `Lỗi khi tải gửi tin! Lỗi ${error}`, {
             showActions: false
