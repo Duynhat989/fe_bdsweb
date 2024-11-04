@@ -185,4 +185,27 @@ onMounted(() => {
 
     color: #fff;
 }
+@media (min-width: 1024px) {
+    .contract-card {
+        width: calc((100% - 45px) / 4);
+    }
+}
+
+@media (min-width: 768px) and (max-width: 1023px) {
+    .contract-card {
+        width: calc((100% - 30px) / 3);
+    }
+}
+
+@media (max-width: 767px) {
+    .contract-card {
+        width: calc((100% - 15px) / 2);
+    }
+}
+
+@media (max-width: 480px) {
+    .contract-card {
+        width: 100%; 
+    }
+}
 </style>

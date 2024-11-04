@@ -504,12 +504,11 @@ watch(conversationList, () => {
         font-size: 25px;
         line-height: 30px;
     }
-
     .message-item .avatar {
         width: 35px;
         height: 35px;
+        position: absolute;
     }
-
     .user-message .avatar {
         right: -40px;
     }
@@ -545,6 +544,27 @@ watch(conversationList, () => {
 
     .history-item {
         width: 100%;
+    }
+ 
+    .message-item {
+        width: 100%;
+        position: relative;
+    }
+    .user-message .copy-button {
+        display: flex;
+        justify-content: start;
+    }
+    .model-message .copy-button{
+        display: flex;
+        justify-content: flex-end;
+    }
+    .user-message .avatar {
+        right: 0px;
+        top: 10px;
+    }
+    .model-message .avatar {
+        left: 0px;
+        top: 10px;
     }
 }
 </style>
