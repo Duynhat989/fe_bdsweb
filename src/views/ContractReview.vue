@@ -1,36 +1,100 @@
-
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted } from 'vue';
 
+import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+import useNotification from '@/composables/useNotification';
+
+const notification = useNotification();
+const isLoading = ref(false);
 const selectedFile = ref(null);
-const reviewResults = ref(null);
+const contractAssistant = ref(null);
+
+const threadId = ref('');
+const reviewResults =  ref([]);
 
 const handleFileUpload = (event) => {
     selectedFile.value = event.target.files[0];
 };
 
-const startReview = () => {
-    // call api
-    setTimeout(() => {
-        reviewResults.value = {
-            status: 'Đã hoàn tất rà soát',
-            issues: [
-                { id: 1, description: 'Điều khoản 1 chưa rõ ràng về quyền và nghĩa vụ' },
-                { id: 2, description: 'Điều khoản 3 có thể gây tranh chấp trong thực tế' },
-            ],
-        };
-    }, 2000);
-};
+const startReview = async () => {
+    isLoading.value = true;
+    reviewResults.value = [];
+    try {
+        const formData = new FormData();
+        formData.append("contract", selectedFile.value);
 
-const resolveIssues = () => {
-    alert('Chuyển đến trang giải quyết các vấn đề.');
+        const response = await request.post(END_POINT.SCAN_CONTRACT, formData, {
+            headers: {
+                "Content-Type": "multipart/form-data",
+            },
+        });
+
+        if (response.success) {
+            reviewResults.value.push( {
+                role:"model",
+                content:''
+            });
+            const res = await sendMessageRequest(response.dataContract, threadId.value, END_POINT);
+            if (!res.ok) {
+                const errorData = await res.json();
+                notification.info('Thông báo!', `${errorData.message}`, {
+                    showActions: true
+                });
+            } else {
+                const newConversation = await handleResponseStream(res, reviewResults.value);
+                reviewResults.value = newConversation;
+                const storedConversations = JSON.parse(localStorage.getItem('reviewResults')) || [];
+                storedConversations.push(newConversation);
+                localStorage.setItem('reviewResults', JSON.stringify(storedConversations));
+            }
+        }
+    } catch (error) {
+        notification.error('Lỗi!', `Rà soát không thành công! Lỗi: ${error.message || error}`, {
+                showActions: false
+        });
+    } finally {
+        isLoading.value = false;
+    }
 };
+// Tạo phiên tin nhắn mới
+const fetchConversationNew = async () => {
+    try {
+        if (contractAssistant.value.id) {
+            const response = await request.post(END_POINT.CONVERSATION_THREAD, { assistant_id: contractAssistant.value.id });
+            threadId.value = response.data.id
+        } else {
+            console.error('ID không hợp lệ');
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
+const fetchSanContract = async () => {
+    try {
+        const response = await request.get(END_POINT.NAV_SCAN_CONTRACT);
+        if (response.success) {
+            contractAssistant.value = response.assistant;
+        }
+    } catch (error) {
+        console.error('Lỗi khi tải dữ liệu:', error);
+    }
+};
+const loadConversation = async () => {
+    await fetchSanContract();
+    await fetchConversationNew();
+};
+onMounted(() => {
+    loadConversation();
+});
 </script>
 <template>
     <div class="contract-review">
         <div class="header-title">
             <h1 class="title">Rà soát hợp đồng</h1>
-            <p class="subtitle">Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp pháp.
+            <p class="subtitle">Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp
+                pháp.
             </p>
         </div>
         <div class="upload-section">
@@ -42,20 +106,32 @@ const resolveIssues = () => {
                 </label>
                 <input id="file-upload" type="file" @change="handleFileUpload" />
             </div>
-            <button @click="startReview" :disabled="!selectedFile" class="review-button">Bắt đầu rà soát</button>
+            <button  class="review-button" :disabled="!selectedFile || isLoading"  @click="startReview">
+                <span v-if="isLoading">
+                    <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                        viewBox="0 0 24 24">
+                        <path fill="currentColor"
+                            d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
+                            opacity="0.5" />
+                        <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+                            <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite"
+                                to="360 12 12" type="rotate" />
+                        </path>
+                    </svg>
+                    Đăng rà soát ...</span>
+                <span v-else>Bắt đầu rà soát</span>
+            </button>
         </div>
 
-        <div v-if="reviewResults" class="results-section">
+        <div v-if="reviewResults.length >0 " class="results-section">
             <h2>Kết quả rà soát</h2>
-            <p>Tên hợp đồng: Hợp đồng bất động sản</p>
-            <p><strong>Trạng thái:</strong> {{ reviewResults.status }}</p>
-            <p><strong>Những điều khoản có vấn đề:</strong></p>
-            <ul>
-                <li v-for="issue in reviewResults.issues" :key="issue.id">
-                    {{ issue.description }}
-                </li>
-            </ul>
-            <button class="resolve-button" @click="resolveIssues">Giải quyết các vấn đề</button>
+            <span class="copy-button" @click="copyToClipboard(message.content)">
+                <i class='bx bx-copy'></i>
+            </span>
+            <i v-show="isLoading" class='bx bx-loader bx-spin'></i>
+            <div v-for="(result, index) in reviewResults" :key="index">
+                <div class="detail" :text-content="result.content" >{{ result.content }}</div>
+            </div>
         </div>
     </div>
 </template>
@@ -69,16 +145,16 @@ const resolveIssues = () => {
 }
 
 .header-title {
-  text-align: center;
-  margin-top: 40px;
-  margin-bottom: 40px;
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 40px;
 }
 
 .header-title .title {
-  font-size: 30px;
-  font-weight: bold;
-  color: var(--color-primary);
-  line-height: 40px;
+    font-size: 30px;
+    font-weight: bold;
+    color: var(--color-primary);
+    line-height: 40px;
 }
 
 .header-title .subtitle {
@@ -156,59 +232,26 @@ const resolveIssues = () => {
 }
 
 .results-section {
-  background: #e8f0fe;
-  padding: 20px;
-  border-radius: 8px;
-  margin-bottom: 30px;
-  text-align: left;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    background: #e8f0fe;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 30px;
+    text-align: left;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    position: relative;
 }
-.results-section h2 {
-  font-size: 24px;
-  color: var(--color-primary);
-  margin-bottom: 15px;
-}
-
-.results-section p {
-  font-size: 16px;
-  color: #333;
-  margin-bottom: 10px;
-}
-.results-section ul {
-  list-style: none; 
-  padding-left: 0;
-}
-
-.results-section li {
-  background-color: #fff;
-  border: 1px solid #ddd;
-  border-radius: 8px;
-  padding: 10px 15px;
-  margin-bottom: 10px;
-  display: flex;
-  align-items: center;
-  font-size: 15px;
-  color: #333;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  transition: background-color 0.3s;
-}
-
-.results-section li:hover {
-  background-color: #f5f5f5;
-}
-
-.results-section li:before {
-  content: '⚠️'; 
-  margin-right: 8px;
-  font-size: 18px;
-}
-.resolve-button {
-    background-color: var(--color-primary);
-    color: white;
-    padding: 10px 20px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
+.detail {
+    padding: 10px;
     margin-top: 10px;
+    font-family: Arial, sans-serif;
+}
+.copy-button {
+    cursor: pointer;
+    font-size: 16px;
+    margin-top: 5px;
+    transition: background-color 0.3s ease;
+    position: absolute;
+    top: 10px;
+    right: 20px;
 }
 </style>

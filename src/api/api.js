@@ -74,4 +74,8 @@ export const END_POINT = {
     PROMPT_DELETE: '/api/prompt/delete', // Xóa Promts
     PROMPT_CREATE: '/api/prompt/create', // Create Promts
     PROMPT_UPDATE: '/api/prompt/update', // Update Promts
+
+    SCAN_CONTRACT: '/api/contract/scan', // Update Promts
+    NAV_SCAN_CONTRACT: '/api/nav/scanContract', // Update Promts
+
 };
