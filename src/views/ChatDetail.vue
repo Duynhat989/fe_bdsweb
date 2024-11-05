@@ -6,6 +6,7 @@ import request from '@/utils/request';
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
 import useNotification from '@/composables/useNotification';
 import store from '@/store';
+import q_a from '@/assets/images/q_a.png';
 
 const notification = useNotification();
 const route = useRoute();
@@ -124,7 +125,7 @@ watch(conversationList, () => {
                     :class="{ 'user-message': message.role === 'user', 'model-message': message.role === 'model' }"
                     class="message-item">
                     <span v-if="message.role === 'user'" class="avatar">Me</span>
-                    <img v-else src="../assets/images/q_a.png" alt="Model Avatar" class="avatar" />
+                    <img v-else :src="q_a" alt="Model Avatar" class="avatar" />
                     <span class="copy-button" @click="copyToClipboard(message.content)">
                         <i class='bx bx-copy'></i>
                     </span>

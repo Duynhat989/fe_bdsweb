@@ -7,6 +7,7 @@ import request from '@/utils/request';
 import useNotification from '@/composables/useNotification';
 import AddPromptPopup from '@/components/AddPromptPopup.vue';
 import store from '@/store';
+import icon_logo from '@/assets/images/icon_logo.png';
 
 const notification = useNotification();
 const route = useRoute();
@@ -252,7 +253,7 @@ onMounted(() => {
                                 <div v-for="(prompt, index) in prompts" :key="prompt.id" class="prompt-card"
                                     @click="executePrompt(prompt)">
                                     <div class="prompt-icon">
-                                        <img src="../assets/images/icon_logo.png" alt="">
+                                        <img :src="icon_logo" alt="">
                                     </div>
                                     <div class="prompt-content">
                                         <div class="prompt-title">{{ prompt.name }}</div>

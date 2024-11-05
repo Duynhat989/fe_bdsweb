@@ -272,4 +272,13 @@ p {
         transform: scale(1);
     }
 }
+@media (max-width: 767px) {
+    .form-group {
+        display: flex;
+        flex-direction: column;
+        margin-bottom: 15px;
+        gap: 5px;
+    }
+}
+
 </style>

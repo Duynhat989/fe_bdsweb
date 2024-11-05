@@ -7,6 +7,12 @@ import footerView from '@/components/footerView.vue';
 import ForgotPasswordForm from '@/components/ForgotPasswordForm.vue';
 import store from '@/store';
 
+import q_a from '@/assets/images/q_a.png';
+import course from '@/assets/images/course.png';
+import search_home from '@/assets/images/search_home.png';
+import contract from '@/assets/images/contract.png';
+
+import icon_logo1 from '@/assets/images/icon_logo1.png';
 const isHighlighted = ref(false);
 const activeTab = ref('login');
 
@@ -38,15 +44,15 @@ const handleClick = (routeName) => {
     </div>
     <div class="content">
       <div class="left-box">
-        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="src/assets/images/q_a.png" />
-        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="src/assets/images/contract.png" />
-        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="src/assets/images/search_home.png" />
-        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="src/assets/images/course.png" />
+        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" :imageUrl="q_a" />
+        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" :imageUrl="contract" />
+        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" :imageUrl="search_home" />
+        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" :imageUrl="course" /> -->
       </div>
 
       <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
-          <img src="../assets/images/icon_logo1.png" alt="icon logo">
+          <img :src="icon_logo1" alt="icon logo">
         </div>
         <div class="tabs">
           <button class="tab-button" :class="{ active: activeTab === 'login' }" @click="activeTab = 'login'">Đăng nhập

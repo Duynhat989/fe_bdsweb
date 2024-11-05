@@ -9,7 +9,7 @@ import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck"
 import request from "./utils/request";
 import { END_POINT } from "./api/api";
 import { encodeId } from '@/utils/encoding';
-
+import icon_logo from '@/assets/images/icon_logo.png';
 const notificationRef = ref(null)
 const hiddenPopup = ref(false);
 const router = useRouter();
@@ -60,6 +60,11 @@ const handleClick = (id) => {
   router.push(`/assistant/${encodedId}`);
 };
 
+watch(isLogin.value, () => {
+  if (isLogin.value) {
+    fetchAssistants();
+  }
+}, { deep: true });
 onMounted(() => {
   checkMaintenanceStatus();
   checkScreenSize();
@@ -78,7 +83,7 @@ onMounted(() => {
         <div class="logo">
           <div class="logo_web flex">
             <div class="img flex">
-              <img src="../src/assets/images/icon_logo.png" alt="Logo" width="50">
+              <img :src="icon_logo" alt="Logo" width="50">
             </div> &nbsp;&nbsp;&nbsp;&nbsp;
             <h2>An Phát <br> Hưng . AI</h2>
           </div>
