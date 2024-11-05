@@ -38,10 +38,10 @@ const handleClick = (routeName) => {
     </div>
     <div class="content">
       <div class="left-box">
-        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="src/assets/images/q_a.png" />
-        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="src/assets/images/contract.png" />
-        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="src/assets/images/search_home.png" />
-        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="src/assets/images/course.png" />
+        <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" imageUrl="./src/assets/images/q_a.png" />
+        <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" imageUrl="./src/assets/images/contract.png" />
+        <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" imageUrl="./src/assets/images/search_home.png" />
+        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" imageUrl="./src/assets/images/course.png" />
       </div>
 
       <div class="right-box" :class="{ highlight: isHighlighted }">
