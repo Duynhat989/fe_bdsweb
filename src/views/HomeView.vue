@@ -11,8 +11,8 @@ import q_a from '@/assets/images/q_a.png';
 import course from '@/assets/images/course.png';
 import search_home from '@/assets/images/search_home.png';
 import contract from '@/assets/images/contract.png';
-
 import icon_logo1 from '@/assets/images/icon_logo1.png';
+
 const isHighlighted = ref(false);
 const activeTab = ref('login');
 
@@ -47,9 +47,8 @@ const handleClick = (routeName) => {
         <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" :imageUrl="q_a" />
         <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" :imageUrl="contract" />
         <ItemBox @click="handleClick('search')" text="Tìm kiếm bất động sản" :imageUrl="search_home" />
-        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" :imageUrl="course" /> -->
+        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" :imageUrl="course" />
       </div>
-
       <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
           <img :src="icon_logo1" alt="icon logo">
