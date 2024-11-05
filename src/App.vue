@@ -58,6 +58,7 @@ const handleLogOut = async () => {
 const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
+  router.go(0);
 };
 
 watch(isLogin.value, () => {

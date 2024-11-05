@@ -36,6 +36,8 @@ const showPopup = ref(false);
 const isEdit = ref(false);
 const selectePrompt = ref(null)
 
+const isLoading = ref(false)
+
 const addPrompt = () => {
     showPopup.value = true;
     isEdit.value = false;
@@ -211,6 +213,7 @@ const loadConversation = async () => {
 
     await fetchPrompts();
     await fetchHistorys();
+    isLoading.value = true
 };
 
 onMounted(() => {
@@ -218,7 +221,7 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="main-container">
+    <div class="main-container" v-if="isLoading">
         <div class="flex">
             <div class="header-title">
                 <h1 class="title">{{ assistantData.name }}</h1>
@@ -314,6 +317,9 @@ onMounted(() => {
         </div>
         <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :isEdit="isEdit" :selectePrompt="selectePrompt"
             :visible="showPopup" @close="showPopup = false" @promptAdded="addPromptToList" />
+    </div>
+    <div class="isloading" v-else>
+        Loading ....
     </div>
 </template>
 <style scoped>
