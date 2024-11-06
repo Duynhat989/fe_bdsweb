@@ -36,7 +36,8 @@ const startReview = async () => {
                 role:"model",
                 content:''
             });
-            const res = await sendMessageRequest(response.dataContract, threadId.value, END_POINT);
+            const message = `Đây là hợp đồng của tôi. Bạn hãy kiểm tra nội dung hợp đồng theo các mục đề xuất ở tài liệu từ đó đưa ra lời khuyên bổ sung cho hợp đồng thêm hoàn thiện. Hợp đồng là:"  ${response.dataContract} "`;
+            const res = await sendMessageRequest(message, threadId.value, END_POINT);
             if (!res.ok) {
                 const errorData = await res.json();
                 notification.info('Thông báo!', `${errorData.message}`, {
