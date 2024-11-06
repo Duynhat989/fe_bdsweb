@@ -1,76 +1,58 @@
 <script setup>
-import { ref, computed, watch } from 'vue';
-import { useRouter } from 'vue-router';
-
-const router = useRouter();
-
-const filters = ref([
-  { name: 'category', label: 'Danh mục', options: ['Biệt thự', 'Căn hộ', 'Đất nền'] },
-  { name: 'landType', label: 'Mẫu đất', options: ['Đất thổ cư', 'Đất nông nghiệp'] },
-  { name: 'propertyType', label: 'Loại hình', options: ['Nhà ở', 'Kinh doanh'] },
-  { name: 'attribute', label: 'Thuộc tính', options: ['Có sổ đỏ', 'Gần trung tâm', 'Gần trường học'] },
-]);
-
-const selectedFilters = ref({
-  category: '',
-  groupType: '',
-  locationType: '',
-  landType: '',
-  propertyType: '',
-  attribute: '',
-});
-
-const items = ref([
-  {
-    id: 1,
-    name: 'Biệt thự sang trọng',
-    image: 'https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg',
-    location: 'Quận 1, TP.HCM',
-    description: 'Biệt thự với thiết kế hiện đại, đầy đủ tiện nghi, gần trung tâm thành phố.',
-    category: 'Biệt thự',
-    groupType: 'Loại A',
-    locationType: 'Trong nước',
-    landType: 'Đất thổ cư',
-    propertyType: 'Nhà ở',
-    attribute: 'Có sổ đỏ',
-    price: '50 tỷ VND',
-    area: '500 m²',
-    amenities: ['Hồ bơi', 'Sân vườn', 'Nhà để xe', 'Phòng tập gym'],
-  },
-  {
-    id: 2,
-    name: 'Căn hộ cao cấp',
-    image: 'https://hocvienamg.edu.vn/wp-content/uploads/2023/07/nguoi-dan-duong-bds.jpg',
-    location: 'Quận 7, TP.HCM',
-    description: 'Căn hộ nằm trong khu vực yên tĩnh, nhiều tiện ích xung quanh.Căn hộ nằm trong khu vực yên tĩnh, nhiều tiện ích xung quanh.',
-    category: 'Căn hộ',
-    groupType: 'Loại B',
-    locationType: 'Trong nước',
-    landType: 'Đất thổ cư',
-    propertyType: 'Nhà ở',
-    attribute: 'Gần trường học',
-    url: 'https://chatgpt.com/c/671bd691-a08c-8010-975c-d6fd08abadf7',
-    price: '50 tỷ VND',
-    area: '500 m²',
-    amenities: ['Hồ bơi', 'Sân vườn', 'Nhà để xe', 'Phòng tập gym'],
-  },
-]);
-
-const filteredItems = computed(() => {
-  return items.value.filter(item => {
-    return Object.keys(selectedFilters.value).every(filterKey => {
-      const filterValue = selectedFilters.value[filterKey];
-      return !filterValue || item[filterKey] === filterValue;
+import { ref, onMounted, computed , watch } from 'vue';
+import { END_POINT } from '@/api/api';
+import request from '@/utils/request';
+const estales = ref([]);
+const currentPage = ref(1);
+const itemsPerPage = ref(8);
+const total = ref(0);
+const searchQuery = ref('');
+const fetchEstates = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
+  try {
+    const response = await request.get(END_POINT.ESTALES_LIST, {
+      params: {
+        page,
+        limit,
+        search
+      }
     });
-  });
-});
-
-const applyFilters = () => {
-  console.log('Danh sách filters', selectedFilters.value);
+    estales.value = response.realEstates;
+    total.value = response.total;
+    currentPage.value = response.page;
+    itemsPerPage.value = response.limit;
+  } catch (error) {
+    console.error('Lỗi lấy danh sách bài viết:', error);
+  }
 };
 
-watch(selectedFilters, applyFilters);
+watch(
+  searchQuery,
+  (newQuery) => {
+    if (newQuery) {
+      fetchEstates(currentPage.value, itemsPerPage.value ,newQuery );
+    } else {
+      fetchEstates();
+    }
+  }
+);
 
+const totalPages = computed(() => {
+  return Math.ceil(total.value / itemsPerPage.value);
+});
+
+const changePage = (page) => {
+  if (page >= 1 && page <= totalPages.value) {
+    currentPage.value = page;
+    if (searchQuery.value) {
+      fetchEstates(currentPage.value, itemsPerPage.value ,searchQuery.value );
+    } else {
+      fetchEstates(currentPage.value, itemsPerPage.value);
+    }
+  }
+};
+onMounted(() => {
+  fetchEstates();
+});
 </script>
 
 <template>
@@ -80,21 +62,17 @@ watch(selectedFilters, applyFilters);
         <h1 class="title">Tìm kiếm bất động sản</h1>
         <p>Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
       </div>
-      <div class="filters">
-        <div class="filter-item" v-for="filter in filters" :key="filter.name">
-          <label :for="filter.name">{{ filter.label }}</label>
-          <select :id="filter.name" v-model="selectedFilters[filter.name]" @change="applyFilters">
-            <option value="">Tất cả</option>
-            <option v-for="option in filter.options" :key="option" :value="option">
-              {{ option }}
-            </option>
-          </select>
-        </div>
-        <button class="filter-apply" @click="applyFilters">LỌC</button>
+      <div class="search-bar">
+        <input
+          type="text"
+          v-model="searchQuery"
+          placeholder="Nhập từ khóa tìm kiếm..."
+          class="search-input"
+        />
       </div>
     </div>
     <div class="results">
-      <div class="result-box" v-for="item in filteredItems" :key="item.id">
+      <div class="result-box" v-for="item in estales" :key="item.id">
           <img :src="item.image" alt="Property Image" class="item-image" />
           <div class="result-detail">
             <h3 class="item-name">{{ item.name }}</h3>
@@ -104,17 +82,20 @@ watch(selectedFilters, applyFilters);
             <p class="item-more"><strong>Diện tích:</strong> {{ item.area }}</p>
             <p class="item-more">
               <strong>Tiện ích:</strong>
-              <span v-for="(amenity, index) in item.amenities" :key="index">
-                {{ amenity }}<span v-if="index < item.amenities.length - 1">, </span>
-              </span>
+              {{ item.exten }}
             </p>
           </div>
-          <a :href="item.url" target="_blank" class="item-link">
+          <a :href="item.base_url" target="_blank" class="item-link">
               Xem chi tiết
           </a>
       </div>
 
     </div>
+    <div class="pagination">
+        <span @click="changePage(page)" v-for="(page, index) in totalPages" :class="{ active: currentPage === page }"
+          class="page-number">
+          {{ page }}</span>
+      </div>
   </div>
 </template>
 
@@ -130,7 +111,19 @@ watch(selectedFilters, applyFilters);
   margin-bottom: 40px;
   margin-top: 40px;
 }
+.search-bar {
+  margin: 20px 0;
+  text-align: center;
+}
 
+.search-input {
+  padding: 10px;
+  width: 100%;
+  max-width: 400px;
+  font-size: 16px;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+}
 .header-title {
   text-align: center;
 }
@@ -211,7 +204,7 @@ watch(selectedFilters, applyFilters);
   cursor: pointer;
 }
 .result-detail {
-  min-height: 260px ;
+  min-height: 150px ;
 }
 .result-box:hover {
   border: 1px solid var(--color-primary);
@@ -264,6 +257,25 @@ watch(selectedFilters, applyFilters);
 }
 .item-link:hover {
   opacity: 0.8;
+}
+
+.pagination {
+  width: 100%;
+  margin-top: 20px;
+}
+
+.pagination span {
+  padding: 10px 15px;
+  background-color: #ccc;
+  color: #111;
+  margin: 0px 5px;
+  cursor: pointer;
+}
+
+.pagination span.active,
+.pagination span:hover {
+  background-color: var(--color-primary);
+  color: #fff;
 }
 /* Responsive Styles */
 @media (max-width: 1024px) {

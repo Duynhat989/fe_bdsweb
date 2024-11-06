@@ -95,8 +95,8 @@ onMounted(() => {
           <li class="menu_item" :class="{ active: currentRoute === '/contract' }">
             <a href="/contract" class="button"><i class="bx bx-file"></i> <span>Rà soát & tạo mới hợp đồng</span></a>
           </li>
-          <li class="menu_item" :class="{ active: currentRoute === '/search' }">
-            <a href="/search" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm & So sánh bất động
+          <li class="menu_item" :class="{ active: currentRoute === '/estate' }">
+            <a href="/estate" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm & So sánh bất động
                 sản</span></a>
           </li>
           <li v-for="(assistant ,index) in assistantsSelected" :key="index" class="menu_item">

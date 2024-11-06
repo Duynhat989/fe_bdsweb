@@ -77,5 +77,7 @@ export const END_POINT = {
 
     SCAN_CONTRACT: '/api/contract/scan', // Update Promts
     NAV_SCAN_CONTRACT: '/api/nav/scanContract', // Update Promts
-
+    
+    ESTALES_LIST: '/api/estales', // Danh sách bài viết bất động sản
+    ESTALE_FIND: '/api/estale/find', // Tìm bài viết bất động sản
 };

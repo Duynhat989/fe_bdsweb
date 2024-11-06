@@ -7,7 +7,7 @@ export const isMaintenance = ref(false)
 export const checkMaintenanceStatus = async () => {
     try {
         const response = await request.get(END_POINT.MAINTENANCE)
-        isMaintenance.value = response.maintenance
+        isMaintenance.value = false
     } catch (error) {
         console.error('Không thể kết nối với API:', error)
     }

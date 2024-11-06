@@ -3,7 +3,7 @@ import HomeView from '../views/HomeView.vue'
 import AssistantView from '../views/AssistantView.vue'
 import AssistantDetail from '@/views/AssistantDetail.vue'
 import store from '@/store';
-import SearchView from '@/views/SearchView.vue';
+import EstateView from '@/views/EstateView.vue';
 import ContractView from '@/views/ContractView.vue';
 import CourseView from '@/views/CourseView.vue';
 import CourseDetail from '@/views/CourseDetail.vue';
@@ -67,9 +67,9 @@ const router = createRouter({
       meta: { requiresAuth: true }
     },
     {
-      path: '/search',
-      name: 'search',
-      component: SearchView,
+      path: '/estate',
+      name: 'estate',
+      component: EstateView,
       meta: { requiresAuth: true }
     },
     {
