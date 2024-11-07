@@ -67,6 +67,7 @@ const copyMessageContent = () => {
 };
 
 onMounted(() => {
+    console.log(props)
     msg.value = props.messA;
     isLoading.value = props.loading;
     if (msg.value) {
@@ -74,13 +75,13 @@ onMounted(() => {
         isViewMsg.value = msg.value.role === "user";
     }
 });
-// watch(
-//     () => props.mess,
-//     (newMsg) => {
-//         msg.value = newMsg;
-//         renderMessage(newMsg.content);
-//     }
-// );
+watch(
+    props.messA,
+    (newMsg) => {
+        msg.value = newMsg;
+        renderMessage(newMsg.content);
+    }
+);
 </script>
 <template>
     <div :class="isViewMsg ? 'message message--visible flex' : 'message flex'" v-if="msg">

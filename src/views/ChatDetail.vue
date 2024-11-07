@@ -120,10 +120,8 @@ watch(conversationList, () => {
             </div>
             <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
                 class="conversation-list">
-                <div class="msg" v-for="(item, index) of conversationList" :key="index">
-                    <MsgContent  :messA="item"  />
-                    <MsgContent v-if="loading" :loading="loading"/>
-                </div>
+                <MsgContent v-for="(item, index) of conversationList" :key="index"  :messA="item"  :loading="false"/>
+                <MsgContent v-if="loading" :loading="loading"/>
             </div>
             <div class="send-bar">
                 <div class="send-container">
