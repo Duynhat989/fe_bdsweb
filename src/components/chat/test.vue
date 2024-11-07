@@ -8,6 +8,7 @@ import useNotification from '@/composables/useNotification';
 import store from '@/store';
 import q_a from '@/assets/images/q_a.png';
 import MsgContent from '@/components/chat/MsgContent.vue';
+
 const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
@@ -57,15 +58,12 @@ const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
         return;
     }
-    loading.value = true;
-    conversationList.value.push({
+        loading.value = true;
+        conversationList.value.push({
             role: "user",
             content: message.value
         });
-        conversationList.value.push( {
-            role:"model",
-            content:''
-        });
+
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
 
         if (!response.ok) {
@@ -82,7 +80,8 @@ const handleSend = async () => {
             conversationList.value = await handleResponseStream(response, conversationList.value);
             store.commit('setMessage', "");
             message.value = "";
-            console.log(conversationList.value);
+
+            console.log(conversationList.value, 'send')
         }
     try {
         
@@ -101,7 +100,6 @@ const loadConversation = async () => {
         await handleSend();
     }
 };
-
 onMounted(() => {
     loadConversation();
 });
@@ -118,12 +116,20 @@ watch(conversationList, () => {
             <div class="header-title">
                 <h1 class="title">Bạn cần hỗ trợ gì?</h1>
             </div>
+
             <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
                 class="conversation-list">
-                <div class="msg" v-for="(item, index) of conversationList" :key="index">
-                    <MsgContent  :messA="item"  />
-                    <MsgContent v-if="loading" :loading="loading"/>
+                <div v-for="(message, index) in conversationList" :key="index"
+                    :class="{ 'user-message': message.role === 'user', 'model-message': message.role === 'model' }"
+                    class="message-item">
+                    <span v-if="message.role === 'user'" class="avatar">Me</span>
+                    <img v-else :src="q_a" alt="Model Avatar" class="avatar" />
+                    <span class="copy-button" @click="copyToClipboard(message.content)">
+                        <i class='bx bx-copy'></i>
+                    </span>
+                    <div class="message-content" :text-content="message.content" ><span> <i v-show="loading && message.role === 'model'" class='bx bx-loader bx-spin'></i></span>{{ message.content }}</div>
                 </div>
+                <!-- <MsgContent v-for="(item, index) of conversationList" :msg="item"  :key="index" :loading="loading" /> -->
             </div>
             <div class="send-bar">
                 <div class="send-container">

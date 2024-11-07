@@ -11,7 +11,12 @@
   "dependencies": {
     "@kyvg/vue3-notification": "^3.4.0",
     "axios": "^1.7.7",
+    "copy-to-clipboard": "^3.3.3",
     "date-fns": "^4.1.0",
+    "highlight": "^0.2.4",
+    "highlight.js": "^11.10.0",
+    "markdown-it": "^14.1.0",
+    "markdown-it-mathjax3": "^4.3.2",
     "qrcode": "^1.5.4",
     "vue": "^3.5.12",
     "vue-router": "^4.4.5",

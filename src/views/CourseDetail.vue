@@ -17,6 +17,7 @@ const defaultImage = ref('');
 const isFirstLoad = ref(true);
 const currentVideo = ref(null);
 const selectedLessonIndex = ref(null);
+const lessonInfo = ref('');
 const fetchMyCourses = async () => {
     try {
         const response = await request.get(END_POINT.COURSE_ME);
@@ -35,10 +36,11 @@ const fetchMyCourses = async () => {
     }
 };
 
-const playVideo = (url, index) => {
-    currentVideo.value = url;
+const playVideo = (lesson, index) => {
+    currentVideo.value = lesson.url_video;
     selectedLessonIndex.value = index;
     isFirstLoad.value = false;
+    lessonInfo.value = `<h3>${lesson.name}</h3><br>${lesson.detail}`;
 };
 const loadConversation = async () => {
     await fetchMyCourses();
@@ -72,7 +74,7 @@ onMounted(() => {
                 <h2 class="section-title">Nội dung khóa học</h2>
                 <ul class="lesson-list">
                     <li v-for="(lesson, index) in courseDetail.lessons" :key="index" class="lesson-item"
-                        :class="{ active: selectedLessonIndex === index }" @click="playVideo(lesson.url_video, index)">
+                        :class="{ active: selectedLessonIndex === index }" @click="playVideo(lesson ,index)">
                         <div class="lesson-info">
                             <div class="lesson-thumbnail">
                                 <img :src="lesson.image" :alt="lesson.name">
@@ -94,10 +96,11 @@ onMounted(() => {
                 </ul>
             </div>
         </div>
-
         <div class="detail">
-            <h2 class="detail-title">Nội dung mô tả</h2>
-            <div class="detail-content">
+            <h2 class="detail-title">Nội dung bài hoc</h2>
+            <div v-if="lessonInfo" class="detail-lesson" v-html="lessonInfo">
+            </div>
+            <div v-else class="detail-content">
                 {{ courseDetail.detail }}
             </div>
         </div>
@@ -113,7 +116,10 @@ onMounted(() => {
 .course-header {
   margin-bottom: 24px;
 }
-
+.detail-lesson h3 {
+  font-weight: bold;
+  color: #444;
+}
 .title {
   font-size: 28px;
   font-weight: 600;

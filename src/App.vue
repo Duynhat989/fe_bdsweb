@@ -18,11 +18,12 @@ const { setNotificationComponent } = useNotification()
 const isLogin = computed(() => store.getters.isLogin);
 const user = computed(() => store.getters.getUser);
 const currentRoute = computed(() => route.path);
-
-const assistantsSelected = ref([]);
-
+const assistantsSelected = ref(JSON.parse(localStorage.getItem("assistantsSelected")) || []);
 const checkScreenSize = () => {
   hiddenPopup.value = window.innerWidth < 1024
+};
+const isDataChanged = (newData, oldData) => {
+  return JSON.stringify(newData) !== JSON.stringify(oldData);
 };
 const fetchAssistants = async () => {
   try {
@@ -32,12 +33,18 @@ const fetchAssistants = async () => {
       request.get(END_POINT.TEAMTRAINGING),
       request.get(END_POINT.NEWSSUMMARY)
     ]);
-    assistantsSelected.value = [
+
+    const newAssistants = [
       estateAnalysis.assistant,
       financialAnalysis.assistant,
       teamTraining.assistant,
       newsSummary.assistant
     ];
+    const storedAssistants = JSON.parse(localStorage.getItem("assistantsSelected"));
+    if (isDataChanged(newAssistants, storedAssistants)) {
+        assistantsSelected.value = newAssistants;
+        localStorage.setItem("assistantsSelected", JSON.stringify(newAssistants));
+    }
   } catch (error) {
     if (error.response && error.response.status === 500) {
       console.error('Lỗi 500: Lỗi máy chủ trong quá trình lấy danh sách trợ lý:', error);
@@ -50,6 +57,7 @@ const fetchAssistants = async () => {
 const handleLogOut = async () => {
   try {
     await store.dispatch('logout');
+    localStorage.removeItem("assistantsSelected"); 
     router.push('/');
   } catch (error) {
     console.error('Logout failed');
@@ -57,20 +65,24 @@ const handleLogOut = async () => {
 };
 const handleClick = (id) => {
   const encodedId = encodeId(id);
-  router.push(`/assistant/${encodedId}`);
-  router.go(0);
+  window.location.href = `/assistant/${encodedId}`;
 };
 
 watch(isLogin.value, () => {
   if (isLogin.value) {
-    fetchAssistants();
+      fetchAssistants();
   }
 }, { deep: true });
+
+watch(assistantsSelected, (newValue) => {
+    localStorage.setItem("assistantsSelected", JSON.stringify(newValue));
+}, { deep: true });
+
 onMounted(() => {
   checkMaintenanceStatus();
   checkScreenSize();
   setNotificationComponent(notificationRef.value);
-  if (isLogin.value) {
+  if (isLogin.value) { 
     fetchAssistants();
   }
   window.addEventListener('resize', checkScreenSize);
