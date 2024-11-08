@@ -10,6 +10,7 @@ const notification = useNotification();
 const isLoading = ref(false);
 const selectedFile = ref(null);
 const contractAssistant = ref(null);
+import MsgContent from '@/components/chat/MsgContent.vue';
 
 const threadId = ref('');
 const reviewResults =  ref([]);
@@ -125,14 +126,8 @@ onMounted(() => {
         </div>
 
         <div v-if="reviewResults.length >0 " class="results-section">
-            <h2>Kết quả rà soát</h2>
-            <span class="copy-button" @click="copyToClipboard(message.content)">
-                <i class='bx bx-copy'></i>
-            </span>
-            <i v-show="isLoading" class='bx bx-loader bx-spin'></i>
-            <div v-for="(result, index) in reviewResults" :key="index">
-                <div class="detail" :text-content="result.content" >{{ result.content }}</div>
-            </div>
+            <h2>Kết quả rà soát</h2> <br>
+            <MsgContent v-for="(item, index) of reviewResults" :key="index" text="AI rà soát" :messA="item"   :loading="isLoading && index === reviewResults.length - 1" />
         </div>
     </div>
 </template>

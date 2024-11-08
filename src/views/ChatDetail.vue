@@ -64,7 +64,7 @@ const handleSend = async () => {
         });
         conversationList.value.push( {
             role:"model",
-            content:''
+            content:'',
         });
         const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
 
@@ -120,8 +120,7 @@ watch(conversationList, () => {
             </div>
             <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
                 class="conversation-list">
-                <MsgContent v-for="(item, index) of conversationList" :key="index"  :messA="item"  :loading="false"/>
-                <MsgContent v-if="loading" :loading="loading"/>
+                <MsgContent v-for="(item, index) of conversationList" :key="index"  :messA="item"   :loading="loading && index === conversationList.length - 1" />
             </div>
             <div class="send-bar">
                 <div class="send-container">

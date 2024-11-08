@@ -20,11 +20,11 @@ const contentElm = ref(null);
 const msg = ref(null);
 const isViewMsg = ref(false);
 const isLoading = ref(false);
+const text = ref('AI chat');
 
 const statusCopy = ref('Copy');
 
-const props = defineProps(['messA','loading']);
-
+const props = defineProps(["messA", "loading",'text']);
 
 const renderMessage = (message) => {
     contentHtml.value = message ? md.render(message) : '';
@@ -67,9 +67,9 @@ const copyMessageContent = () => {
 };
 
 onMounted(() => {
-    console.log(props)
     msg.value = props.messA;
     isLoading.value = props.loading;
+    text.value = props.text;
     if (msg.value) {
         renderMessage(msg.value.content);
         isViewMsg.value = msg.value.role === "user";
@@ -85,24 +85,25 @@ watch(
 </script>
 <template>
     <div :class="isViewMsg ? 'message message--visible flex' : 'message flex'" v-if="msg">
-        <div v-if="isLoading" class="loading-overlay">
-            <i class="bx bx-loader bx-spin"></i> Đang tải...
-        </div>
         <div class="msg-content">
             <div class="message__header">
                 <div class="message__icon">
                     <img width="30" height="30" 
                          :src="msg.role === 'user' ? 'https://img.icons8.com/clouds/100/user.png' : q_a" 
                          :alt="msg.role === 'user' ? 'User' : 'Bot'" />
-                    <span class="message__role">{{ msg.role === 'user' ? 'You' : 'AI Chat' }}</span>
+                    <span class="message__role">{{ msg.role === 'user' ? 'You' : text }}</span>
                 </div>
                 <button class="message__copy-button" @click="copyMessageContent">
                     {{ statusCopy }} <i class='bx bx-copy'></i>
                 </button>
             </div>
-            <div  ref="contentElm" v-html="contentHtml" class="message__body pa-3"></div>
+            <div ref="contentElm" class="message__body pa-3">
+                <div v-if="loading" class="loading-indicator">
+                    <i class="bx bx-loader bx-spin"></i> Loading...
+                </div>
+                <div v-html="contentHtml"></div>
+            </div>
         </div>
-   
     </div>
 </template>
 <style scoped>
