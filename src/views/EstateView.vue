@@ -216,7 +216,8 @@ onMounted(() => {
 }
 .result-detail {
   height: 180px;
-  overflow: scroll;
+  overflow-y: auto;
+  scrollbar-width: none;
 }
 .result-box:hover {
   border: 1px solid var(--color-primary);

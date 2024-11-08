@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted } from 'vue';
+import { ref, computed, onMounted, onUnmounted } from 'vue';
 import 'vue3-carousel/dist/carousel.css'
 import { Carousel, Slide, Pagination, Navigation } from 'vue3-carousel'
 import { useRouter } from 'vue-router';
@@ -52,23 +52,30 @@ const changePage = (page) => {
   }
 };
 
-const itemsToShow = computed(() => {
+const itemsToShow = ref(3);
+
+const updateItemsToShow = () => {
   if (window.innerWidth < 768) {
-    return 1;
+    itemsToShow.value = 1;
   } else if (window.innerWidth < 1024) {
-    return 2;
+    itemsToShow.value = 2;
   } else {
-    return 3;
+    itemsToShow.value = 3;
   }
-});
+};
+
 const loadAssistants = async () => {
     await fetchAssistants();
     isLoading.value = true
 };
 onMounted(() => {
   loadAssistants();
+  updateItemsToShow();
+  window.addEventListener('resize', updateItemsToShow);
 });
-
+onUnmounted(() => {
+  window.removeEventListener('resize', updateItemsToShow);
+});
 </script>
 <template>
   <LoadingSpinner v-if="!isLoading" />
