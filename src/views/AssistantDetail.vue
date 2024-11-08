@@ -8,7 +8,7 @@ import useNotification from '@/composables/useNotification';
 import AddPromptPopup from '@/components/AddPromptPopup.vue';
 import store from '@/store';
 import icon_logo from '@/assets/images/icon_logo.png';
-
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
@@ -221,7 +221,8 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="main-container" v-if="isLoading">
+    <LoadingSpinner v-if="!isLoading" />
+    <div class="main-container" v-else>
         <div class="flex">
             <div class="header-title">
                 <h1 class="title">{{ assistantData.name }}</h1>
@@ -317,9 +318,6 @@ onMounted(() => {
         </div>
         <AddPromptPopup v-if="showPopup" :assistantId="assistantId" :isEdit="isEdit" :selectePrompt="selectePrompt"
             :visible="showPopup" @close="showPopup = false" @promptAdded="addPromptToList" />
-    </div>
-    <div class="isloading" v-else>
-        Loading ....
     </div>
 </template>
 <style scoped>

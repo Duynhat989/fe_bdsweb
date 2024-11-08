@@ -2,11 +2,14 @@
 import { ref, onMounted, computed , watch } from 'vue';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 const estales = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const total = ref(0);
 const searchQuery = ref('');
+const isLoading = ref(false)
+
 const fetchEstates = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
   try {
     const response = await request.get(END_POINT.ESTALES_LIST, {
@@ -50,13 +53,19 @@ const changePage = (page) => {
     }
   }
 };
+const loadEstates = async () => {
+    await fetchEstates();
+    isLoading.value = true
+};
+
 onMounted(() => {
-  fetchEstates();
+  loadEstates();
 });
 </script>
 
 <template>
-  <div class="real-estate-search">
+  <LoadingSpinner v-if="!isLoading" />
+  <div class="real-estate-search" v-else>
     <div class="header">
       <div class="header-title">
         <h1 class="title">Tìm kiếm bất động sản</h1>
@@ -190,11 +199,13 @@ onMounted(() => {
 
 .results {
   display: grid;
-  grid-template-columns: repeat(4, 1fr);
+  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
   gap: 20px;
+  align-items: start; 
+  box-sizing: border-box;
 }
-
 .result-box {
+  width: 100%;
   border-radius: 5px;
   background-color: #fff;
   padding: 15px;
@@ -204,7 +215,8 @@ onMounted(() => {
   cursor: pointer;
 }
 .result-detail {
-  min-height: 150px ;
+  height: 180px;
+  overflow: scroll;
 }
 .result-box:hover {
   border: 1px solid var(--color-primary);
@@ -280,7 +292,7 @@ onMounted(() => {
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .results {
-    grid-template-columns: repeat(3, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
   .filters {
@@ -291,7 +303,7 @@ onMounted(() => {
 
 @media (max-width: 768px) {
   .results {
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 
   .filters {
@@ -304,7 +316,7 @@ onMounted(() => {
 
 @media (max-width: 576px) {
   .results {
-    grid-template-columns: 1fr;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
   }
 }
 </style>

@@ -175,13 +175,13 @@ watch(
 <style >
 .message__body.pa-3 {
     background: #fff !important;
-    padding: 1rem !important;
+    padding: 5px 15px !important;
     border-radius: 8px !important;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1) !important;
     word-break: break-word !important;
 }
 .hljs-code-container.my-3 {
-    background-color: rgb(193, 191, 196);
+    background-color: #ececec;
 }
 .message__body.hljs.language-html {
     padding: 10px !important;
@@ -235,7 +235,9 @@ pre .hljs-code-container {
     margin: 0.5rem 0 !important;
     color: #555 !important;
 }
-
+.message__body.pa-3 .pl-2.text-caption {
+    color: #fff !important;
+}
 .message__body.pa-3 span {
     color: #555 !important;
     font-weight: 500 !important;

@@ -6,6 +6,8 @@ import { format, isBefore } from 'date-fns';
 import { encodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
+
 const router = useRouter();
 const activeTab = ref('all');
 const showPopup = ref(false);
@@ -19,6 +21,7 @@ const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const total = ref(0);
 
+const isLoading = ref(false)
 // Khóa học của Tôi
 const fetchMyCourses = async () => {
   try {
@@ -102,13 +105,19 @@ const changePage = (page) => {
     fetchCourses(currentPage.value, itemsPerPage.value);
   }
 };
+const loadCourses = async () => {
+    await fetchCourses();
+    await fetchMyCourses();
+    isLoading.value = true
+};
+
 onMounted(() => {
-  fetchCourses();
-  fetchMyCourses();
+  loadCourses();
 });
 </script>
 <template>
-  <div class="courses-page">
+  <LoadingSpinner v-if="!isLoading" />
+  <div class="courses-page" v-else>
     <div class="header-title">
       <h1 class="title">Khóa học bất động sản</h1>
     </div>

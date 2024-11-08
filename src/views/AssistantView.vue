@@ -6,12 +6,15 @@ import { useRouter } from 'vue-router';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { encodeId } from '@/utils/encoding';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 const router = useRouter();
 const viewType = ref('list');
 const assistants = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const total = ref(0);
+const isLoading = ref(false)
+
 
 const handleClick = (id) => {
   const encodedId = encodeId(id);
@@ -60,6 +63,7 @@ const itemsToShow = computed(() => {
 });
 const loadAssistants = async () => {
     await fetchAssistants();
+    isLoading.value = true
 };
 onMounted(() => {
   loadAssistants();
@@ -67,7 +71,8 @@ onMounted(() => {
 
 </script>
 <template>
-  <div class="main-container">
+  <LoadingSpinner v-if="!isLoading" />
+  <div class="main-container" v-else>
     <div class="change-type">
       <button @click="setView('list')" :class="{ active: viewType === 'list' }">Danh sách</button>
       <button @click="setView('slide')" :class="{ active: viewType === 'slide' }">Slide</button>

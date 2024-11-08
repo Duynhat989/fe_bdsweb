@@ -2,11 +2,15 @@
 import { ref, onMounted } from 'vue';
 import { formatCurrency, getFeatureNames } from '@/utils/helps';
 import PaymentPackagePopup from '@/components/PaymentPackagePopup.vue';
+import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
+
 const packages = ref([]);
 const isPopupVisible = ref(false);
 const selectedPackage = ref({});
+const isLoading = ref(false)
+
 const openPopup = (pkg) => {
     selectedPackage.value = pkg;
     isPopupVisible.value = true;
@@ -24,15 +28,19 @@ const fetchPackages = async () => {
     }
 };
 
+const loadPackages = async () => {
+    await fetchPackages();
+    isLoading.value = true
+};
 
 onMounted(() => {
-    fetchPackages();
+    loadPackages();
 });
 </script>
 
 <template>
-    <div class="main-container">
-
+    <LoadingSpinner v-if="!isLoading" />
+    <div class="main-container" v-else>
         <div class="package-page">
             <div class="header-title">
                 <h1 class="title">Các gói hiện tại</h1>

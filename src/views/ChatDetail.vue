@@ -382,11 +382,14 @@ watch(conversationList, () => {
 }
 
 .conversation-list {
+    padding-top: 30px;
     max-height: calc(85vh - 100px);
     overflow-y: scroll;
     transition: all 1s;
     -ms-overflow-style: none;
     scrollbar-width: none;
+    width: 70%;
+    margin: 0 auto;
 }
 
 .avatar {
