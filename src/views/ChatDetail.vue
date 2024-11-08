@@ -481,6 +481,10 @@ watch(conversationList, () => {
 }
 
 @media (max-width: 768px) {
+    .conversation-list {
+        width: 100%;
+        margin: 0 auto;
+    }
     .main-container {
         max-width: 600px;
     }

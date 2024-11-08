@@ -182,6 +182,7 @@ watch(
 }
 .hljs-code-container.my-3 {
     background-color: #ececec;
+    overflow: auto;
 }
 .message__body.hljs.language-html {
     padding: 10px !important;

@@ -219,7 +219,14 @@ const handleClick = (routeName) => {
   .right-box {
     order: 1;
   }
-
+  .right-icon {
+    right: -12px;
+    top: -105px;
+  }
+  .right-icon img {
+    width: 112px;
+    height: auto;
+  }
   .left-box {
     order: 2;
     gap: 10px;
