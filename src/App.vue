@@ -10,6 +10,10 @@ import request from "./utils/request";
 import { END_POINT } from "./api/api";
 import { encodeId } from '@/utils/encoding';
 import icon_logo from '@/assets/images/icon_logo.png';
+
+import logo from '@/assets/images/logo.png';
+
+
 const notificationRef = ref(null)
 const hiddenPopup = ref(false);
 const router = useRouter();
@@ -98,7 +102,7 @@ onMounted(() => {
             <div class="img flex">
               <img :src="icon_logo" alt="Logo" width="50">
             </div> &nbsp;&nbsp;&nbsp;&nbsp;
-            <h2>An Phát <br> Hưng . AI</h2>
+            <img :src="logo" alt="logo web" class="logo_text">
           </div>
         </div>
         <ul class="menu">
@@ -280,7 +284,9 @@ li .button span {
   font-weight: bold;
   color: var(--color-primary);
 }
-
+.logo_web .logo_text {
+  width: 175px;
+}
 .user {
   position: absolute;
   bottom: 0;
