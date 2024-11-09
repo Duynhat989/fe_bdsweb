@@ -71,10 +71,13 @@ const handleClick = (id) => {
   const encodedId = encodeId(id);
   window.location.href = `/assistant/${encodedId}`;
 };
+const loadAssistant = async () => {
+    await fetchAssistants();
+};
 
-watch(isLogin.value, () => {
-  if (isLogin.value) {
-      fetchAssistants();
+watch(isLogin, (newIsLogin) => {
+  if (newIsLogin) {
+    loadAssistant();
   }
 }, { deep: true });
 
@@ -87,7 +90,7 @@ onMounted(() => {
   checkScreenSize();
   setNotificationComponent(notificationRef.value);
   if (isLogin.value) { 
-    fetchAssistants();
+      loadAssistant();
   }
   window.addEventListener('resize', checkScreenSize);
 });
