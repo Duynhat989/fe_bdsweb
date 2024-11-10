@@ -9,6 +9,7 @@ import AddPromptPopup from '@/components/AddPromptPopup.vue';
 import store from '@/store';
 import icon_logo from '@/assets/images/icon_logo.png';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import Pagination from '@/components/Pagination.vue';
 const notification = useNotification();
 const route = useRoute();
 const router = useRouter();
@@ -25,7 +26,7 @@ const loading = ref(false);
 const messageInput = ref(null);
 const currentHistoryPage = ref(1);
 const currentPromptPage = ref(1);
-const itemsPromptPage = ref(10);
+const itemsPromptPage = ref(8);
 const itemsHistoryPage = ref(10);
 
 const totalHistory = ref(0);
@@ -112,6 +113,9 @@ const fetchPrompts = async (page = currentPromptPage.value, limit = itemsPromptP
                 page: parseInt(page, 10),
                 limit: parseInt(limit, 10)
             });
+            // const response = await request.post(`${END_POINT.PROMPTS_LIST}?page=${parseInt(page, 10)}&limit=${parseInt(limit, 10)}`, {
+            //     assistant_id: assistantId,
+            // });
             prompts.value = response.prompts
             totalPrompts.value = response.total;
             currentPromptPage.value = response.page;
@@ -125,22 +129,18 @@ const fetchPrompts = async (page = currentPromptPage.value, limit = itemsPromptP
     }
 };
 
-const totalHistoryPages = computed(() => Math.ceil(totalHistory.value / itemsHistoryPage.value));
-const totalPromptPages = computed(() => Math.ceil(totalPrompts.value / itemsPromptPage.value));
+// const totalHistoryPages = computed(() => Math.ceil(totalHistory.value / itemsHistoryPage.value));
+// const totalPromptPages = computed(() => Math.ceil(totalPrompts.value / itemsPromptPage.value));
 
 
 const changeHistoryPage = (page) => {
-    if (page >= 1 && page <= totalHistoryPages.value) {
-        currentHistoryPage.value = page;
-        fetchHistorys(currentHistoryPage.value, itemsHistoryPage.value);
-    }
+    currentHistoryPage.value = page;
+    fetchHistorys(currentHistoryPage.value, itemsHistoryPage.value);
 };
 
 const changePromptPage = (page) => {
-    if (page >= 1 && page <= totalPromptPages.value) {
-        currentPromptPage.value = page;
-        fetchPrompts(currentPromptPage.value, itemsPromptPage.value);
-    }
+    currentPromptPage.value = page;
+    fetchPrompts(currentPromptPage.value, itemsPromptPage.value);
 };
 
 const executeAction = (suggest) => {
@@ -277,12 +277,12 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <div class="pagination">
-                                <span v-for="page in totalPromptPages" :key="page" @click="changePromptPage(page)"
-                                    :class="{ active: currentPromptPage == page }" class="page-number">
-                                    {{ page }}
-                                </span>
-                            </div>
+                            <Pagination
+                                :total="totalPrompts"
+                                :itemsPerPage="itemsPromptPage"
+                                :currentPage="currentPromptPage"
+                                @changePage="changePromptPage"
+                            />
                         </div>
                     </div>
 
@@ -293,12 +293,12 @@ onMounted(() => {
                                 {{ item.name }}
                             </div>
                         </div>
-                        <div class="pagination">
-                            <span v-for="page in totalHistoryPages " :key="page" @click="changeHistoryPage(page)"
-                                :class="{ active: currentHistoryPage == page }" class="page-number">
-                                {{ page }}
-                            </span>
-                        </div>
+                        <Pagination
+                            :total="totalHistory"
+                            :itemsPerPage="itemsHistoryPage"
+                            :currentPage="currentHistoryPage"
+                            @changePage="changeHistoryPage"
+                        />
                     </div>
                 </div>
             </div>
@@ -594,27 +594,6 @@ onMounted(() => {
 
 .prompts .pagination {
     text-align: left;
-}
-
-.pagination {
-    width: 100%;
-    margin-top: 20px;
-    text-align: center;
-}
-
-.pagination span {
-    padding: 10px 15px;
-    background-color: #ccc;
-    color: #111;
-    margin: 0px 5px;
-    cursor: pointer;
-}
-
-.pagination span.active,
-.pagination span:hover {
-    background-color: var(--color-primary);
-
-    color: #fff;
 }
 
 .content-box {

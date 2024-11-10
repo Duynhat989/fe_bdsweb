@@ -7,11 +7,12 @@ import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { encodeId } from '@/utils/encoding';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import PaginationView from '@/components/Pagination.vue';
 const router = useRouter();
 const viewType = ref('list');
 const assistants = ref([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(10);  
 const total = ref(0);
 const isLoading = ref(false)
 
@@ -41,15 +42,13 @@ const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.va
 const setView = (type) => {
   viewType.value = type;
 };
-const totalPages = computed(() => {
-  return Math.ceil(total.value / itemsPerPage.value);
-});
+// const totalPages = computed(() => {
+//   return Math.ceil(total.value / itemsPerPage.value);
+// });
 
 const changePage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
     fetchAssistants(currentPage.value, itemsPerPage.value);
-  }
 };
 
 const itemsToShow = ref(3);
@@ -99,12 +98,12 @@ onUnmounted(() => {
             <span class="assistant-view">Lượt xem: {{ assistant.view }}</span>
           </div>
         </div>
-        <div class="pagination">
-          <span v-for="page in totalPages" :key="page" @click="changePage(page)"
-            :class="{ active: currentPage === page }" class="page-number">
-            {{ page }}
-          </span>
-        </div>
+        <PaginationView
+          :total="total"
+          :itemsPerPage="itemsPerPage"
+          :currentPage="currentPage"
+          @changePage="changePage"
+        />
       </div>
       <carousel v-if="viewType === 'slide' && assistants.length > 0" :items-to-show="itemsToShow"
         class="assistant-slide">
@@ -196,26 +195,6 @@ onUnmounted(() => {
 
 .assistant-slide {
   margin: 30px auto;
-}
-
-.pagination {
-  width: 100%;
-  margin-top: 20px;
-}
-
-.pagination span {
-  padding: 10px 15px;
-  background-color: #ccc;
-  color: #111;
-  margin: 0px 5px;
-  cursor: pointer;
-}
-
-.pagination span.active,
-.pagination span:hover {
-  background-color: var(--color-primary);
-
-  color: #fff;
 }
 
 .list-card {

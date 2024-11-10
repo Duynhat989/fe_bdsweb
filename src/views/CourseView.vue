@@ -7,7 +7,7 @@ import { encodeId } from '@/utils/encoding';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-
+import Pagination from '@/components/Pagination.vue';
 const router = useRouter();
 const activeTab = ref('all');
 const showPopup = ref(false);
@@ -95,15 +95,13 @@ const handlePayment = (course) => {
   selectedCourse.value = course;
   showPopup.value = true;
 };
-const totalPages = computed(() => {
-  return Math.ceil(total.value / itemsPerPage.value);
-});
+// const totalPages = computed(() => {
+//   return Math.ceil(total.value / itemsPerPage.value);
+// });
 
 const changePage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
     currentPage.value = page;
     fetchCourses(currentPage.value, itemsPerPage.value);
-  }
 };
 const loadCourses = async () => {
     await fetchCourses();
@@ -152,12 +150,12 @@ onMounted(() => {
           </div>
         </div>
       </div>
-      <div class="pagination">
-        <span v-for="page in totalPages" :key="page" @click="changePage(page)" :class="{ active: currentPage == page }"
-          class="page-number">
-          {{ page }}
-        </span>
-      </div>
+      <Pagination
+        :total="total"
+        :itemsPerPage="itemsPerPage"
+        :currentPage="currentPage"
+        @changePage="changePage"
+      />
     </div>
 
     <div v-else>
@@ -257,27 +255,6 @@ onMounted(() => {
   gap: 20px;
   margin-top: 20px;
 }
-
-.pagination {
-  width: 100%;
-  margin-top: 20px;
-}
-
-.pagination span {
-  padding: 10px 15px;
-  background-color: #ccc;
-  color: #111;
-  margin: 0px 5px;
-  cursor: pointer;
-}
-
-.pagination span.active,
-.pagination span:hover {
-  background-color: var(--color-primary);
-
-  color: #fff;
-}
-
 .course-card {
   background: white;
   border: 1px solid #e0e0e0;

@@ -3,6 +3,7 @@ import { ref, onMounted, computed, watch } from 'vue';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import Pagination from '@/components/Pagination.vue';
 const estales = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
@@ -44,20 +45,15 @@ watch(
   }
 );
 
-const totalPages = computed(() => {
-  return Math.ceil(total.value / itemsPerPage.value);
-});
-
 const changePage = (page) => {
-  if (page >= 1 && page <= totalPages.value) {
-    currentPage.value = page;
-    if (searchQuery.value) {
+  currentPage.value = page;
+  if (searchQuery.value) {
       fetchEstates(currentPage.value, itemsPerPage.value, searchQuery.value);
     } else {
       fetchEstates(currentPage.value, itemsPerPage.value);
-    }
   }
 };
+
 const loadEstates = async () => {
   await fetchEstates();
   isLoading.value = true
@@ -104,11 +100,12 @@ onMounted(() => {
     <div class="note" v-if="estales.length == 0">
       Không tìm thấy kết quả
     </div>
-    <div class="pagination"  v-if="isLoading">
-      <span @click="changePage(page)" v-for="(page, index) in totalPages" :class="{ active: currentPage === page }"
-        class="page-number">
-        {{ page }}</span>
-    </div>
+    <Pagination
+      :total="total"
+      :itemsPerPage="itemsPerPage"
+      :currentPage="currentPage"
+      @changePage="changePage"
+    />
   </div>
 </template>
 
@@ -285,26 +282,6 @@ onMounted(() => {
 .item-link:hover {
   opacity: 0.8;
 }
-
-.pagination {
-  width: 100%;
-  margin-top: 20px;
-}
-
-.pagination span {
-  padding: 10px 15px;
-  background-color: #ccc;
-  color: #111;
-  margin: 0px 5px;
-  cursor: pointer;
-}
-
-.pagination span.active,
-.pagination span:hover {
-  background-color: var(--color-primary);
-  color: #fff;
-}
-
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .results {

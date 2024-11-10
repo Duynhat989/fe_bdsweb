@@ -3,13 +3,13 @@ import { ref, computed, onMounted } from 'vue';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import ContractCreatePopup from '@/components/ContractCreatePopup.vue';
+import Pagination from '@/components/Pagination.vue';
 const contracts = ref([]);
 const showPopup = ref(false);
 const selectedContract = ref({});
 const currentPage = ref(1);
 const itemsPerPage = ref(10);
 const total = ref(0);
-
 const fetchContracts = async (page = currentPage.value, limit = itemsPerPage.value) => {
     try {
         const response = await request.get(END_POINT.CONTRACTS_LIST, {
@@ -28,18 +28,16 @@ const fetchContracts = async (page = currentPage.value, limit = itemsPerPage.val
 };
 
 const changePage = (page) => {
-    if (page >= 1 && page <= totalPages.value) {
-        currentPage.value = page;
-        fetchContracts(currentPage.value, itemsPerPage.value);
-    }
+    currentPage.value = page;
+    fetchContracts(currentPage.value, itemsPerPage.value);
 };
 const handleClick = (contract) => {
     selectedContract.value = contract;
     showPopup.value = true;
 };
-const totalPages = computed(() => {
-    return Math.ceil(total.value / itemsPerPage.value);
-});
+// const totalPages = computed(() => {
+//     return Math.ceil(total.value / itemsPerPage.value);
+// });
 onMounted(() => {
     fetchContracts();
 });
@@ -61,11 +59,12 @@ onMounted(() => {
                         <p class="contract-detail">{{ contract.description }}</p>
                     </div>
                 </div>
-                <div class="pagination">
-                    <span @click="changePage(page)" v-for="(page, index) in totalPages"
-                        :class="{ active: currentPage == page }" class="page-number">
-                        {{ page }}</span>
-                </div>
+                <Pagination
+                    :total="total"
+                    :itemsPerPage="itemsPerPage"
+                    :currentPage="currentPage"
+                    @changePage="changePage"
+                />
             </div>
         </div>
         <ContractCreatePopup v-if="showPopup" :contract="selectedContract" :visible="showPopup"
@@ -166,25 +165,6 @@ onMounted(() => {
     text-overflow: ellipsis;
 }
 
-.pagination {
-    width: 100%;
-    margin-top: 20px;
-}
-
-.pagination span {
-    padding: 10px 15px;
-    background-color: #ccc;
-    color: #111;
-    margin: 0px 5px;
-    cursor: pointer;
-}
-
-.pagination span.active,
-.pagination span:hover {
-    background-color: var(--color-primary);
-
-    color: #fff;
-}
 @media (min-width: 1024px) {
     .contract-card {
         width: calc((100% - 45px) / 4);
