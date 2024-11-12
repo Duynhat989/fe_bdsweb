@@ -158,12 +158,12 @@ onUnmounted(() => {
 .assistant-list {
   display: flex;
   flex-wrap: wrap;
-  gap: 20px;
+  gap: 15px;
 }
 
 .assistant-card {
   background-color: #fff;
-  width: calc(50% - 20px);
+  width: calc((100% - 30px)/3);
   padding: 15px;
   border-radius: 10px;
   box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);

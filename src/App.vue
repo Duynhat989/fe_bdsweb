@@ -134,10 +134,7 @@ onMounted(() => {
           <li class="menu_item" :class="{ active: currentRoute === '/check_process' }">
             <a href="/check_process" class="button"><i class='bx bx-check-shield'></i> <span>Kiểm tra quy hoạch</span></a>
           </li>
-          <li class="menu_item" :class="{ active: currentRoute === '/course' }">
-            <a href="/course" class="button"><i class="bx bx-movie-play"></i> <span>Khóa học bất động sản</span></a>
-          </li>
-
+         
           <li class="menu_item" :class="{ active: currentRoute === '/package' }">
             <a href="/package" class="button"><i class='bx bx-package'></i><span>Gói dịch vụ</span></a>
           </li>
@@ -152,6 +149,10 @@ onMounted(() => {
               <h3>{{ user.name }}</h3>
             </div>
             <div class="info">
+              <div class="menu_item" :class="{ active: currentRoute === '/course' }">
+                <a href="/course" class="button"><i style="margin-bottom: -3px;" class='bx bx-movie-play'></i>
+                  &nbsp;&nbsp;<span>Khóa học bất động sản</span></a>
+              </div>
               <div class="menu_item" :class="{ active: currentRoute === '/introducing_page' }">
                 <a href="/introducing_page" class="button"><i style="margin-bottom: -3px;" class='bx bxs-buildings'></i>
                   &nbsp;&nbsp;<span>Giới thiệu doanh nghiệp</span></a>
@@ -250,18 +251,14 @@ onMounted(() => {
   /* background-color: var(--color-primary); */
   /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 }
-/* 
-.menu_item.active span,.menu_item.active i,.menu_item:hover span, .menu_item:hover i {
-  color: white;
-} */
 .menu_item.active,
 .menu_item:hover {
   opacity: 0.8;
   cursor: pointer;
   color: white;
   background-color: var(--color-primary);
-  transform: scale(1.03)
 }
+
 .menu_item.active .button,
 .menu_item:hover .button {
   color: #fff;
@@ -323,7 +320,9 @@ onMounted(() => {
   display: flex;
   background-color: #f5f5f5;
 }
-
+.user_profile:hover {
+  color: var(--color-primary);
+}
 .user:hover .info {
   left: 0px;
   bottom: 100%;
