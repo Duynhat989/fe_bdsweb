@@ -13,7 +13,9 @@ const isLoading = ref(false)
 
 const openPopup = (pkg) => {
     selectedPackage.value = pkg;
-    isPopupVisible.value = true;
+    if(pkg.price !== '0') {
+        isPopupVisible.value = true;
+    }
 };
 
 const closePopup = () => {

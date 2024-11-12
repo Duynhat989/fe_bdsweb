@@ -6,7 +6,8 @@ const store = createStore({
         user: JSON.parse(localStorage.getItem('user')) || null,
         token: localStorage.getItem('token') || null,
         isLogin: !!localStorage.getItem('token') ,
-        message: ""
+        message: "",
+        assistantName: ""
     },
     mutations: {
         setUser(state, user) {
@@ -27,6 +28,9 @@ const store = createStore({
         },
         setMessage(state, message) {
             state.message = message;
+        },
+        setAssistantName(state, assistantName) {
+            state.assistantName = assistantName;
         },
     },
     actions: {

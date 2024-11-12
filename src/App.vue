@@ -8,7 +8,7 @@ import MaintenancePage from "./views/MaintenancePage.vue";
 import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck";
 import request from "./utils/request";
 import { END_POINT } from "./api/api";
-import { encodeId } from '@/utils/encoding';
+import { encodeId, decodeId } from '@/utils/encoding';
 import icon_logo from '@/assets/images/icon_logo.png';
 
 import logo from '@/assets/images/logo.png';
@@ -71,6 +71,12 @@ const handleClick = (id) => {
   const encodedId = encodeId(id);
   window.location.href = `/assistant/${encodedId}`;
 };
+
+const isActive = (id) => {
+  const currentId = route.params.id;
+  return decodeId(currentId) === id; 
+};
+
 const loadAssistant = async () => {
     await fetchAssistants();
 };
@@ -109,7 +115,7 @@ onMounted(() => {
           </div>
         </div>
         <ul class="menu">
-          <li class="menu_item" :class="{ active: currentRoute === '/assistant' }">
+          <li class="menu_item" :class="{ active: currentRoute === '/assistant' ||  currentRoute.includes('/chat') }">
             <a href="/assistant" class="button"><i class="bx bx-equalizer"></i> <span>Hỏi đáp trợ lý</span></a>
           </li>
           <li class="menu_item" :class="{ active: currentRoute === '/contract' }">
@@ -119,11 +125,14 @@ onMounted(() => {
             <a href="/estate" class="button"><i class="bx bx-search-alt"></i> <span>Tìm kiếm & So sánh bất động
                 sản</span></a>
           </li>
-          <li v-for="(assistant ,index) in assistantsSelected" :key="index" class="menu_item">
+          <li v-for="(assistant ,index) in assistantsSelected" :key="index"  :class="{ active: isActive(assistant.id) }" class="menu_item">
             <a class="button" @click.prevent="handleClick(assistant.id)">
               <i class="bx bx-message-square-detail"></i>
               <span>{{ assistant.name }}</span>
             </a>
+          </li>
+          <li class="menu_item" :class="{ active: currentRoute === '/check_process' }">
+            <a href="/check_process" class="button"><i class='bx bx-check-shield'></i> <span>Kiểm tra quy hoạch</span></a>
           </li>
           <li class="menu_item" :class="{ active: currentRoute === '/course' }">
             <a href="/course" class="button"><i class="bx bx-movie-play"></i> <span>Khóa học bất động sản</span></a>
@@ -182,7 +191,7 @@ onMounted(() => {
 }
 
 .body-bar {
-  width: 300px;
+  width: 310px;
   background-color: #f5f5f5;
   border-right: 1px solid #ddd;
   position: fixed;
@@ -197,14 +206,14 @@ onMounted(() => {
 }
 
 .hidden {
-  transform: translateX(-300px);
+  transform: translateX(-310px);
 }
 
 .body-content {
   flex-grow: 1;
   overflow-y: auto;
   height: 100vh;
-  margin-left: 300px;
+  margin-left: 310px;
   transition: margin-left 0.3s ease;
 }
 
@@ -238,39 +247,37 @@ onMounted(() => {
   border: 1px solid rgba(170, 170, 170, 0);
   transition: all 0.5s;
   border-radius: 10px;
-  color: #fff;
-  background-color: var(--color-primary);
-  box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;
+
+  /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 }
 
 .menu_item.active,
 .menu_item:hover {
   opacity: 0.8;
   cursor: pointer;
-  background-color: #cef4f2;
+  background-color: var(--color-primary);
 }
-
 .menu_item.active .button,
 .menu_item:hover .button {
-  color: black;
+  color: #fff;
 }
 
 .menu_item i {
   font-size: 1.5em;
 }
 
-li .button {
+.menu_item .button {
   display: flex;
   align-items: center;
-  color: #ececec;
+  color: #111;
   width: 100%;
   padding: 15px 5px;
 }
 
 
 
-li .button span {
-  padding-left: 5px;
+.menu_item .button span {
+  padding-left: 15px;
   line-height: 18px;
 }
 
@@ -343,16 +350,11 @@ li .button span {
 }
 
 .user_profile:hover .menu_item .button {
-  color: #ffff;
-
+  color: #111;
 }
-
+.info .menu_item:hover .button ,
 .info .menu_item.active .button {
-  color: #111;
-}
-
-.info .menu_item:hover .button {
-  color: #111;
+  color: #fff;
 }
 
 .menu_icon {
@@ -375,7 +377,7 @@ li .button span {
 
 @media (max-width: 1024px) {
   .body-bar.hidden {
-    transform: translateX(-300px);
+    transform: translateX(-310px);
   }
 
   .body-content {

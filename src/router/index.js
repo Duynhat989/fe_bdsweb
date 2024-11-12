@@ -14,7 +14,7 @@ import NotFound from '@/views/NotFound.vue';
 import IntroducingPage from '@/views/IntroducingPage.vue';
 import PackageView from '@/views/PackageView.vue';
 import UserDetail from '@/views/UserDetail.vue';
-
+import CheckProcessPage from '@/views/checkProcessPage.vue';
 const router = createRouter({
   history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
@@ -82,6 +82,12 @@ const router = createRouter({
       path: '/course/:id',
       name: 'courseDetail',
       component: CourseDetail,
+      meta: { requiresAuth: true }
+    },
+    {
+      path: '/check_process',
+      name: 'checkProcess',
+      component: CheckProcessPage,
       meta: { requiresAuth: true }
     },
     {

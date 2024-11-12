@@ -7,7 +7,7 @@ import request from '@/utils/request';
 import useNotification from '@/composables/useNotification';
 import AddPromptPopup from '@/components/AddPromptPopup.vue';
 import store from '@/store';
-import icon_logo from '@/assets/images/icon_logo.png';
+import icon_logo from '@/assets/images/promt.jpg';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Pagination from '@/components/Pagination.vue';
 const notification = useNotification();
@@ -38,6 +38,8 @@ const isEdit = ref(false);
 const selectePrompt = ref(null)
 
 const isLoading = ref(false)
+
+const goBack = () => router.back();
 
 const addPrompt = () => {
     showPopup.value = true;
@@ -188,6 +190,7 @@ const handleSend = async () => {
     try {
         await fetchConversationNew()
         store.commit('setMessage', message.value);
+        store.commit('setAssistantName',  assistantData.value.name);
         router.push({
             path: `/chat/${threadId.value}`
         });
@@ -200,6 +203,7 @@ const handleSend = async () => {
 
 const openHistory = (thread_id) => {
     const threadId = thread_id.replace('thread_', '');
+    store.commit('setAssistantName', assistantData.value.name);
     router.push({
         path: `/chat/${threadId}`
     });
@@ -224,6 +228,7 @@ onMounted(() => {
     <LoadingSpinner v-if="!isLoading" />
     <div class="main-container" v-else>
         <div class="flex">
+            <button class="back-button" @click="goBack"><i class='bx bx-arrow-back'></i> Back</button>
             <div class="header-title">
                 <h1 class="title">{{ assistantData.name }}</h1>
                 <p>{{ assistantData.detail }}</p>
@@ -244,7 +249,7 @@ onMounted(() => {
                             <button v-for="(suggest, index) in suggests" :key="index" @click="executeAction(suggest)"
                                 class="action-card">
                                 <div class="icon">
-                                    <i class="bx bx-message-square-dots"></i>
+                                    <i class='bx bx-message-square-edit'></i>
                                 </div>
                                 <p class="title">{{ suggest }}</p>
                             </button>
@@ -257,7 +262,7 @@ onMounted(() => {
                                 <div v-for="(prompt, index) in prompts" :key="prompt.id" class="prompt-card"
                                     @click="executePrompt(prompt)">
                                     <div class="prompt-icon">
-                                        <img :src="icon_logo" alt="">
+                                        <img :src="icon_logo" alt="Prompt Icon" />
                                     </div>
                                     <div class="prompt-content">
                                         <div class="prompt-title">{{ prompt.name }}</div>
@@ -265,7 +270,7 @@ onMounted(() => {
                                         <div class="prompt-action">
                                             <button @click.stop="editPrompt(prompt)" class="delete-btn">
                                                 <i class='bx bx-edit-alt'></i>
-                                            </button> &nbsp;&nbsp;&nbsp;&nbsp;
+                                            </button>
                                             <button @click.stop="deletePrompt(prompt.id)" class="delete-btn">
                                                 <svg xmlns="http://www.w3.org/2000/svg" width="28" height="28"
                                                     viewBox="0 0 24 24">
@@ -285,7 +290,6 @@ onMounted(() => {
                             />
                         </div>
                     </div>
-
                     <div v-if="activeTab === 'history'" class="content-center">
                         <div class="history" v-if="historys.length > 0">
                             <div class="history-item" v-for="item in historys" :key="item.id"
@@ -321,6 +325,26 @@ onMounted(() => {
     </div>
 </template>
 <style scoped>
+.back-button {
+    position: absolute;
+    top: 20px;
+    left: 70px;
+    background-color: #fff;
+    border: 1px solid var(--color-primary);
+    padding: 8px 12px;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
+    color: var(--color-primary);
+    font-weight: bold;
+    transition: background-color 0.3s ease;
+}
+
+.back-button:hover {
+    background-color: var(--color-primary);
+    color: #fff;
+}
+
 .header-title {
     text-align: center;
     margin-top: 40px;
@@ -431,7 +455,7 @@ onMounted(() => {
 }
 
 .action-card {
-    background-color: #f9f9f9;
+    background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 10px;
@@ -445,7 +469,7 @@ onMounted(() => {
     text-align: left;
     display: flex;
     flex-direction: column;
-    align-items: flex-start;
+    align-items: center;
     overflow: hidden;
     text-overflow: ellipsis;
 }
@@ -463,110 +487,146 @@ onMounted(() => {
 
 .action-card .icon {
     font-size: 24px;
-    color: #666;
+    color: var(--color-primary);
     margin: 0 auto;
     margin-bottom: 4px;
 }
 
 .action-card .title {
     font-size: 16px;
-    font-weight: bold;
+    font-weight: 400;
     line-height: 20px;
+    text-align: center;
     color: #333;
     margin-bottom: 4px;
     width: fit-content;
 }
-
-.add-btn {
-    background-color: var(--color-primary);
-    color: white;
-    border: none;
-    border-radius: 5px;
-    padding: 8px 16px;
-    font-size: 14px;
-    cursor: pointer;
-    transition: background-color 0.3s ease;
-}
-
-.add-btn:hover {
-    opacity: 0.8;
-}
-
 .prompts {
-    display: flex;
-    flex-direction: column;
-    padding: 1rem;
+  padding: 20px;
 }
 
 .prompt-controls {
-    display: flex;
-    justify-content: flex-end;
-    margin-bottom: 1rem;
+  display: flex;
+  justify-content: flex-end;
+  margin-bottom: 20px;
+}
+
+.add-btn {
+  background-color: var(--color-primary);
+  color: #fff;
+  padding: 5px 15px;
+  border: none;
+  border-radius: 5px;
+  font-size: 14px;
+  cursor: pointer;
+  font-weight: 400;
+  transition: background-color 0.3s ease, transform 0.2s ease;
+}
+
+.add-btn:hover {
+  background-color: #0056b3;
+  transform: scale(1.05);
 }
 
 .prompt-box {
-    display: flex;
-    width: 100%;
-    gap: 10px;
-    flex-wrap: wrap;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 20px;
 }
 
 .prompt-card {
-    display: flex;
-    align-items: center;
-    padding: 8px;
-    border: 1px solid #ddd;
-    border-radius: 8px;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    gap: 4px;
-    width: calc((100% - 30px)/ 4);
-    flex-direction: column;
-    cursor: pointer;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+  width: calc(50% - 10px);
+  padding: 15px;
+  display: flex;
+  align-items: center;
+  cursor: pointer;
+  transition: box-shadow 0.3s ease, transform 0.3s ease;
+}
+
+.prompt-card:hover {
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  transform: translateY(-5px);
 }
 
 .prompt-icon img {
-    width: 30px;
-    height: 40px;
+  width: 50px;
+  height: 50px;
+  border-radius: 50%;
+  margin-right: 15px;
+  transition: transform 0.3s ease;
+}
+
+.prompt-card:hover .prompt-icon img {
+  transform: scale(1.1);
 }
 
 .prompt-content {
-    flex: 1;
+  flex: 1;
 }
 
 .prompt-title {
-    font-weight: bold;
-    font-size: 16px;
-    margin-bottom: 4px;
+  font-size: 16px;
+  font-weight: bold;
+  color: #333;
+  margin-bottom: 5px;
+  transition: color 0.3s ease;
 }
 
-.prompt-date,
+.prompt-card:hover .prompt-title {
+  color: var(--color-primary);
+}
+
 .prompt-description {
-    font-size: 14px;
-    color: #666;
-    margin-bottom: 8px;
-    display: -webkit-box;
-    -webkit-line-clamp: 2;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    text-align: justify;
+  font-size: 14px;
+  color: #555;
+  margin-bottom: 10px;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  text-align: justify;
 }
 
 .prompt-action {
-    display: flex;
-    align-items: center;
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
 }
 
+.edit-btn,
 .delete-btn {
-    border: none;
-    cursor: pointer;
-    background: #fff;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 18px;
+  padding: 5px;
+  transition: transform 0.2s ease, color 0.3s ease;
 }
+
+.edit-btn:hover {
+  color: var(--color-primary);
+  transform: scale(1.1);
+}
+
 
 .delete-btn i {
     font-size: 26px;
     color: var(--color-primary);
+}
+/* Responsive adjustments */
+@media (max-width: 768px) {
+  .prompt-card {
+    width: 100%;
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .prompt-icon img {
+    margin: 0 0 10px 0;
+  }
 }
 
 .history {
@@ -576,15 +636,20 @@ onMounted(() => {
 }
 
 .history-item {
-    background-color: #f9f9f9;
+    background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 10px;
+    padding: 5px 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
     width: 80%;
     margin: 0 auto;
-
+    -webkit-line-clamp: 2;
+    font-size: 14px;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: justify;
 }
 
 .history-item:hover {

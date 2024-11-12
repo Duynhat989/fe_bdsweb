@@ -20,7 +20,7 @@ const contentElm = ref(null);
 const msg = ref(null);
 const isViewMsg = ref(false);
 const isLoading = ref(false);
-const text = ref('AI chat');
+const text = ref('');
 
 const statusCopy = ref('Copy');
 
@@ -91,7 +91,7 @@ watch(
                     <img width="30" height="30" 
                          :src="msg.role === 'user' ? 'https://img.icons8.com/clouds/100/user.png' : q_a" 
                          :alt="msg.role === 'user' ? 'User' : 'Bot'" />
-                    <span class="message__role">{{ msg.role === 'user' ? 'You' : text }}</span>
+                    <span class="message__role">{{ msg.role === 'user' ? 'You' : text ?? 'AI chat' }}</span>
                 </div>
                 <button class="message__copy-button" @click="copyMessageContent">
                     {{ statusCopy }} <i class='bx bx-copy'></i>

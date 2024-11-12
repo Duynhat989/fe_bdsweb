@@ -6,7 +6,6 @@ import request from '@/utils/request';
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
 import useNotification from '@/composables/useNotification';
 import store from '@/store';
-import q_a from '@/assets/images/q_a.png';
 import MsgContent from '@/components/chat/MsgContent.vue';
 const notification = useNotification();
 const route = useRoute();
@@ -16,20 +15,10 @@ const loading = ref(false);
 const conversationContainer = ref(null);
 const message = ref('');
 const messageOld = computed(() => store.state.message);
+const assistantName = computed(() => store.state.assistantName);
 const threadId = computed(() => route.params.id);
-
 const goBack = () => router.back();
 
-const copyToClipboard = (text) => {
-    if (!text) return;
-    navigator.clipboard.writeText(text).then(
-        () => {
-            notification.success('Thành công!', 'Copy text thành công!', {
-                showActions: false
-            })
-        }
-    );
-};
 
 const scrollToBottom = () => {
     nextTick(() => {
@@ -116,7 +105,7 @@ watch(conversationList, () => {
         <div class="flex">
             <button class="back-button" @click="goBack"><i class='bx bx-arrow-back'></i> Back</button>
             <div class="header-title">
-                <h1 class="title">Bạn cần hỗ trợ gì?</h1>
+                <h1 class="title">{{ assistantName }}</h1>
             </div>
             <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
                 class="conversation-list">
@@ -388,7 +377,7 @@ watch(conversationList, () => {
     transition: all 1s;
     -ms-overflow-style: none;
     scrollbar-width: none;
-    width: 70%;
+    width: 90%;
     margin: 0 auto;
 }
 
