@@ -226,7 +226,7 @@ onMounted(() => {
   list-style: none;
   display: flex;
   flex-direction: column;
-  gap: 15px;
+  gap: 7px;
   max-height: 80vh;
   overflow-y: auto;
   padding-right: 10px;
@@ -247,15 +247,20 @@ onMounted(() => {
   border: 1px solid rgba(170, 170, 170, 0);
   transition: all 0.5s;
   border-radius: 10px;
-
+  /* background-color: var(--color-primary); */
   /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 }
-
+/* 
+.menu_item.active span,.menu_item.active i,.menu_item:hover span, .menu_item:hover i {
+  color: white;
+} */
 .menu_item.active,
 .menu_item:hover {
   opacity: 0.8;
   cursor: pointer;
+  color: white;
   background-color: var(--color-primary);
+  transform: scale(1.03)
 }
 .menu_item.active .button,
 .menu_item:hover .button {
@@ -263,7 +268,7 @@ onMounted(() => {
 }
 
 .menu_item i {
-  font-size: 1.5em;
+  font-size: 1.2em;
 }
 
 .menu_item .button {
