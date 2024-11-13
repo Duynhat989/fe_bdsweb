@@ -83,22 +83,25 @@ onUnmounted(() => {
       <button class="list">Danh sách</button>
     </div>
     <div class="header-title">
-      <h1 class="title">Hỏi đáp trợ lý</h1>
+      <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
       <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
     </div>
     <div class="main-content">
       <div class="assistant-list">
         <div class="assistant-card list-card" v-for="assistant in assistants" :key="assistant.id"
           @click="handleClick(assistant.id)">
-          <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
-          <div class="assistant-content">
+          <div class="base-info">
+            <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
             <h3 class="assistant-title">{{ assistant.name }}</h3>
+          </div>
+          <div class="assistant-content">
             <p class="assistant-detail">{{ assistant.detail }}</p>
-            <span class="assistant-view">Lượt xem: {{ assistant.view }}</span>
             <div class="likes-container">
+              <span class="assistant-view">Lượt xem: {{ assistant.view + randomLikes() }}</span>
               <span class="likes">{{ randomLikes() }} ❤️</span>
-              <button class="action-btn">Thực hiện</button>
             </div>
+            <button class="action-btn">Bắt đầu trò chuyện <span style="margin-left: auto;"><i
+                  class='bx bx-chevron-right'></i></span></button>
           </div>
         </div>
         <PaginationView :total="total" :itemsPerPage="itemsPerPage" :currentPage="currentPage"
@@ -144,6 +147,7 @@ onUnmounted(() => {
   background-color: var(--color-primary);
   color: #fff;
 }
+
 .header-title .title {
   font-size: 24px;
   font-weight: bold;
@@ -166,39 +170,54 @@ onUnmounted(() => {
   width: calc((100% - 30px)/3);
   padding: 15px;
   border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  display: flex;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.256);
+  border: 1px solid rgba(128, 128, 128, 0.266);
+  /* display: flex; */
   align-items: center;
   cursor: pointer;
   transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
+
 .assistant-image {
   width: 80px;
   height: 80px;
-  border-radius: 50%;
+  border-radius: 15px;
   margin-right: 15px;
   transition: transform 0.3s ease;
   object-fit: cover;
 }
+
 .assistant-card:hover .assistant-image {
   transform: scale(1.1);
 }
 
 .assistant-card:hover {
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.299);
   transform: translateY(-5px);
+  border: 1px solid rgba(128, 128, 128, 0.266);
 }
+
+.base-info {
+  display: flex;
+  align-items: center;
+  background-color: #d4e9ff66;
+  padding: 10px;
+  border-radius: 15px;
+  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.101);
+}
+
 .assistant-card:hover .assistant-title {
   color: #007bff;
 }
+
 .assistant-content {
   flex: 1;
   width: 100%;
 }
 
 .assistant-title {
-  font-size: 18px;
-  font-weight: bold;
+  font-size: 1.2em;
+  font-weight: normal;
   color: #333;
 }
 
@@ -212,6 +231,9 @@ onUnmounted(() => {
   font-size: 14px;
   color: #555;
   margin: 10px 0;
+  margin-top: 15px;
+  line-height: 22px;
+  display: -webkit-box;
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
@@ -228,7 +250,7 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-top: 10px;
+  margin: 10px 0;
 }
 
 .likes {
@@ -237,17 +259,22 @@ onUnmounted(() => {
 }
 
 .action-btn {
-  background-color: #007bff;
-  color: #fff;
-  padding: 5px 10px;
+  /* background-color: #007bff; */
+  color: #007bff;
+  font-weight: 400 !important;
+  font-size: medium;
+  padding: 10px;
+  width: 100%;
   border: none;
   border-radius: 5px;
   cursor: pointer;
   font-weight: bold;
   transition: background-color 0.3s ease, transform 0.2s ease;
 }
+
 .action-btn:hover {
-  background-color: #0056b3;
+  background-color: #007bff;
+  color: white;
   transform: scale(1.05);
 }
 
