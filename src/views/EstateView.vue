@@ -209,6 +209,7 @@ onMounted(() => {
 }
 
 .result-box {
+  max-width: 300px;
   width: 100%;
   border-radius: 5px;
   background-color: #fff;
