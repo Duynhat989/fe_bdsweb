@@ -95,7 +95,7 @@ onMounted(() => {
     <div class="contract-review">
         <div class="header-title">
             <h1 class="title">Rà soát hợp đồng</h1>
-            <p class="subtitle">Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp
+            <p class="subtitle"  style="color: white;">Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp
                 pháp.
             </p>
         </div>
@@ -155,7 +155,6 @@ onMounted(() => {
 
 .header-title .subtitle {
     font-size: 16px;
-    color: #555;
     margin-bottom: 20px;
 }
 

@@ -363,7 +363,7 @@ onMounted(() => {
 }
 .info .menu_item:hover .button ,
 .info .menu_item.active .button {
-  color: #fff;
+  color: var(--color-primary);
 }
 
 .menu_icon {

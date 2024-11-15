@@ -206,13 +206,14 @@ onUnmounted(() => {
 .base-info {
   display: flex;
   align-items: center;
-  background-color: #cae4ff;
-  padding: 10px;
+  background-color: #e9f2fc;
+  border: 1px solid #cae4ff;
+  padding: 12px 10px;
   border-radius: 15px;
   box-shadow: 0px 4px 8px rgba(133, 133, 133, 0.101);
 }
 
-.assistant-card:hover .assistant-title {
+.assistant-card:hover .assistant-title,.assistant-card:hover h2 {
   color: #007bff;
 }
 
