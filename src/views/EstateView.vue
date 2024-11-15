@@ -203,7 +203,7 @@ onMounted(() => {
 .results {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
+  gap: 10px;
   align-items: start;
   box-sizing: border-box;
 }
