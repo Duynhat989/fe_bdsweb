@@ -16,7 +16,7 @@ console.log(isLoading);
   <div class="contract-page" v-else>
     <div class="header-title">
       <h1 class="title">Rà soát & tạo mới hợp đồng</h1>
-      <p>Quản lý hợp đồng chính xác – Tiết kiệm thời gian, tối đa lợi ích</p>
+      <p style="color: white;">Quản lý hợp đồng chính xác – Tiết kiệm thời gian, tối đa lợi ích</p>
     </div>
     <div class="contract-options">
       <div class="contract-box">

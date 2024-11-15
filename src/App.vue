@@ -251,21 +251,24 @@ onMounted(() => {
   /* background-color: var(--color-primary); */
   /* box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px; */
 }
-.menu_item.active,
-.menu_item:hover {
-  opacity: 0.8;
-  cursor: pointer;
-  color: white;
+.menu_item.active{
   background-color: var(--color-primary);
 }
 .menu_item:hover {
   transform: scale(1.1);
+  opacity: 0.8;
+  cursor: pointer;
 }
-.menu_item.active .button,
-.menu_item:hover .button {
-  color: #fff;
+.menu_item:hover {
+  color: var(--color-primary);
 }
 
+.menu_item:hover .button {
+  color: var(--color-primary);
+}
+.menu_item.active .button{
+  color: white;
+}
 .menu_item i {
   font-size: 1.2em;
 }

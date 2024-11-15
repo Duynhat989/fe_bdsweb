@@ -38,8 +38,7 @@ const handleClick = (routeName) => {
   <div class="main-container">
     <div class="header-title">
       <h1 class="title">An Phát Hưng</h1>
-      <p>Hỗ trợ bạn trong việc tìm kiếm thông tin và giải đáp thắc mắc về bất động sản.</p>
-      <p>Trợ lý An Phát Hưng giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý
+      <p style="color: white;">Trợ lý An Phát Hưng giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý
         trở nên dễ dàng hơn.</p>
     </div>
     <div class="content">
@@ -86,7 +85,14 @@ const handleClick = (routeName) => {
   gap: 30px;
   margin: 100px 0;
 }
-
+.title{
+  font-size: large;
+  font-weight: bold !important;
+  color: white !important;
+  background-color: #318be05d;
+  border-radius: 10px;
+  padding: 10px;
+}
 .header-title {
   text-align: center;
   margin: 30px auto;

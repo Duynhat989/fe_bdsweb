@@ -16,7 +16,7 @@ onMounted(() => {
     <div class="main-container" v-else>
         <div class="header-title">
             <h1 class="title">Kiểm tra quy hoạch</h1>
-            <p class="description">Mô tả về kiểm tra quy hoạch.</p>
+            <p style="color: white;" class="description">Mô tả về kiểm tra quy hoạch.</p>
         </div>
         <div class="check-process-page">
             <div class="content">

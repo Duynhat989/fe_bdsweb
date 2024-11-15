@@ -80,11 +80,11 @@ onUnmounted(() => {
   <LoadingSpinner v-if="!isLoading" />
   <div class="main-container" v-else>
     <div class="change-type">
-      <button class="list">Danh sách</button>
+      <!-- <button class="list">Danh sách</button> -->
     </div>
     <div class="header-title">
       <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
-      <p>Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
+      <p style="color: white;">Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
     </div>
     <div class="main-content">
       <div class="assistant-list">
@@ -92,7 +92,10 @@ onUnmounted(() => {
           @click="handleClick(assistant.id)">
           <div class="base-info">
             <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
-            <h3 class="assistant-title">{{ assistant.name }}</h3>
+            <div class="it">
+              <h2 style="font-size: 16px;font-weight: 450 !important;">AI. An Phát Hưng</h2>
+              <h3 style="font-size: 14px;" class="assistant-title">{{ assistant.name }}</h3>
+            </div>
           </div>
           <div class="assistant-content">
             <p class="assistant-detail">{{ assistant.detail }}</p>
@@ -112,6 +115,9 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
+.it{
+  padding-left: 10px;
+}
 .header-title {
   text-align: center;
   margin-top: 40px;
@@ -200,10 +206,10 @@ onUnmounted(() => {
 .base-info {
   display: flex;
   align-items: center;
-  background-color: #d4e9ff66;
+  background-color: #cae4ff;
   padding: 10px;
   border-radius: 15px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.101);
+  box-shadow: 0px 4px 8px rgba(133, 133, 133, 0.101);
 }
 
 .assistant-card:hover .assistant-title {
@@ -262,7 +268,7 @@ onUnmounted(() => {
   /* background-color: #007bff; */
   color: #007bff;
   /* font-weight: 400 !important; */
-  font-size: medium;
+  font-size: 13px !important;
   padding: 10px;
   width: 100%;
   border: none;

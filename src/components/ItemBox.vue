@@ -24,6 +24,7 @@ const props = defineProps({
   width: calc((100% - 20px)/2);
   height: 200px;
   transition: all 0.5s;
+  background: linear-gradient(0deg, rgba(204, 204, 204, 1) 0%, var(--color-primary) 50%);
 }
 
 .item-box {

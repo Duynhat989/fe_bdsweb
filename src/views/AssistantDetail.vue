@@ -231,7 +231,7 @@ onMounted(() => {
             <button class="back-button" @click="goBack"><i class='bx bx-arrow-back'></i> Back</button>
             <div class="header-title">
                 <h1 class="title">{{ assistantData.name }}</h1>
-                <p>{{ assistantData.detail }}</p>
+                <p style="color: white;">{{ assistantData.detail }}</p>
             </div>
             <div class="content-box">
                 <div class="tabs">
@@ -580,7 +580,7 @@ onMounted(() => {
 }
 
 .prompt-description {
-  font-size: 14px;
+  font-size: 12px;
   color: #555;
   margin-bottom: 10px;
   -webkit-line-clamp: 2;
@@ -632,14 +632,14 @@ onMounted(() => {
 .history {
     display: flex;
     flex-direction: column;
-    gap: 12px;
+    gap: 4px;
 }
 
 .history-item {
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 5px 10px;
+    padding: 8px 10px;
     cursor: pointer;
     transition: background-color 0.2s ease;
     width: 80%;
@@ -700,6 +700,7 @@ onMounted(() => {
 .content-center {
     width: 80%;
     margin: 0 auto;
+    max-width: 800px;
 }
 
 /* Responsive Styles */

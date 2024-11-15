@@ -243,7 +243,8 @@ watch(conversationList, () => {
     background-color: #f0f0f0;
     padding: 8px 10px;
     border-radius: 5px;
-    width: 50%;
+    width:70%;
+    max-width: 800px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
@@ -379,6 +380,7 @@ watch(conversationList, () => {
     -ms-overflow-style: none;
     scrollbar-width: none;
     width: 90%;
+    max-width: 1000px;
     margin: 0 auto;
 }
 

@@ -69,7 +69,7 @@ onMounted(() => {
     <div class="header">
       <div class="header-title">
         <h1 class="title">Tìm kiếm bất động sản</h1>
-        <p>Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
+        <p style="color: white;">Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
       </div>
       <div class="search-bar">
         <input type="text" v-model="searchQuery" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
@@ -84,8 +84,8 @@ onMounted(() => {
           <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
           <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
           <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
-          <p class="item-more"><strong>Giá:</strong> <span style="color: red;">{{ item.price }}</span></p>
-          <p class="item-more"><strong>Diện tích:</strong><span style="color: red;">{{ item.area }}</span> </p>
+          <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ item.price }}</span></p>
+          <p class="item-more"><strong>Diện tích: </strong><span style="color: red;">{{ item.area }}</span> </p>
           <p class="item-more">
             <strong>Tiện ích:</strong>
             {{ item.exten }}
