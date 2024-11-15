@@ -49,6 +49,7 @@ onMounted(() => {
             <h1 class="title">Tạo mới hợp đồng</h1>
             <p class="subtitle">Tạo hợp đồng mới theo nhu cầu của bạn với các mẫu có sẵn và tùy chỉnh dễ dàng.</p>
         </div>
+        <p>Lưu ý: <i style="font-size: 12px;color: red;">Đây là giải pháp tham khảo nhằm mục đích tối ưu quá trình tạo hợp đồng 1 cách nhanh nhất. Vui lòng chỉ sử dụng để tham khảo, chúng tôi không chịu trách nhiệm nếu bạn sử dụng trực tiếp với mục đích thương mại.</i></p>
         <div class="main-content">
             <div class="contract-list">
                 <div class="contract-card list-card" v-for="contract in contracts" :key="contract.id"

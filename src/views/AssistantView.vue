@@ -11,7 +11,7 @@ const router = useRouter();
 const viewType = ref('list');
 const assistants = ref([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(10);
+const itemsPerPage = ref(6);
 const total = ref(0);
 const isLoading = ref(false)
 

@@ -13,7 +13,10 @@ a {
   text-decoration: none;
   color: var(--color-text);
 }
-
+*{
+  
+  font-weight: 300 !important;
+}
 /* 
 @media (hover: hover) {
   a:hover {
