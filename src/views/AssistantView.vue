@@ -198,9 +198,9 @@ onUnmounted(() => {
 }
 
 .assistant-card:hover {
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.299);
-  transform: translateY(-5px);
-  border: 1px solid rgba(128, 128, 128, 0.266);
+  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.438);
+  transform: translateY(-10px);
+  border: 1px solid rgb(0, 162, 255);
 }
 
 .base-info {

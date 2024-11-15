@@ -209,14 +209,15 @@ onMounted(() => {
 }
 
 .result-box {
-  max-width: 300px;
   width: 100%;
+  max-width: 300px;
   border-radius: 5px;
   background-color: #fff;
   padding: 15px;
   text-align: left;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-  transition: transform 0.3s;
+  transition: transform 0.5s;
+  border: 1px solid white;
   cursor: pointer;
 }
 
@@ -228,7 +229,7 @@ onMounted(() => {
 
 .result-box:hover {
   border: 1px solid var(--color-primary);
-  transform: translateY(-5px);
+  transform: translateY(-10px);
 }
 
 .item-image {
@@ -314,6 +315,9 @@ onMounted(() => {
 @media (max-width: 576px) {
   .results {
     grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  }
+  .result-box{
+    max-width: 100%;
   }
 }
 </style>

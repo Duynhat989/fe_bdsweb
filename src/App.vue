@@ -100,6 +100,10 @@ onMounted(() => {
   }
   window.addEventListener('resize', checkScreenSize);
 });
+
+const goHome = () => {
+  location.href = '/'
+}
 </script>
 <template>
   <MaintenancePage v-if="isMaintenance"/>
@@ -107,7 +111,7 @@ onMounted(() => {
     <div class="body-bar" :class="{ hidden: hiddenPopup }" v-if="isLogin">
       <div class="nav">
         <div class="logo">
-          <div class="logo_web flex">
+          <div class="logo_web flex" @click="goHome">
             <div class="img flex">
               <img :src="icon_logo" alt="Logo" width="50">
             </div> &nbsp;&nbsp;&nbsp;&nbsp;
@@ -255,7 +259,7 @@ onMounted(() => {
   background-color: var(--color-primary);
 }
 .menu_item:hover {
-  transform: scale(1.1);
+  transform: translateX(15px);
   opacity: 0.8;
   cursor: pointer;
 }
