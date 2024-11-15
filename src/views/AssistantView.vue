@@ -98,7 +98,7 @@ onUnmounted(() => {
             <p class="assistant-detail">{{ assistant.detail }}</p>
             <div class="likes-container">
               <span class="assistant-view">Lượt xem: {{ assistant.view + randomLikes() }}</span>
-              <span class="likes">{{ randomLikes() }} ❤️</span>
+              <span class="likes">{{ randomLikes() }} <i class='bx bxs-heart' style='color:#ff0808'  ></i></span>
             </div>
             <button class="action-btn">Bắt đầu trò chuyện <span style="margin-left: auto;"><i
                   class='bx bx-chevron-right'></i></span></button>
@@ -261,7 +261,7 @@ onUnmounted(() => {
 .action-btn {
   /* background-color: #007bff; */
   color: #007bff;
-  font-weight: 400 !important;
+  /* font-weight: 400 !important; */
   font-size: medium;
   padding: 10px;
   width: 100%;

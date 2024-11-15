@@ -44,6 +44,7 @@ const fetchConversationList = async () => {
 
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
+        console.log("343434")
         return;
     }
     loading.value = true;
@@ -114,7 +115,7 @@ watch(conversationList, () => {
             <div class="send-bar">
                 <div class="send-container">
                     <div class="input-wrapper">
-                        <input type="text" v-model="message" @keydown.enter="handleSend"
+                        <input :disabled="loading" type="text" v-model="message" @keydown.enter="handleSend"
                             placeholder="Nhập yêu cầu hỗ trợ..." />
                         <span class="send-icon">🔍</span>
                     </div>
@@ -299,7 +300,7 @@ watch(conversationList, () => {
     border: 1px solid #e0e0e0;
     border-radius: 8px;
     padding: 10px;
-    font-size: 16px;
+    font-size: 13px;
     color: #333;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -332,7 +333,7 @@ watch(conversationList, () => {
 }
 
 .action-card .title {
-    font-size: 16px;
+    font-size: 13px;
     font-weight: bold;
     color: #333;
     margin-bottom: 4px;

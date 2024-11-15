@@ -41,7 +41,7 @@ watch(
         fetchEstates();
       }
       isLoading.value = true
-    }, 2000)
+    }, 1000)
   }
 );
 
@@ -81,11 +81,11 @@ onMounted(() => {
       <div class="result-box" v-for="item in estales" :key="item.id">
         <img :src="item.image" alt="Property Image" class="item-image" />
         <div class="result-detail">
-          <h3 class="item-name">{{ item.name }}</h3>
-          <p class="item-location">{{ item.location }}</p>
-          <p class="item-description">{{ item.description }}</p>
-          <p class="item-more"><strong>Giá:</strong> {{ item.price }}</p>
-          <p class="item-more"><strong>Diện tích:</strong> {{ item.area }}</p>
+          <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
+          <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
+          <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
+          <p class="item-more"><strong>Giá:</strong> <span style="color: red;">{{ item.price }}</span></p>
+          <p class="item-more"><strong>Diện tích:</strong><span style="color: red;">{{ item.area }}</span> </p>
           <p class="item-more">
             <strong>Tiện ích:</strong>
             {{ item.exten }}
@@ -221,7 +221,7 @@ onMounted(() => {
 }
 
 .result-detail {
-  height: 180px;
+  height: 280px;
   overflow-y: auto;
   scrollbar-width: none;
 }
@@ -240,24 +240,27 @@ onMounted(() => {
 }
 
 .item-name {
-  font-size: 18px;
-  color: #333;
+  font-size: 15px;
+  color: #000000;
+  font-weight: 400 !important;
   margin-bottom: 5px;
 }
 
-.item-location {
-  font-size: 14px;
-  color: #777;
+.item-location{
+  font-size: 11px;
+  color: #000000;
+  font-weight: 400 !important;
   margin-bottom: 10px;
 }
 
 .item-more,
 .item-description {
-  font-size: 14px;
+  font-size: 12px;
   color: #555;
 }
 
 .item-description {
+  font-size: 12px;
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;

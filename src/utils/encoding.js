@@ -14,11 +14,13 @@ export const encodeId = (id) => {
  */
 export const decodeId = (encodedId) => {
     try {
-        const decodedStr = atob(encodedId);
-        const [id] = decodedStr.split('-');
-        return parseInt(id);
+        if(encodedId){
+            const decodedStr = atob(encodedId);
+            const [id] = decodedStr.split('-');
+            return parseInt(id);
+        }
     } catch (error) {
-        console.error('Lỗi khi giải mã ID:', error);
+        console.error('Lỗi khi giải mã ID:', encodedId);
         return null;
     }
 };

@@ -258,7 +258,9 @@ onMounted(() => {
   color: white;
   background-color: var(--color-primary);
 }
-
+.menu_item:hover {
+  transform: scale(1.1);
+}
 .menu_item.active .button,
 .menu_item:hover .button {
   color: #fff;

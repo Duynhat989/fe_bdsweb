@@ -61,14 +61,14 @@ console.log(isLoading);
 }
 
 .header-title .title {
-  font-size: 40px;
+  font-size: 30px;
   font-weight: bold;
   color: var(--color-primary);
   line-height: 40px;
 }
 
 .header-title p {
-  font-size: 16px;
+  font-size: 13px;
   margin-top: 8px;
 }
 
@@ -104,13 +104,13 @@ console.log(isLoading);
 }
 
 .contract-box h2 {
-  font-size: 24px;
+  font-size: 20px;
   color: #333;
   margin-bottom: 5px;
 }
 
 .contract-box p {
-  font-size: 16px;
+  font-size: 13px;
   color: #666;
   margin-bottom: 10px;
 }
@@ -120,7 +120,7 @@ console.log(isLoading);
   color: #fff;
   border: none;
   padding: 10px 20px;
-  font-size: 16px;
+  font-size: 13px;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s;
@@ -139,13 +139,13 @@ console.log(isLoading);
 }
 
 .contract-description h2 {
-  font-size: 28px;
+  font-size: 23px;
   color: #333;
   margin-bottom: 20px;
 }
 
 .contract-description p {
-  font-size: 16px;
+  font-size: 13px;
   color: #555;
   line-height: 1.6;
 }
