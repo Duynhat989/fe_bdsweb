@@ -143,7 +143,7 @@ onMounted(() => {
         <div class="user">
           <div class="user_profile flex">
             <div class="avatar flex">
-              <img src="https://cdn-icons-png.flaticon.com/512/3177/3177440.png" alt="User Avatar" width="30">
+              <img src="https://cdn3.iconfinder.com/data/icons/business-avatar-1/512/3_avatar-512.png" alt="User Avatar" width="30">
             </div> &nbsp;&nbsp;
             <div class="username">
               <h3>{{ user.name }}</h3>
