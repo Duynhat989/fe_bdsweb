@@ -274,7 +274,7 @@ const goHome = () => {
   color: white;
 }
 .menu_item i {
-  font-size: 1.2em;
+  font-size: 1.1em;
 }
 
 .menu_item .button {

@@ -48,7 +48,13 @@ const randomLikes = () => {
 
 const changePage = (page) => {
   currentPage.value = page;
-  fetchAssistants(currentPage.value, itemsPerPage.value);
+  isLoading.value = false
+  assistants.value = []
+  setTimeout(async () => {
+    await fetchAssistants();
+    fetchAssistants(currentPage.value, itemsPerPage.value);
+    isLoading.value = true
+  }, 500)
 };
 
 const itemsToShow = ref(3);
@@ -101,7 +107,7 @@ onUnmounted(() => {
             <p class="assistant-detail">{{ assistant.detail }}</p>
             <div class="likes-container">
               <span class="assistant-view">Lượt xem: {{ assistant.view + randomLikes() }}</span>
-              <span class="likes">{{ randomLikes() }} <i class='bx bxs-heart' style='color:#ff0808'  ></i></span>
+              <span class="likes">{{ randomLikes() }} <i class='bx bxs-heart' style='color:#ff0808'></i></span>
             </div>
             <button class="action-btn">Bắt đầu trò chuyện <span style="margin-left: auto;"><i
                   class='bx bx-chevron-right'></i></span></button>
@@ -115,9 +121,10 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.it{
+.it {
   padding-left: 10px;
 }
+
 .header-title {
   text-align: center;
   margin-top: 40px;
@@ -213,7 +220,8 @@ onUnmounted(() => {
   box-shadow: 0px 4px 8px rgba(133, 133, 133, 0.101);
 }
 
-.assistant-card:hover .assistant-title,.assistant-card:hover h2 {
+.assistant-card:hover .assistant-title,
+.assistant-card:hover h2 {
   color: #007bff;
 }
 
@@ -284,7 +292,12 @@ onUnmounted(() => {
   color: white;
   transform: scale(1.05);
 }
-
+/* Responsive Styles */
+@media (max-width: 1224px) {
+  .assistant-card {
+    width: calc(50% - 10px);
+  }
+}
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .assistant-card {
