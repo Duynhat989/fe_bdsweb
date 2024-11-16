@@ -365,9 +365,11 @@ const goHome = () => {
 .user_profile:hover .menu_item .button {
   color: #111;
 }
-.info .menu_item:hover .button ,
-.info .menu_item.active .button {
+.info .menu_item:hover .button{
   color: var(--color-primary);
+}
+.info .menu_item.active .button {
+  color: white;
 }
 
 .menu_icon {

@@ -190,7 +190,7 @@ const handleSend = async () => {
     try {
         await fetchConversationNew()
         store.commit('setMessage', message.value);
-        store.commit('setAssistantName',  assistantData.value.name);
+        store.commit('setAssistantName', assistantData.value.name);
         router.push({
             path: `/chat/${threadId.value}`
         });
@@ -236,11 +236,11 @@ onMounted(() => {
             <div class="content-box">
                 <div class="tabs">
                     <div class="tab" :class="{ active: activeTab === 'suggest' }" @click="activeTab = 'suggest'">
-                        Gợi ý
+                        <i class='bx bx-show-alt'></i> Gợi ý
                     </div>
                     <div v-if="historys.length > 0" class="tab" :class="{ active: activeTab === 'history' }"
                         @click="activeTab = 'history'">
-                        Lịch sử
+                        <i class='bx bx-history' ></i> Lịch sử
                     </div>
                 </div>
                 <div class="content">
@@ -249,7 +249,9 @@ onMounted(() => {
                             <button v-for="(suggest, index) in suggests" :key="index" @click="executeAction(suggest)"
                                 class="action-card">
                                 <div class="icon">
-                                    <i class='bx bx-message-square-edit'></i>
+                                    <img width="30" src="https://cdn-icons-png.flaticon.com/512/8561/8561386.png"
+                                        alt="icon suggest">
+                                    <!-- <i class='bx bx-message-square-edit'></i> -->
                                 </div>
                                 <p class="title">{{ suggest }}</p>
                             </button>
@@ -282,12 +284,8 @@ onMounted(() => {
                                     </div>
                                 </div>
                             </div>
-                            <Pagination
-                                :total="totalPrompts"
-                                :itemsPerPage="itemsPromptPage"
-                                :currentPage="currentPromptPage"
-                                @changePage="changePromptPage"
-                            />
+                            <Pagination :total="totalPrompts" :itemsPerPage="itemsPromptPage"
+                                :currentPage="currentPromptPage" @changePage="changePromptPage" />
                         </div>
                     </div>
                     <div v-if="activeTab === 'history'" class="content-center">
@@ -297,12 +295,8 @@ onMounted(() => {
                                 {{ item.name }}
                             </div>
                         </div>
-                        <Pagination
-                            :total="totalHistory"
-                            :itemsPerPage="itemsHistoryPage"
-                            :currentPage="currentHistoryPage"
-                            @changePage="changeHistoryPage"
-                        />
+                        <Pagination :total="totalHistory" :itemsPerPage="itemsHistoryPage"
+                            :currentPage="currentHistoryPage" @changePage="changeHistoryPage" />
                     </div>
                 </div>
             </div>
@@ -501,114 +495,115 @@ onMounted(() => {
     margin-bottom: 4px;
     width: fit-content;
 }
+
 .prompts {
-  padding: 20px;
+    padding: 20px;
 }
 
 .prompt-controls {
-  display: flex;
-  justify-content: flex-end;
-  margin-bottom: 20px;
+    display: flex;
+    justify-content: flex-end;
+    margin-bottom: 20px;
 }
 
 .add-btn {
-  background-color: var(--color-primary);
-  color: #fff;
-  padding: 5px 15px;
-  border: none;
-  border-radius: 5px;
-  font-size: 14px;
-  cursor: pointer;
-  font-weight: 400;
-  transition: background-color 0.3s ease, transform 0.2s ease;
+    background-color: var(--color-primary);
+    color: #fff;
+    padding: 5px 15px;
+    border: none;
+    border-radius: 5px;
+    font-size: 14px;
+    cursor: pointer;
+    font-weight: 400;
+    transition: background-color 0.3s ease, transform 0.2s ease;
 }
 
 .add-btn:hover {
-  background-color: #0056b3;
-  transform: scale(1.05);
+    background-color: #0056b3;
+    transform: scale(1.05);
 }
 
 .prompt-box {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
 }
 
 .prompt-card {
-  background-color: #fff;
-  border-radius: 10px;
-  box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
-  width: calc(50% - 10px);
-  padding: 15px;
-  display: flex;
-  align-items: center;
-  cursor: pointer;
-  transition: box-shadow 0.3s ease, transform 0.3s ease;
+    background-color: #fff;
+    border-radius: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    width: calc(50% - 10px);
+    padding: 15px;
+    display: flex;
+    align-items: center;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
 
 .prompt-card:hover {
-  box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
-  transform: translateY(-5px);
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.15);
+    transform: translateY(-5px);
 }
 
 .prompt-icon img {
-  width: 50px;
-  height: 50px;
-  border-radius: 50%;
-  margin-right: 15px;
-  transition: transform 0.3s ease;
+    width: 50px;
+    height: 50px;
+    border-radius: 50%;
+    margin-right: 15px;
+    transition: transform 0.3s ease;
 }
 
 .prompt-card:hover .prompt-icon img {
-  transform: scale(1.1);
+    transform: scale(1.1);
 }
 
 .prompt-content {
-  flex: 1;
+    flex: 1;
 }
 
 .prompt-title {
-  font-size: 16px;
-  font-weight: bold;
-  color: #333;
-  margin-bottom: 5px;
-  transition: color 0.3s ease;
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+    transition: color 0.3s ease;
 }
 
 .prompt-card:hover .prompt-title {
-  color: var(--color-primary);
+    color: var(--color-primary);
 }
 
 .prompt-description {
-  font-size: 12px;
-  color: #555;
-  margin-bottom: 10px;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  text-align: justify;
+    font-size: 12px;
+    color: #555;
+    margin-bottom: 10px;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    text-align: justify;
 }
 
 .prompt-action {
-  display: flex;
-  gap: 10px;
-  margin-top: 10px;
+    display: flex;
+    gap: 10px;
+    margin-top: 10px;
 }
 
 .edit-btn,
 .delete-btn {
-  background: none;
-  border: none;
-  cursor: pointer;
-  font-size: 18px;
-  padding: 5px;
-  transition: transform 0.2s ease, color 0.3s ease;
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 18px;
+    padding: 5px;
+    transition: transform 0.2s ease, color 0.3s ease;
 }
 
 .edit-btn:hover {
-  color: var(--color-primary);
-  transform: scale(1.1);
+    color: var(--color-primary);
+    transform: scale(1.1);
 }
 
 
@@ -616,17 +611,18 @@ onMounted(() => {
     font-size: 26px;
     color: var(--color-primary);
 }
+
 /* Responsive adjustments */
 @media (max-width: 768px) {
-  .prompt-card {
-    width: 100%;
-    flex-direction: column;
-    align-items: flex-start;
-  }
+    .prompt-card {
+        width: 100%;
+        flex-direction: column;
+        align-items: flex-start;
+    }
 
-  .prompt-icon img {
-    margin: 0 0 10px 0;
-  }
+    .prompt-icon img {
+        margin: 0 0 10px 0;
+    }
 }
 
 .history {
