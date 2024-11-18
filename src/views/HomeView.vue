@@ -89,13 +89,13 @@ const handleClick = (routeName) => {
   font-size: large;
   font-weight: bold !important;
   color: white !important;
-  background-color: #318be05d;
+  /* background-color: #318be05d; */
   border-radius: 10px;
   padding: 10px;
 }
 .header-title {
   text-align: center;
-  margin: 30px auto;
+  margin: 20px auto;
 }
 
 .header-title .title {
@@ -122,8 +122,8 @@ const handleClick = (routeName) => {
 
 .right-box {
   width: calc(100% - 55% - 20px);
-  background-color: white;
-  padding: 60px 30px;
+  background-color: #ffffffba;
+  padding: 45px 30px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   position: relative;
