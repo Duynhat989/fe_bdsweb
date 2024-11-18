@@ -92,10 +92,11 @@ onMounted(() => {
 .header-title {
     text-align: center;
     margin-bottom: 20px;
+    margin-top: 20px;
 }
 
 .title {
-    font-size: 28px;
+    font-size: 25px;
     font-weight: bold;
     color: #333;
 }

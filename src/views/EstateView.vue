@@ -141,7 +141,7 @@ onMounted(() => {
 }
 
 .header-title .title {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   color: #e03d31;
   line-height: 40px;
@@ -149,7 +149,7 @@ onMounted(() => {
 }
 
 .title {
-  font-size: 24px;
+  font-size: 26px;
   color: var(--color-primary);
   font-weight: bold;
   margin-bottom: 10px;

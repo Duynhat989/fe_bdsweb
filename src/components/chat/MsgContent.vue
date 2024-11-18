@@ -99,7 +99,7 @@ watch(
             </div>
             <div ref="contentElm" class="message__body pa-3">
                 <div v-if="loading" class="loading-indicator">
-                    <i class="bx bx-loader bx-spin"></i> Loading...
+                    <i class='bx bx-loader bx-spin' ></i> Loading...
                 </div>
                 <div v-html="contentHtml"></div>
             </div>

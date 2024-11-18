@@ -325,7 +325,7 @@ onMounted(() => {
     left: 70px;
     background-color: #fff;
     border: 1px solid var(--color-primary);
-    padding: 8px 12px;
+    padding: 6px 12px;
     border-radius: 5px;
     cursor: pointer;
     font-size: 16px;
@@ -622,6 +622,11 @@ onMounted(() => {
 
     .prompt-icon img {
         margin: 0 0 10px 0;
+    }
+    .back-button {
+        right: 6px;
+        left: auto;
+        top: 6px;
     }
 }
 

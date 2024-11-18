@@ -51,17 +51,18 @@ console.log(isLoading);
 <style scoped>
 .contract-page {
   max-width: 1200px;
-  padding: 50px 5%; 
+  padding: 30px 5%; 
   margin: 40px auto;
 }
 
 .header-title {
   text-align: center;
   margin-bottom: 40px;
+  /* margin-top: 40px; */
 }
 
 .header-title .title {
-  font-size: 30px;
+  font-size: 24px;
   font-weight: bold;
   color: var(--color-primary);
   line-height: 40px;

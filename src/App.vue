@@ -307,6 +307,7 @@ const goHome = () => {
 }
 .logo_web .logo_text {
   width: 175px;
+  cursor: pointer;
 }
 .user {
   position: absolute;

@@ -142,7 +142,7 @@ onMounted(() => {
 
 .header-title {
     text-align: center;
-    margin-top: 40px;
+    margin-top: 30px;
     margin-bottom: 40px;
 }
 

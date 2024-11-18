@@ -128,7 +128,7 @@ onMounted(() => {
       <input type="text" placeholder="Tìm kiếm khóa học..." v-model="searchQuery" @input="filterCourses" />
     </div>
     <div v-if="activeTab === 'all'">
-      <h2 class="section-title">Danh sách khóa học</h2>
+      <h4 class="section-title">Danh sách khóa học</h4>
       <div class="course-list">
         <div class="course-card" v-for="course in courses" :key="course.id">
           <img :src="course.image" alt="Course Image" class="course-image" />
@@ -194,6 +194,7 @@ onMounted(() => {
 .header-title {
   text-align: center;
   margin-bottom: 40px;
+  margin-top: 20px;
 }
 
 .header-title .title {
@@ -213,7 +214,7 @@ onMounted(() => {
 
 .tabs button {
   padding: 10px 20px;
-  font-size: 18px;
+  font-size: 16px;
   cursor: pointer;
   background-color: #f4f4f4;
   color: #333;
@@ -244,9 +245,10 @@ onMounted(() => {
 }
 
 .section-title {
-  font-size: 24px;
+  font-size: 20px;
   margin-top: 20px;
   margin-bottom: 5px;
+  color: white;
 }
 
 .course-list {
@@ -433,7 +435,7 @@ onMounted(() => {
 @media (max-width: 420px) {
 
   .tabs button {
-    padding: 10px 10px;
+    padding: 10px 20px;
     color: 15px;
   }
 
