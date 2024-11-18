@@ -83,7 +83,7 @@ const handleClick = (routeName) => {
   justify-content: space-between;
   align-items: flex-start;
   gap: 30px;
-  margin: 100px 0;
+  margin: 80px 0;
 }
 .title{
   font-size: large;
