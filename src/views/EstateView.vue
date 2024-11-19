@@ -4,20 +4,42 @@ import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Pagination from '@/components/Pagination.vue';
+import EstateDetailPopup from '@/components/EstateDetailPopup.vue';
 const estales = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const total = ref(0);
 const searchQuery = ref('');
 const isLoading = ref(false)
+const selectedEstate = ref(null);
+// change selected
+const location = ref('');
+const transactionType = ref('');
+const isPopupVisible = ref(false);
 
-const fetchEstates = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
+const openPopup = (estate) => {
+    selectedEstate.value = estate;
+    isPopupVisible.value = true;
+};
+
+const closePopup = () => {
+    isPopupVisible.value = false;
+};
+const fetchEstates = async (
+    page = currentPage.value,
+    limit = itemsPerPage.value,
+    search = searchQuery.value,
+    loc = location.value,
+    transaction = transactionType.value
+  ) => {
   try {
     const response = await request.get(END_POINT.ESTALES_LIST, {
       params: {
         page,
         limit,
-        search
+        search,
+        loc,
+        transaction
       }
     });
     estales.value = response.realEstates;
@@ -30,35 +52,29 @@ const fetchEstates = async (page = currentPage.value, limit = itemsPerPage.value
 };
 let timeout;
 watch(
-  searchQuery,
-  (newQuery) => {
-    isLoading.value = false
-    try { clearTimeout(timeout) } catch (error) { }
+  [searchQuery, location, transactionType],
+  ([newQuery, newLocation, newType]) => {
+    isLoading.value = false;
+    try {
+      clearTimeout(timeout);
+    } catch (error) {}
+
     timeout = setTimeout(() => {
-      if (newQuery) {
-        fetchEstates(currentPage.value, itemsPerPage.value, newQuery);
-      } else {
-        fetchEstates();
-      }
-      isLoading.value = true
-    }, 1000)
+      fetchEstates(currentPage.value, itemsPerPage.value, newQuery, newLocation, newType);
+      isLoading.value = true;
+    }, 1000);
   }
 );
 
 const changePage = (page) => {
   currentPage.value = page;
-  if (searchQuery.value) {
-      fetchEstates(currentPage.value, itemsPerPage.value, searchQuery.value);
-    } else {
-      fetchEstates(currentPage.value, itemsPerPage.value);
-  }
+  fetchEstates(currentPage.value, itemsPerPage.value, searchQuery.value, location.value, transactionType.value,);
 };
 
 const loadEstates = async () => {
   await fetchEstates();
   isLoading.value = true
 };
-
 onMounted(() => {
   loadEstates();
 });
@@ -72,41 +88,62 @@ onMounted(() => {
         <p style="color: white;">Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
       </div>
       <div class="search-bar">
-        <input type="text" v-model="searchQuery" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
+          <div class="search-row">
+              <i class='bx bx-search-alt-2 search-icon'></i>
+              <input type="text" v-model="searchQuery" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
+          </div>
+          <div class="filter-row">
+              <select class="search-select" v-model="location">
+                  <option value="">Chọn vị trí</option>
+                  <option value="hanoi">Hà Nội</option>
+                  <option value="hcm">TP. Hồ Chí Minh</option>
+                  <option value="danang">Đà Nẵng</option>
+                  <option value="haiphong">Hải Phòng</option>
+              </select>
+              <select class="search-select"  v-model="transactionType">
+                  <option value="">Chọn loại giao dịch</option>
+                  <option value="buy">Mua</option>
+                  <option value="sell">Bán</option>
+                  <option value="rent">Thuê</option>
+              </select>
+          </div>
       </div>
     </div>
-
     <LoadingSpinner v-if="!isLoading" />
-    <div class="results" v-else>
-      <div class="result-box" v-for="item in estales" :key="item.id">
-        <img :src="item.image" alt="Property Image" class="item-image" />
-        <div class="result-detail">
-          <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
-          <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
-          <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
-          <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ item.price }}</span></p>
-          <p class="item-more"><strong>Diện tích: </strong><span style="color: red;">{{ item.area }}</span> </p>
-          <p class="item-more">
-            <strong>Tiện ích:</strong>
-            {{ item.exten }}
-          </p>
-        </div>
-        <a :href="item.base_url" target="_blank" class="item-link">
-          Xem chi tiết
-        </a>
+    <div v-else>
+      <div v-if="estales.length > 0">
+          <div class="results" v-if="estales.length > 0">
+            <div class="result-box" v-for="item in estales" :key="item.id">
+              <img :src="item.image" alt="Property Image" class="item-image" />
+              <div class="result-detail">
+                <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
+                <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
+                <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
+                <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ item.price }}</span></p>
+                <p class="item-more"><strong>Diện tích: </strong><span style="color: red;">{{ item.area }}</span> </p>
+                <p class="item-more">
+                  <strong>Tiện ích:</strong>
+                  {{ item.exten }}
+                </p>
+                 <a :href="item.base_url" target="_blank"  class="link-root">Xem thêm</a>
+              </div>
+              <button @click="openPopup(item)" class="item-link">Xem chi tiết</button>
+            </div>
+          </div>
+          <Pagination
+            :total="total"
+            :itemsPerPage="itemsPerPage"
+            :currentPage="currentPage"
+            @changePage="changePage"
+          />
       </div>
-
     </div>
     <div class="note" v-if="estales.length == 0">
-      Không tìm thấy kết quả
+        Không tìm thấy kết quả
     </div>
-    <Pagination
-      :total="total"
-      :itemsPerPage="itemsPerPage"
-      :currentPage="currentPage"
-      @changePage="changePage"
-    />
   </div>
+  <EstateDetailPopup :estate="selectedEstate" :visible="isPopupVisible" @close="closePopup" />
+
 </template>
 
 <style scoped>
@@ -116,24 +153,82 @@ onMounted(() => {
   padding: 20px;
   text-align: center;
 }
-
+.note {
+    text-align: center;
+    color: white;
+}
+.isloading {
+    height: 50vh;
+    background-color: transparent;
+}
 .header {
   margin-bottom: 40px;
   margin-top: 40px;
 }
-
-.search-bar {
-  margin: 20px 0;
-  text-align: center;
+.search-row {
+    position: relative;
+    width: 100%;
+}
+.filter-row {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    width: 100%;
+}
+.search-select {
+    padding: 10px 15px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    font-size: 16px;
+    background-color: white;
+    outline: none;
+    transition: border-color 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    color: #333;
+    cursor: pointer;
+    flex: 1;
+    max-width: fit-content;
 }
 
+.search-select:focus {
+    border-color: #4a90e2;
+}
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 60%;
+    margin: 0 auto;
+}
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #aaa;
+    pointer-events: none;
+}
 .search-input {
-  padding: 10px;
-  width: 100%;
-  max-width: 550px;
-  font-size: 16px;
-  border: 1px solid #ccc;
-  border-radius: 4px;
+    width: 100%;
+    padding: 10px 20px 10px 40px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.search-input:focus {
+    border-color: #4a90e2;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
+
+.search-input::placeholder {
+    color: #aaa;
+    font-size: 14px;
 }
 
 .header-title {
@@ -273,7 +368,10 @@ onMounted(() => {
 .item-more strong {
   color: var(--color-primary);
 }
-
+.link-root {
+  color: #4a90e2;
+  text-decoration: underline;
+}
 .item-link {
   display: block;
   padding: 10px 20px;
@@ -282,6 +380,8 @@ onMounted(() => {
   text-align: center;
   border-radius: 20px;
   margin-top: 10px;
+  border: none;
+  width: 100%;
 }
 
 .item-link:hover {

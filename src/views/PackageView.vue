@@ -19,6 +19,7 @@ const openPopup = (pkg) => {
 };
 
 const closePopup = () => {
+    console.log(1);
     isPopupVisible.value = false;
 };
 const fetchPackages = async () => {
