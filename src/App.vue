@@ -31,18 +31,20 @@ const isDataChanged = (newData, oldData) => {
 };
 const fetchAssistants = async () => {
   try {
-    const [estateAnalysis, financialAnalysis, teamTraining, newsSummary] = await Promise.all([
+    const [estateAnalysis, financialAnalysis, teamTraining, newsSummary, investmentAdvice] = await Promise.all([
       request.get(END_POINT.ESTATEANALYSIS),
       request.get(END_POINT.FINANCIALANALYSIS),
       request.get(END_POINT.TEAMTRAINGING),
-      request.get(END_POINT.NEWSSUMMARY)
+      request.get(END_POINT.NEWSSUMMARY),
+      request.get(END_POINT.INVESTMENTADVISE)
     ]);
 
     const newAssistants = [
       estateAnalysis.assistant,
       financialAnalysis.assistant,
       teamTraining.assistant,
-      newsSummary.assistant
+      newsSummary.assistant,
+      investmentAdvice.assistant
     ];
     const storedAssistants = JSON.parse(localStorage.getItem("assistantsSelected"));
     if (isDataChanged(newAssistants, storedAssistants)) {

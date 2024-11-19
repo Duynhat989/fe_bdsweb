@@ -64,6 +64,7 @@ export const END_POINT = {
     FINANCIALANALYSIS: '/api/nav/financialAnalysis',
     TEAMTRAINGING: '/api/nav/teamTraining',
     NEWSSUMMARY: '/api/nav/newsSummary',
+    INVESTMENTADVISE: '/api/nav/investmentAdvice',
 
     // Contracts APIs
     CONTRACTS_LIST: '/api/contracts', // Danh sách Hợp đồng
