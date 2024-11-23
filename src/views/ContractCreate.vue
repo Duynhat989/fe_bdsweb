@@ -15,8 +15,7 @@ const total = ref(0);
 const searchQuery = ref('');
 const isLoading = ref(false)
 const fetchContracts = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
-    try {
-        const response = await request.get(END_POINT.CONTRACTS_LIST, {
+    const response = await request.get(END_POINT.CONTRACTS_LIST, {
             params: {
                 page,
                 limit,
@@ -27,6 +26,8 @@ const fetchContracts = async (page = currentPage.value, limit = itemsPerPage.val
         total.value = response?.total ?? 1;
         currentPage.value = response?.page ?? 1;
         itemsPerPage.value = response?.limit ?? 10;
+    try {
+        
     } catch (error) {
         console.error('Lỗi lấy danh sách hợp đồng:', error);
     }
