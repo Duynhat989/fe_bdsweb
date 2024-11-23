@@ -16,6 +16,7 @@ const conversationContainer = ref(null);
 const message = ref('');
 const messageOld = computed(() => store.state.message);
 const assistantName = computed(() => store.state.assistantName);
+
 const threadId = computed(() => route.params.id);
 const goBack = () => router.back();
 
@@ -44,7 +45,6 @@ const fetchConversationList = async () => {
 
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
-        console.log("343434")
         return;
     }
     loading.value = true;
@@ -106,7 +106,7 @@ watch(conversationList, () => {
         <div class="flex">
             <button class="back-button" @click="goBack"><i class='bx bx-arrow-back'></i> Back</button>
             <div class="header-title">
-                <h1 class="title">{{ assistantName }}</h1>
+                <h1 class="title">{{ assistantName ? assistantName : 'Rà soát hợp đồng' }}</h1>
             </div>
             <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
                 class="conversation-list">

@@ -1,10 +1,13 @@
 <script setup>
 import { ref, onMounted } from 'vue';
+import {  useRouter } from 'vue-router';
 
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import useNotification from '@/composables/useNotification';
+import store from '@/store';
+const router = useRouter();
 
 const notification = useNotification();
 const isLoading = ref(false);
@@ -60,6 +63,20 @@ const startReview = async () => {
         isLoading.value = false;
     }
 };
+const handleChatMore = () => {
+    if (!threadId.value) {
+        notification.error('Lỗi!', 'Bạn chưa upload hợp đồng của bạn. Vui lòng thử lại sau.', {
+            showActions: false
+        });
+        return;
+    }
+    store.commit('setAssistantName', contractAssistant.value.name);
+    setTimeout(() => {
+        window.location.href = `/chat/${threadId.value}`;
+    }, 5000);
+};
+
+
 // Tạo phiên tin nhắn mới
 const fetchConversationNew = async () => {
     try {
@@ -126,7 +143,12 @@ onMounted(() => {
         </div>
 
         <div v-if="reviewResults.length >0 " class="results-section">
-            <h2>Kết quả rà soát</h2> <br>
+            <div class="results-top">
+                <h2>Kết quả rà soát</h2> 
+                <div class="chat-more-btn">
+                    <button @click="handleChatMore">Tiếp tục thảo luận</button>
+                </div>
+            </div>
             <MsgContent v-for="(item, index) of reviewResults" :key="index" text="AI rà soát" :messA="item"   :loading="isLoading && index === reviewResults.length - 1" />
         </div>
     </div>
@@ -248,5 +270,29 @@ onMounted(() => {
     position: absolute;
     top: 10px;
     right: 20px;
+}
+.results-top {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 20px;
+}
+.chat-more-btn {
+  text-align: center;
+}
+
+.chat-more-btn button {
+  background-color: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+}
+
+.chat-more-btn button:hover {
+    background-color: #a02620;
+    opacity: 0.8;
 }
 </style>

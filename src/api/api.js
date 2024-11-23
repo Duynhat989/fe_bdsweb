@@ -81,4 +81,5 @@ export const END_POINT = {
     
     ESTALES_LIST: '/api/estales', // Danh sách bài viết bất động sản
     ESTALE_FIND: '/api/estale/find', // Tìm bài viết bất động sản
+    ESTALE_PROVINCE: '/api/estale/province', // Lấy vị trí
 };

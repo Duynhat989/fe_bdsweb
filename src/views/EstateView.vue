@@ -6,6 +6,7 @@ import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Pagination from '@/components/Pagination.vue';
 import EstateDetailPopup from '@/components/EstateDetailPopup.vue';
 const estales = ref([]);
+const provinces = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
 const total = ref(0);
@@ -29,8 +30,8 @@ const fetchEstates = async (
     page = currentPage.value,
     limit = itemsPerPage.value,
     search = searchQuery.value,
-    loc = location.value,
-    transaction = transactionType.value
+    province = location.value,
+    type = transactionType.value
   ) => {
   try {
     const response = await request.get(END_POINT.ESTALES_LIST, {
@@ -38,8 +39,8 @@ const fetchEstates = async (
         page,
         limit,
         search,
-        loc,
-        transaction
+        province,
+        type
       }
     });
     estales.value = response.realEstates;
@@ -48,6 +49,14 @@ const fetchEstates = async (
     itemsPerPage.value = response.limit;
   } catch (error) {
     console.error('Lỗi lấy danh sách bài viết:', error);
+  }
+};
+const fetchsProvince = async () => {
+  try {
+    const response = await request.get(END_POINT.ESTALE_PROVINCE);
+    provinces.value = response.data;
+  } catch (error) {
+    console.error('Lỗi lấy danh sách vị trí:', error);
   }
 };
 let timeout;
@@ -74,6 +83,7 @@ const changePage = (page) => {
 const loadEstates = async () => {
   await fetchEstates();
   isLoading.value = true
+  await fetchsProvince();
 };
 onMounted(() => {
   loadEstates();
@@ -94,16 +104,14 @@ onMounted(() => {
           </div>
           <div class="filter-row">
               <select class="search-select" v-model="location">
-                  <option value="">Chọn vị trí</option>
-                  <option value="hanoi">Hà Nội</option>
-                  <option value="hcm">TP. Hồ Chí Minh</option>
-                  <option value="danang">Đà Nẵng</option>
-                  <option value="haiphong">Hải Phòng</option>
+                <option value="">Chọn vị trí</option>
+                <option v-for="(province,index) in provinces" :key="index" :value="province.province">
+                  {{ province.province }}
+                </option>
               </select>
               <select class="search-select"  v-model="transactionType">
                   <option value="">Chọn loại giao dịch</option>
-                  <option value="buy">Mua</option>
-                  <option value="sell">Bán</option>
+                  <option value="buy">Mua & Bán</option>
                   <option value="rent">Thuê</option>
               </select>
           </div>
