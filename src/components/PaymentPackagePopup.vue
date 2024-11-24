@@ -16,6 +16,7 @@ const accountName = import.meta.env.VITE_ACCOUNT_NAME;
 const paymentContent = ref('');
 const paymentData = ref({});
 const extensionPeriod = ref(1); 
+const isInvoiceCreated = ref(false); 
 import store from '@/store';
 
 const user = computed(() => store.state.user);
@@ -83,11 +84,7 @@ const createInvoice = async () => {
                 accountName
             );
             isInvoiceCreated.value = true;
-        } else {
-            notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
-                showActions: false
-            });
-        }
+        } 
     } catch (error) {
         console.error(error);
         notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
@@ -302,6 +299,19 @@ canvas {
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
+}
+input:disabled {
+    background-color: #f5f5f5;
+    color: #999;
+    border: 1px solid #ddd;
+    cursor: not-allowed;
+}
+
+button:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+    border: 1px solid #aaa;
 }
 
 @media (max-width: 768px) {
