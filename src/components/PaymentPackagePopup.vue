@@ -46,6 +46,7 @@ watch(
 
 const closePopup = () => {
     emit('close');
+    isInvoiceCreated.value = false;
     qrCodeUrl.value = null;
 };
 const createInvoice = async () => {
@@ -66,7 +67,7 @@ const createInvoice = async () => {
             invoice_code: paymentContent.value, 
             must_pay: calculatedTotal,
             package_id: props.package.id,
-            extension_period: 1,
+            extension_period: extensionPeriod,
             message_code: paymentContent.value, 
         };
 
