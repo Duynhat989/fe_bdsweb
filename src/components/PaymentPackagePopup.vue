@@ -1,7 +1,12 @@
 <script setup>
-import { ref, watch } from 'vue';
+import { ref, watch, computed } from 'vue';
 import { formatCurrency, getFeatureNames } from '@/utils/helps';
 import { generateVietQRUrl } from '@/utils/qrHelper';
+import request from '@/utils/request';
+import { END_POINT } from '@/api/api';
+import useNotification from '@/composables/useNotification';
+
+const notification = useNotification();
 
 const qrCodeUrl = ref(null);
 const totalPrice = ref(0);
@@ -9,7 +14,11 @@ const accountNumber = import.meta.env.VITE_ACCOUNT_NUMBER;
 const bankCode = import.meta.env.VITE_BANK_CODE;
 const accountName = import.meta.env.VITE_ACCOUNT_NAME;
 const paymentContent = ref('');
+const paymentData = ref({});
+const extensionPeriod = ref(1); 
+import store from '@/store';
 
+const user = computed(() => store.state.user);
 const props = defineProps({
     package: {
         type: Object,
@@ -20,7 +29,11 @@ const props = defineProps({
         default: false,
     },
 });
-
+const updateTotalPrice = () => {
+    if (extensionPeriod.value < 1) {
+        extensionPeriod.value = 1; 
+    }
+};
 const emit = defineEmits(['close']);
 watch(
     () => props.package,
@@ -34,17 +47,60 @@ const closePopup = () => {
     emit('close');
     qrCodeUrl.value = null;
 };
-
 const createInvoice = async () => {
-    paymentContent.value = `APH${props.package.id}CO${Math.floor(1000 + Math.random() * 9000)}`;
-    qrCodeUrl.value = await generateVietQRUrl(bankCode, accountNumber, totalPrice.value, paymentContent.value, accountName);
+    try {
+        const calculatedTotal = totalPrice.value * extensionPeriod.value;
+
+        paymentContent.value = `APH${props.package.id}USER${user.value.id}CO${Math.floor(1000 + Math.random() * 9000)}`;
+        qrCodeUrl.value = await generateVietQRUrl(
+            bankCode,
+            accountNumber,
+            calculatedTotal,
+            paymentContent.value,
+            accountName
+        );
+        paymentData.value = {
+            user_id: user.value.id, 
+            pay_status: 1, 
+            invoice_code: paymentContent.value, 
+            must_pay: calculatedTotal,
+            package_id: props.package.id,
+            extension_period: 1,
+            message_code: paymentContent.value, 
+        };
+
+        const response = await request.post(END_POINT.PAYMENT_CREATE, paymentData.value);
+       
+        if (response.data && response.success) {
+            notification.success('Thành công!', 'Hóa đơn đã được tạo thành công vui lòng chuyển khoản theo mã QA dưới đây!', {
+                showActions: false
+            });
+            qrCodeUrl.value = await generateVietQRUrl(
+                bankCode,
+                accountNumber,
+                calculatedTotal,
+                paymentContent.value,
+                accountName
+            );
+            isInvoiceCreated.value = true;
+        } else {
+            notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
+                showActions: false
+            });
+        }
+    } catch (error) {
+        console.error(error);
+        notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
+            showActions: false
+        });
+    }
 };
 </script>
 
 <template>
     <div v-if="visible" class="modal-overlay">
         <div class="payment-popup">
-            <div class="popup-content">
+            <div class="popup-content" >
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ package.name }}</h3>
                 <p class="package-features"
@@ -53,18 +109,30 @@ const createInvoice = async () => {
                     <h4>Chi tiết thanh toán</h4>
                     <p>Gói đăng ký: <span> {{ package.name }}</span></p>
                     <p>Số lượt yêu cầu: <span> {{ package.ask }}</span></p>
-                    <p>Giá: <span>{{ formatCurrency(totalPrice) }}</span></p>
-                    <p>Nội dung chuyển : <span>{{ paymentContent }}</span></p>
-                    <div class="recipient-info">
-                        <h4>Thông tin người nhận</h4>
-                        <p>Ngân hàng: <span>{{ bankCode }}</span></p>
-                        <p>Số tài khoản: <span>{{ accountNumber }}</span></p>
-                        <p>Tên tài khoản: <span>{{ accountName }}</span></p>
-                    </div>
-
-                    <button @click="createInvoice" class="invoice-btn">Tạo hóa đơn</button>
-                    <div v-if="qrCodeUrl" class="payment-qr">
-                        <img :src="qrCodeUrl" alt="Mã QR thanh toán" />
+                    <div class="payment-info">
+                        <div class="recipient-info">
+                            <h4>Thông tin người nhận</h4>
+                            <p>Ngân hàng: <span>{{ bankCode }}</span></p>
+                            <p>Số tài khoản: <span>{{ accountNumber }}</span></p>
+                            <p>Tên tài khoản: <span>{{ accountName }}</span></p>
+                            <div class="input-number">
+                                <label for="extension-period">Số tháng:</label>
+                                <input 
+                                    id="extension-period" 
+                                    type="number" 
+                                    min="1" 
+                                    v-model.number="extensionPeriod" 
+                                    @input="updateTotalPrice" 
+                                    :disabled="isInvoiceCreated" 
+                                />
+                            </div>
+                            <p>Giá: <span>{{ formatCurrency(totalPrice * extensionPeriod) }}</span></p>
+                            <p>Nội dung chuyển : <span>{{ paymentContent }}</span></p>
+                            <button @click="createInvoice" class="invoice-btn" :disabled="isInvoiceCreated" >Tạo hóa đơn</button>
+                        </div>
+                        <div v-if="qrCodeUrl" class="payment-qr">
+                            <img :src="qrCodeUrl" alt="Mã QR thanh toán" />
+                        </div>
                     </div>
                 </div>
             </div>
@@ -90,7 +158,7 @@ const createInvoice = async () => {
     background-color: #fff;
     border-radius: 8px;
     box-shadow: 0 4px 20px rgba(0, 0, 0, 0.3);
-    max-width: 450px;
+    max-width: 700px;
     width: 90%;
     padding: 20px;
     text-align: center;
@@ -132,7 +200,7 @@ h3 {
 .payment-details {
     background-color: #f9f9f9;
     border-radius: 8px;
-    padding: 10px;
+    padding: 20px;
     font-size: 14px;
     text-align: left;
 }
@@ -151,10 +219,17 @@ h3 {
     margin: 5px 0;
 }
 
-.recipient-info {
-    margin-top: 20px;
-    padding: 10px;
+.payment-info {
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    gap: 40px;
+    padding-top: 20px;
     border-top: 1px solid #ddd;
+}
+.payment-qr,
+.recipient-info {
+    width: 50%;
 }
 
 .recipient-info h4 {
@@ -205,5 +280,37 @@ h3 {
 
 canvas {
     margin-top: 10px;
+}
+.recipient-info label {
+    font-weight: bold;
+    display: block;
+}
+.input-number {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+}
+
+.input-number label,
+.input-number .input {
+    flex: 50%;
+}
+.recipient-info input {
+    width: 100%;
+    padding: 5px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+}
+
+@media (max-width: 768px) {
+    .payment-info {
+        flex-wrap: wrap;
+    }
+
+    .payment-qr[data-v-f196ce7d] {
+        width: 100%;
+    }
 }
 </style>

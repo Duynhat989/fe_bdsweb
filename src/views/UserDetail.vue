@@ -21,7 +21,7 @@ const fetchLicense = async () => {
         const response = await request.get(END_POINT.LICENSE_GET);
         license.value = response.license;
     } catch (error) {
-        // console.error('Lỗi lấy thông tin gói:', error);
+        console.error('Lỗi lấy thông tin gói:', error);
     }
 };
 
@@ -30,7 +30,7 @@ const fetchUser = async () => {
         const response = await request.get(END_POINT.USER_GET);
         userInfo.value = response.data;
     } catch (error) {
-        // console.error('Lỗi lấy thông tin người dùng:', error);
+        console.error('Lỗi lấy thông tin người dùng:', error);
     }
 };
 

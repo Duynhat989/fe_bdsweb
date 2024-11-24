@@ -105,7 +105,7 @@ onMounted(() => {
 
 const goHome = () => {
   location.href = '/'
-}
+};
 </script>
 <template>
   <MaintenancePage v-if="isMaintenance"/>
