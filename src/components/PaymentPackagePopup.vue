@@ -251,7 +251,10 @@ h3 {
     margin-top: 10px;
     font-family: inherit;
 }
-
+.invoice-btn:hover {
+    background-color: #b33a3a;
+    opacity: 0.8;
+}
 .payment-qr {
     margin-top: 15px;
     text-align: center;

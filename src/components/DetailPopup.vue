@@ -87,7 +87,6 @@ onMounted(() => {
                 <div class="course-image">
                     <img :src="course.image" alt="Course Image" />
                 </div>
-                <button @click="createRegisterCourse" class="button-course">Đăng ký</button>
                 <div class="lessons">
                     <h4>Danh sách bài giảng</h4>
                     <ul>
@@ -97,6 +96,7 @@ onMounted(() => {
                         </li>
                     </ul>
                 </div>
+                <button @click="createRegisterCourse" class="button-course">Đăng ký</button>
             </div>
         </div>
     </div>
@@ -171,11 +171,10 @@ onMounted(() => {
     font-size: 18px;
     border-radius: 10px;
     cursor: pointer;
-    margin-top: 10px;
     font-family: inherit;
-    position: absolute;
-    top: 10px;
-    left: 20px;
+    display: flex;
+    margin: 0 auto;
+    margin-top: 10px;
 }
 
 .button-course:hover {

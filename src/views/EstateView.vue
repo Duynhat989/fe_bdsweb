@@ -5,6 +5,7 @@ import request from '@/utils/request';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
 import Pagination from '@/components/Pagination.vue';
 import EstateDetailPopup from '@/components/EstateDetailPopup.vue';
+import { getLatestPrice } from '@/utils/helps';
 const estales = ref([]);
 const provinces = ref([]);
 const currentPage = ref(1);
@@ -127,15 +128,15 @@ onMounted(() => {
                 <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
                 <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
                 <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
-                <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ item.price }}</span></p>
+                <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ getLatestPrice(item.price) }}</span></p>
                 <p class="item-more"><strong>Diện tích: </strong><span style="color: red;">{{ item.area }}</span> </p>
                 <p class="item-more">
                   <strong>Tiện ích:</strong>
                   {{ item.exten }}
                 </p>
-                 <a :href="item.base_url" target="_blank"  class="link-root">Xem thêm</a>
               </div>
               <button @click="openPopup(item)" class="item-link">Xem chi tiết</button>
+              <a :href="item.base_url" target="_blank"  class="item-link">Link gốc</a>
             </div>
           </div>
           <Pagination
@@ -328,6 +329,7 @@ onMounted(() => {
   height: 280px;
   overflow-y: auto;
   scrollbar-width: none;
+  margin-bottom: 20px;
 }
 
 .result-box:hover {

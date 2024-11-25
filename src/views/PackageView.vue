@@ -12,6 +12,7 @@ const selectedPackage = ref({});
 const isLoading = ref(false)
 
 const openPopup = (pkg) => {
+    
     selectedPackage.value = pkg;
     if(pkg.price !== '0') {
         isPopupVisible.value = true;
@@ -77,7 +78,6 @@ onMounted(() => {
 
 .package-page {
     width: 100%;
-    background-color: #ffffff;
     padding: 20px;
     border-radius: 10px;
     color: #333;
@@ -99,7 +99,7 @@ onMounted(() => {
 
 
 .description {
-    color: #555;
+    color: #ffffff;
     font-size: 16px;
     margin-top: 10px;
 }
@@ -129,8 +129,14 @@ onMounted(() => {
     width: 100%;
     text-align: center;
     color: #333;
+    cursor: pointer;
+    transition: box-shadow 0.3s ease, transform 0.3s ease;
 }
-
+.package-card:hover {
+    box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.438);
+    transform: translateY(-10px);
+    border: 1px solid rgb(0, 162, 255);
+}
 .package-name {
     font-size: 20px;
     font-weight: bold;
@@ -174,7 +180,7 @@ onMounted(() => {
 }
 
 .register-btn:hover {
-    background-color: var(--color-primary);
+    background-color: #b33a3a;
     opacity: 0.8;
 }
 </style>

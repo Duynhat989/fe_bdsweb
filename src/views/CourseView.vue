@@ -13,6 +13,7 @@ const activeTab = ref('all');
 const showPopup = ref(false);
 const selectedCourse = ref({});
 const searchQuery = ref('');
+const searchMyQuery = ref('');
 const courses = ref([]);
 const license = ref({});
 
@@ -49,10 +50,11 @@ const checkAvailableCoursesInLicense = async () => {
   }
 };
 
-const fetchCourses = async (page = currentPage.value, limit = itemsPerPage.value) => {
+const fetchCourses = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
   try {
     const response = await request.get(END_POINT.COURSES_LIST, {
       params: {
+        search,
         page,
         limit
       }
@@ -66,10 +68,28 @@ const fetchCourses = async (page = currentPage.value, limit = itemsPerPage.value
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
 };
-watch(searchQuery, async (newSearch) => {
-    //  api tìm kiếm
-})
-
+let timeout;
+watch(
+  searchQuery,
+  (newQuery) => {
+    isLoading.value = false
+    try { clearTimeout(timeout) } catch (error) { }
+    timeout = setTimeout(() => {
+      if (newQuery) {
+        fetchCourses(currentPage.value, itemsPerPage.value, newQuery);
+      }
+      isLoading.value = true
+    }, 1000)
+  }
+);
+const changePage = (page) => {
+  currentPage.value = page;
+  if (searchQuery.value) {
+      fetchCourses(currentPage.value, itemsPerPage.value, searchQuery.value);
+    } else {
+        fetchCourses(currentPage.value, itemsPerPage.value);
+  }
+};
 const fetchLicense = async () => {
   try {
     const response = await request.get(END_POINT.LICENSE_GET);
@@ -79,14 +99,6 @@ const fetchLicense = async () => {
   }
 };
 
-
-const filteredMyCourses = computed(() =>
-  myCourses.value.filter(courseItem =>
-    courseItem.course.name.toLowerCase().includes(searchQuery.value.toLowerCase()) ||
-    courseItem.course.detail.toLowerCase().includes(searchQuery.value.toLowerCase())
-  )
-);
-
 const handleCourseClick = (value) => {
   const encodedId = encodeId(value.course.id);
   router.push(`/course/${encodedId}`);
@@ -95,14 +107,7 @@ const handlePayment = (course) => {
   selectedCourse.value = course;
   showPopup.value = true;
 };
-// const totalPages = computed(() => {
-//   return Math.ceil(total.value / itemsPerPage.value);
-// });
 
-const changePage = (page) => {
-    currentPage.value = page;
-    fetchCourses(currentPage.value, itemsPerPage.value);
-};
 const loadCourses = async () => {
     await fetchCourses();
     await fetchMyCourses();
@@ -114,8 +119,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <LoadingSpinner v-if="!isLoading" />
-  <div class="courses-page" v-else>
+  <div class="courses-page">
     <div class="header-title">
       <h1 class="title">Khóa học bất động sản</h1>
     </div>
@@ -124,61 +128,69 @@ onMounted(() => {
       <button @click="activeTab = 'my-courses'" :class="{ active: activeTab === 'my-courses' }">Khóa học của
         tôi</button>
     </div>
-    <div class="search-bar">
-      <input type="text" placeholder="Tìm kiếm khóa học..." v-model="searchQuery" @input="filterCourses" />
-    </div>
-    <div v-if="activeTab === 'all'">
-      <h4 class="section-title">Danh sách khóa học</h4>
-      <div class="course-list">
-        <div class="course-card" v-for="course in courses" :key="course.id">
-          <img :src="course.image" alt="Course Image" class="course-image" />
-          <div class="course-content">
-            <label class="label-status">{{ course.statusUse }}</label>
-            <h3 class="course-title">{{ course.name }}</h3>
-            <p class="course-detail">{{ course.detail }}</p>
-            <div class="course-status">
-              <span :class="{ active: course.status === 1, inactive: course.status !== 1 }">
-                {{ course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
-              </span>
+    <div >
+      <div v-if="activeTab === 'all'">
+        <div class="search-bar">
+            <div class="search-row">
+                <i class='bx bx-search-alt-2 search-icon'></i>
+                <input type="text" v-model="searchQuery" placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
             </div>
-            <div class="course-dates">
-              <span>Ngày tạo: {{ new Date(course.createdAt).toLocaleDateString() }}</span>
-            </div>
-          </div>
-          <div class="register-overlay">
-            <button class="register-button" @click.stop="handlePayment(course)">Xem chi tiết</button>
-          </div>
         </div>
-      </div>
-      <Pagination
-        :total="total"
-        :itemsPerPage="itemsPerPage"
-        :currentPage="currentPage"
-        @changePage="changePage"
-      />
-    </div>
-
-    <div v-else>
-      <h2 class="section-title">Khóa học của tôi</h2>
-      <div v-if="filteredMyCourses.length > 0" class="course-list">
-        <div class="course-card" v-for="value in filteredMyCourses" :key="value.course.id"
-          @click="handleCourseClick(value)">
-          <img :src="value.course.image" alt="Course Image" class="course-image" />
-          <div class="course-content">
-            <h3 class="course-title">{{ value.course.name }}</h3>
-            <p class="course-detail">{{ value.course.detail }}</p>
-            <div class="course-status">
-              <span :class="{ active: value.course.status === 1, inactive: value.course.status !== 1 }">
-                {{ value.course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
-              </span>
+        <h4 class="section-title">Danh sách khóa học</h4>
+        <LoadingSpinner v-if="!isLoading" />
+        <div class="course-list"  v-else>
+          <div class="course-card" v-for="course in courses" :key="course.id">
+            <img :src="course.image" alt="Course Image" class="course-image" />
+            <div class="course-content">
+              <label class="label-status">{{ course.statusUse }}</label>
+              <h3 class="course-title">{{ course.name }}</h3>
+              <p class="course-detail">{{ course.detail }}</p>
+              <div class="course-status">
+                <span :class="{ active: course.status === 1, inactive: course.status !== 1 }">
+                  {{ course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                </span>
+              </div>
+              <div class="course-dates">
+                <span>Ngày tạo: {{ new Date(course.createdAt).toLocaleDateString() }}</span>
+              </div>
             </div>
-            <div class="course-dates">
-              <span>Ngày tạo: {{ new Date(value.course.createdAt).toLocaleDateString() }}</span>
+            <div class="register-overlay">
+              <button class="register-button" @click.stop="handlePayment(course)">Xem chi tiết</button>
             </div>
           </div>
         </div>
+        <Pagination
+          :total="total"
+          :itemsPerPage="itemsPerPage"
+          :currentPage="currentPage"
+          @changePage="changePage"
+        />
+        <div class="note" v-if="courses.length == 0">
+          Không tìm thấy kết quả
+        </div>
       </div>
-      <p v-else>Hiện tại bạn chưa có khóa học nào.</p>
+      <div v-else>
+        <h2 class="section-title">Khóa học của tôi</h2>
+        <div v-if="myCourses.length > 0" class="course-list">
+          <div class="course-card" v-for="value in myCourses" :key="value.course.id"
+            @click="handleCourseClick(value)">
+            <img :src="value.course.image" alt="Course Image" class="course-image" />
+            <div class="course-content">
+              <h3 class="course-title">{{ value.course.name }}</h3>
+              <p class="course-detail">{{ value.course.detail }}</p>
+              <div class="course-status">
+                <span :class="{ active: value.course.status === 1, inactive: value.course.status !== 1 }">
+                  {{ value.course.status === 1 ? 'Hoạt động' : 'Ngừng hoạt động' }}
+                </span>
+              </div>
+              <div class="course-dates">
+                <span>Ngày tạo: {{ new Date(value.course.createdAt).toLocaleDateString() }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+        <p v-else>Hiện tại bạn chưa có khóa học nào.</p>
+      </div>
     </div>
     <DetailPopup v-if="showPopup" :course="selectedCourse" :visible="showPopup" @close="showPopup = false" />
   </div>
@@ -229,21 +241,58 @@ onMounted(() => {
   background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);
   color: white;
 }
+.isloading {
+    height: 50vh;
+    background-color: transparent;
+}
+.courses-page .note {
+    text-align: center;
+    color: white;
+}
 
 .search-bar {
-  width: 50%;
-  margin: 20px auto;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 60%;
+    margin: 0 auto;
+    margin-top: 20px;
+    margin-bottom: 20px;
+}
+.search-row {
+    position: relative;
+    width: 100%;
+}
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #aaa;
+    pointer-events: none;
+}
+.search-input {
+    width: 100%;
+    padding: 10px 20px 10px 40px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.search-input:focus {
+    border-color: #4a90e2;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
-.search-bar input {
-  width: 100%;
-  padding: 10px;
-  font-size: 16px;
-  border: 2px solid #ccc;
-  border-radius: 5px;
-  font-family: inherit;
+.search-input::placeholder {
+    color: #aaa;
+    font-size: 14px;
 }
-
 .section-title {
   font-size: 20px;
   margin-top: 20px;

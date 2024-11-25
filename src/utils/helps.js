@@ -26,7 +26,25 @@ export function extractVideoId(url) {
 export function formatCurrency(amount) {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(amount).replace('₫', 'VND');
 }
+export function getLatestPrice(priceData) {
+    if (!priceData) return "Không có giá";
 
+    const priceEntries = priceData.split("|").map((entry) => {
+      const [price, date] = entry.split(":");
+      return { price: price.trim(), date: new Date(date.trim()) };
+    });
+
+    const agreementPrice = priceEntries.find((entry) =>
+      entry.price.includes("Thỏa thuận")
+    );
+    if (agreementPrice) {
+      return "Thỏa thuận";
+    }
+    const latestPrice = priceEntries.sort(
+      (a, b) => b.date - a.date
+    )[0]?.price;
+    return latestPrice || "Không có giá";
+};
 /**
  * Formats the message content by replacing \n with <br />
  * to support multiline text display.

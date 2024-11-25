@@ -2,7 +2,7 @@
 import { ref, watch } from "vue";
 import { Chart as ChartJS, Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement } from "chart.js";
 import { Line } from "vue-chartjs";
-
+import { getLatestPrice } from "@/utils/helps";
 // Đăng ký các thành phần Chart.js
 ChartJS.register(Title, Tooltip, Legend, LineElement, CategoryScale, LinearScale, PointElement);
 
@@ -111,17 +111,17 @@ watch(
     <div class="estate-popup">
       <div class="popup-content">
         <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
-        <img :src="estate.image" alt="Estate Image" class="popup-image" />
         <h3>{{ estate.title }}</h3>
+        <img :src="estate.image" alt="Estate Image" class="popup-image" />
         <p><strong>Vị trí:</strong> {{ estate.location }}</p>
         <p><strong>Mô tả:</strong> {{ estate.description }}</p>
-        <p><strong>Giá:</strong> <span style="color: red;">{{ estate.price }}</span></p>
+        <p><strong>Giá:</strong> <span style="color: red;">{{ getLatestPrice(estate.price) }}</span></p>
         <p><strong>Diện tích:</strong> <span style="color: red;">{{ estate.area }}</span></p>
         <p><strong>Tiện ích:</strong> {{ estate.exten }}</p>
         <a :href="estate.base_url" target="_blank" class="popup-link">
           Xem trên trang gốc
         </a>
-        <div>
+        <div v-if="getLatestPrice(estate.price) !== 'Thỏa thuận'">
           <Line :data="chartData" :options="chartOptions" />
         </div>
       </div>
@@ -165,10 +165,10 @@ watch(
 }
 
 .popup-image {
-  width: 60%;
-  height: auto;
+  width: 100%;
+  height: 400px;
+  object-fit: cover;
   border-radius: 8px;
-  margin: 0 auto;
   margin-bottom: 15px;
 }
 
@@ -198,5 +198,7 @@ h3 {
   font-weight: bold;
   line-height: 24px;
   color: var(--color-primary);
+  text-align: center;
+  margin:15px 0px;
 }
 </style>

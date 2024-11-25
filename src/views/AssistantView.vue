@@ -1,5 +1,5 @@
 <script setup>
-import { ref, computed, onMounted, onUnmounted } from 'vue';
+import { ref, watch, onMounted, onUnmounted } from 'vue';
 import 'vue3-carousel/dist/carousel.css'
 import { useRouter } from 'vue-router';
 import { END_POINT } from '@/api/api';
@@ -14,6 +14,7 @@ const currentPage = ref(1);
 const itemsPerPage = ref(6);
 const total = ref(0);
 const isLoading = ref(false)
+const searchQuery = ref('');
 
 
 const handleClick = (id) => {
@@ -21,10 +22,11 @@ const handleClick = (id) => {
   router.push(`/assistant/${encodedId}`);
 };
 
-const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value) => {
+const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value,    search = searchQuery.value) => {
   try {
     const response = await request.get(END_POINT.ASSISTANTS_LIST, {
       params: {
+        search,
         page,
         limit
       }
@@ -73,6 +75,22 @@ const loadAssistants = async () => {
   await fetchAssistants();
   isLoading.value = true
 };
+let timeout;
+watch(
+  searchQuery,
+  (newQuery) => {
+    isLoading.value = false;
+    try {
+      clearTimeout(timeout);
+    } catch (error) {}
+
+    timeout = setTimeout(() => {
+      fetchAssistants(currentPage.value, itemsPerPage.value, newQuery);
+      isLoading.value = true;
+    }, 2000);
+  }
+);
+
 onMounted(() => {
   loadAssistants();
   updateItemsToShow();
@@ -81,10 +99,10 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('resize', updateItemsToShow);
 });
+
 </script>
 <template>
-  <LoadingSpinner v-if="!isLoading" />
-  <div class="main-container" v-else>
+  <div class="main-container">
     <div class="change-type">
       <!-- <button class="list">Danh sách</button> -->
     </div>
@@ -92,7 +110,15 @@ onUnmounted(() => {
       <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
       <p style="color: white;">Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
     </div>
-    <div class="main-content">
+    <div class="search-bar">
+          <div class="search-row">
+              <i class='bx bx-search-alt-2 search-icon'></i>
+              <input type="text" v-model="searchQuery" placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
+          </div>
+      </div>
+    <LoadingSpinner v-if="!isLoading" />
+
+    <div class="main-content"  v-else>
       <div class="assistant-list">
         <div class="assistant-card list-card" v-for="assistant in assistants" :key="assistant.id"
           @click="handleClick(assistant.id)">
@@ -117,6 +143,9 @@ onUnmounted(() => {
           @changePage="changePage" />
       </div>
     </div>
+    <div class="note" v-if="assistants.length == 0">
+        Không tìm thấy kết quả
+    </div>
   </div>
 </template>
 
@@ -124,11 +153,18 @@ onUnmounted(() => {
 .it {
   padding-left: 10px;
 }
-
+.isloading {
+    height: 50vh;
+    background-color: transparent;
+}
+.main-container .note {
+    text-align: center;
+    color: white;
+}
 .header-title {
   text-align: center;
   margin-top: 30px;
-  margin-bottom: 40px;
+  margin-bottom: 20px;
 }
 
 .header-title .title {
@@ -137,7 +173,48 @@ onUnmounted(() => {
   color: var(--color-primary);
   line-height: 40px;
 }
+.search-bar {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 60%;
+    margin: 0 auto;
+    margin-bottom: 20px;
+}
+.search-row {
+    position: relative;
+    width: 100%;
+}
+.search-icon {
+    position: absolute;
+    top: 50%;
+    left: 15px;
+    transform: translateY(-50%);
+    font-size: 16px;
+    color: #aaa;
+    pointer-events: none;
+}
+.search-input {
+    width: 100%;
+    padding: 10px 20px 10px 40px;
+    border: 2px solid #fff;
+    border-radius: 25px;
+    font-size: 16px;
+    outline: none;
+    transition: all 0.3s ease-in-out;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+.search-input:focus {
+    border-color: #4a90e2;
+    background-color: #fff;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+}
 
+.search-input::placeholder {
+    color: #aaa;
+    font-size: 14px;
+}
 .main-container {
   width: 100%;
   padding: 20px 5%;
