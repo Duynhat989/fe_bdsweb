@@ -13,7 +13,7 @@ console.log(isLoading);
 </script>
 <template>
   <LoadingSpinner v-if="!isLoading" />
-  <div class="contract-page" v-else>
+  <div class="main-container" v-else>
     <div class="header-title">
       <h1 class="title">Rà soát & tạo mới hợp đồng</h1>
       <p style="color: white;">Quản lý hợp đồng chính xác – Tiết kiệm thời gian, tối đa lợi ích</p>
@@ -49,9 +49,9 @@ console.log(isLoading);
 </template>
 
 <style scoped>
-.contract-page {
+.main-container {
   max-width: 1200px;
-  padding: 30px 5%; 
+  padding: 0px 5%; 
   margin: 40px auto;
 }
 
@@ -159,7 +159,7 @@ console.log(isLoading);
 }
 
 @media (max-width: 576px) {
-  .contract-page {
+  .main-container {
     width: 100%;
     padding: 20px;
   }

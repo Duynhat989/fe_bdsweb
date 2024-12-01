@@ -119,7 +119,7 @@ onMounted(() => {
 });
 </script>
 <template>
-  <div class="courses-page">
+  <div class="courses-page main-container">
     <div class="header-title">
       <h1 class="title">Khóa học bất động sản</h1>
     </div>
@@ -200,7 +200,7 @@ onMounted(() => {
 .courses-page {
   margin: 40px auto;
   max-width: 1400px;
-  padding: 40px 5%;
+  padding: 0px 5%;
 }
 
 .header-title {

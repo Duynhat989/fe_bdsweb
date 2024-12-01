@@ -9,7 +9,6 @@ const notification = useNotification();
 const userInfo = ref({});
 const license = ref({});
 const isLoading = ref(false);
-const isEditing = ref(false);
 
 const form = ref({
     name: userInfo.value.name || '',
@@ -29,22 +28,16 @@ const fetchUser = async () => {
     try {
         const response = await request.get(END_POINT.USER_GET);
         userInfo.value = response.data;
-    } catch (error) {
-        console.error('Lỗi lấy thông tin người dùng:', error);
-    }
-};
-
-
-const toggleEdit = () => {
-    isEditing.value = !isEditing.value;
-    if (isEditing.value) {
         form.value = {
             name: userInfo.value.name || '',
             phone: userInfo.value.phone || '',
             email: userInfo.value.email || ''
         };
+    } catch (error) {
+        console.error('Lỗi lấy thông tin người dùng:', error);
     }
 };
+
 const updateUser = async () => {
     isLoading.value = true;
     try {
@@ -74,7 +67,6 @@ const updateUser = async () => {
         })
     } finally {
         isLoading.value = false;
-        toggleEdit();
     }
 };
 
@@ -92,7 +84,6 @@ onMounted(() => {
     <div class="main-container">
         <div class="user-page">
             <h1 class="title">Thông tin người dùng</h1>
-
             <div class="user-info">
                 <p><strong>Tên người dùng:</strong> {{ userInfo?.name }}</p>
                 <p><strong>Phone:</strong> {{ userInfo?.phone }}</p>
@@ -102,7 +93,7 @@ onMounted(() => {
                 <p><strong>Gói đang sử dụng:</strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
                 </p>
             </div>
-            <div v-if="isEditing" class="edit-form">
+            <div  class="edit-form">
                 <div class="form-box">
                     <h3>Cập nhật thông tin tài khoản</h3>
                     <label>
@@ -120,7 +111,6 @@ onMounted(() => {
                 </div>
                 <button @click="updateUser" class="save-btn">Lưu thay đổi</button>
             </div>
-            <button @click="toggleEdit" class="edit-btn">{{ isEditing ? 'Ẩn' : 'Chỉnh sửa' }}</button>
         </div>
     </div>
 </template>

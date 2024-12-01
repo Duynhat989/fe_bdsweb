@@ -162,6 +162,8 @@ const createInvoice = async () => {
     text-align: center;
     position: relative;
     animation: popupFadeIn 0.3s ease-in-out;
+    height: 70vh;
+    overflow: auto;
 }
 
 .popup-content {
@@ -196,7 +198,6 @@ h3 {
 }
 
 .payment-details {
-    background-color: #f9f9f9;
     border-radius: 8px;
     padding: 20px;
     font-size: 14px;
@@ -319,6 +320,10 @@ button:disabled {
 }
 
 @media (max-width: 768px) {
+    .payment-qr,
+    .recipient-info {
+        width: 100%;
+    }
     .payment-info {
         flex-wrap: wrap;
     }

@@ -73,7 +73,7 @@ onMounted(() => {
 
 </script>
 <template>
-    <div class="create-contract">
+    <div class="create-contract main-container">
         <div class="header">
             <div class="header-title">
                 <h1 class="title">Tạo mới hợp đồng</h1>

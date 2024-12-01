@@ -59,7 +59,7 @@ onMounted(() => {
                         <p class="package-features"
                             v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></p>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
-                        <button @click="openPopup(pkg)" class="register-btn">Đăng ký gói</button>
+                        <button @click="openPopup(pkg)"  v-show="pkg.price !== '0'"  class="register-btn">Đăng ký gói</button>
                     </div>
                 </div>
             </div>
@@ -73,12 +73,11 @@ onMounted(() => {
     display: flex;
     justify-content: center;
     padding: 0 5%;
-    margin: 20px 0;
 }
 
 .package-page {
     width: 100%;
-    padding: 20px;
+    padding: 0px 20px;
     border-radius: 10px;
     color: #333;
 }

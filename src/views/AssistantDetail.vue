@@ -659,7 +659,7 @@ onMounted(() => {
 }
 
 .prompts .pagination {
-    text-align: left;
+    text-align: center;
 }
 
 .content-box {

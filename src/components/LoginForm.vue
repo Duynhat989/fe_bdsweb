@@ -3,13 +3,15 @@ import { ref } from 'vue'
 import store from '@/store';
 import { useRouter } from 'vue-router';
 import useNotification from '@/composables/useNotification';
-
+import request from '@/utils/request';
+import { END_POINT } from '@/api/api';
 const notification = useNotification();
 
 const router = useRouter();
 
 const email = ref('');
 const password = ref('');
+const license = ref({});
 
 const isLoading = ref(false);
 const isPasswordVisible = ref(false);
@@ -23,11 +25,25 @@ const togglePasswordVisibility = () => {
 const switchToForgotPassword = () => {
   emit('switchToForgotPassword');
 };
+const fetchLicense = async () => {
+  try {
+    const response = await request.get(END_POINT.LICENSE_GET);
+    license.value = response.license;
+
+    localStorage.setItem('license', JSON.stringify(response.license));
+  } catch (error) {
+    console.error('Lỗi lấy thông tin gói:', error);
+    notification.error('Lỗi!', 'Không thể lấy thông tin gói. Vui lòng thử lại!', {
+      showActions: false,
+    });
+  }
+};
 const handleLogin = async (event) => {
   isLoading.value = true;
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
     await store.dispatch('login', { email: email.value, password: password.value });
+    await fetchLicense();
     const intendedRoute = localStorage.getItem('intendedRoute');
     if (intendedRoute) {
       router.push(intendedRoute);

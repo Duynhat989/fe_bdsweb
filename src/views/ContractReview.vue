@@ -1,6 +1,6 @@
 <script setup>
 import { ref, onMounted } from 'vue';
-import {  useRouter } from 'vue-router';
+import { useRouter } from 'vue-router';
 
 import { handleResponseStream, sendMessageRequest } from '@/utils/requestStream';
 import { END_POINT } from '@/api/api';
@@ -11,12 +11,13 @@ const router = useRouter();
 
 const notification = useNotification();
 const isLoading = ref(false);
+const isChatMoreLoading = ref(false);
 const selectedFile = ref(null);
 const contractAssistant = ref(null);
 import MsgContent from '@/components/chat/MsgContent.vue';
 
 const threadId = ref('');
-const reviewResults =  ref([]);
+const reviewResults = ref([]);
 
 const handleFileUpload = (event) => {
     selectedFile.value = event.target.files[0];
@@ -36,9 +37,9 @@ const startReview = async () => {
         });
 
         if (response.success) {
-            reviewResults.value.push( {
-                role:"model",
-                content:''
+            reviewResults.value.push({
+                role: "model",
+                content: ''
             });
             const message = `Đây là hợp đồng của tôi. Bạn hãy kiểm tra nội dung hợp đồng theo các mục đề xuất ở tài liệu từ đó đưa ra lời khuyên bổ sung cho hợp đồng thêm hoàn thiện. Hợp đồng là:"  ${response.dataContract} "`;
             const res = await sendMessageRequest(message, threadId.value, END_POINT);
@@ -57,23 +58,31 @@ const startReview = async () => {
         }
     } catch (error) {
         notification.error('Lỗi!', `Rà soát không thành công! Lỗi: ${error.message || error}`, {
-                showActions: false
+            showActions: false
         });
     } finally {
         isLoading.value = false;
     }
 };
-const handleChatMore = () => {
+const handleChatMore = async () => {
     if (!threadId.value) {
         notification.error('Lỗi!', 'Bạn chưa upload hợp đồng của bạn. Vui lòng thử lại sau.', {
             showActions: false
         });
         return;
     }
-    store.commit('setAssistantName', contractAssistant.value.name);
-    setTimeout(() => {
+    isChatMoreLoading.value = true;
+    try {
+        store.commit('setAssistantName', contractAssistant.value.name);
+        await new Promise(resolve => setTimeout(resolve, 3000)); 
         window.location.href = `/chat/${threadId.value}`;
-    }, 5000);
+    } catch (error) {
+        notification.error('Lỗi!', 'Không thể chuyển sang chat. Vui lòng thử lại!', {
+            showActions: false
+        });
+    } finally {
+        isChatMoreLoading.value = false; 
+    }
 };
 
 
@@ -109,10 +118,11 @@ onMounted(() => {
 });
 </script>
 <template>
-    <div class="contract-review">
+    <div class="contract-review main-container">
         <div class="header-title">
             <h1 class="title">Rà soát hợp đồng</h1>
-            <p class="subtitle"  style="color: white;">Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối ưu hóa lợi ích hợp
+            <p class="subtitle" style="color: white;">Kiểm tra và phân tích hợp đồng của bạn để đảm bảo tuân thủ và tối
+                ưu hóa lợi ích hợp
                 pháp.
             </p>
         </div>
@@ -125,7 +135,7 @@ onMounted(() => {
                 </label>
                 <input id="file-upload" type="file" @change="handleFileUpload" />
             </div>
-            <button  class="review-button" :disabled="!selectedFile || isLoading"  @click="startReview">
+            <button class="review-button" :disabled="!selectedFile || isLoading" @click="startReview">
                 <span v-if="isLoading">
                     <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                         viewBox="0 0 24 24">
@@ -141,15 +151,32 @@ onMounted(() => {
                 <span v-else>Bắt đầu rà soát</span>
             </button>
         </div>
-
-        <div v-if="reviewResults.length >0 " class="results-section">
+        <div v-if="reviewResults.length > 0" class="results-section">
             <div class="results-top">
-                <h2>Kết quả rà soát</h2> 
+                <h2>Kết quả rà soát</h2>
                 <div class="chat-more-btn">
-                    <button @click="handleChatMore">Tiếp tục thảo luận</button>
+                    <button :disabled="isChatMoreLoading" @click="handleChatMore" class="chat-more-button">
+                        <span v-if="isChatMoreLoading">
+                            <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
+                                viewBox="0 0 24 24">
+                                <path fill="currentColor"
+                                    d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
+                                    opacity="0.5" />
+                                <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
+                                    <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite"
+                                        to="360 12 12" type="rotate" />
+                                </path>
+                            </svg>
+                            Đang chuyển hướng ...
+                        </span>
+                        <span v-else>
+                            Tiếp tục thảo luận
+                        </span>
+                    </button>
                 </div>
             </div>
-            <MsgContent v-for="(item, index) of reviewResults" :key="index" text="AI rà soát" :messA="item"   :loading="isLoading && index === reviewResults.length - 1" />
+            <MsgContent v-for="(item, index) of reviewResults" :key="index" text="AI rà soát" :messA="item"
+                :loading="isLoading && index === reviewResults.length - 1" />
         </div>
     </div>
 </template>
@@ -257,11 +284,13 @@ onMounted(() => {
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     position: relative;
 }
+
 .detail {
     padding: 10px;
     margin-top: 10px;
     font-family: Arial, sans-serif;
 }
+
 .copy-button {
     cursor: pointer;
     font-size: 16px;
@@ -271,28 +300,39 @@ onMounted(() => {
     top: 10px;
     right: 20px;
 }
+
 .results-top {
     display: flex;
     align-items: center;
     justify-content: space-between;
     margin-bottom: 20px;
 }
+
 .chat-more-btn {
-  text-align: center;
+    text-align: center;
+}
+.chat-more-button:disabled {
+  background-color: #ccc;
+  cursor: not-allowed;
+}
+.chat-more-button {
+    background-color: #007bff;
+    color: white;
+    padding: 10px 20px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    font-size: 16px;
 }
 
-.chat-more-btn button {
-  background-color: #007bff;
-  color: white;
-  padding: 10px 20px;
-  border: none;
-  border-radius: 5px;
-  cursor: pointer;
-  font-size: 16px;
-}
-
-.chat-more-btn button:hover {
+.chat-more-button:hover {
     background-color: #a02620;
     opacity: 0.8;
+    transform: scale(1.05);
 }
+.chat-more-button:hover:enabled {
+    background-color: #a02620;
+    transform: scale(1.05);
+}
+
 </style>

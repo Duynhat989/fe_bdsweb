@@ -111,4 +111,6 @@ body {
 {
 	background-color: var(--color-primary);
 }
-
+.main-container {
+  margin-top: 80px!important;
+}

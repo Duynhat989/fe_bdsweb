@@ -92,7 +92,7 @@ onMounted(() => {
 </script>
 
 <template>
-  <div class="real-estate-search">
+  <div class="main-container">
     <div class="header">
       <div class="header-title">
         <h1 class="title">Tìm kiếm bất động sản</h1>
@@ -156,10 +156,10 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.real-estate-search {
+.main-container {
   max-width: 1300px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0px 20px;
   text-align: center;
 }
 .note {

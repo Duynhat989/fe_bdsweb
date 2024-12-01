@@ -56,6 +56,23 @@ const bindCopyCodeToButtons = () => {
         }
     });
 };
+// const stripHTML = (html) => {
+//     const tempElement = document.createElement('div');
+//     tempElement.innerHTML = html;
+//     return tempElement.textContent || tempElement.innerText || '';
+// };
+
+// const copyMessageContent = () => {
+//     if (contentHtml.value) {
+//         const plainText = stripHTML(contentHtml.value);
+//         copy(plainText);
+
+//         statusCopy.value = 'Copied!';
+//         setTimeout(() => {
+//             statusCopy.value = 'Copy';
+//         }, 2000);
+//     }
+// };
 const copyMessageContent = () => {
     if (contentHtml.value) {
         copy(contentHtml.value);

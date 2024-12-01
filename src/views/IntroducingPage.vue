@@ -59,7 +59,7 @@ const handleSubmit = () => {
 };
 </script>
 <template>
-    <div class="landing-page">
+    <div class="landing-page main-container">
         <section class="hero">
             <div class="container">
                 <div class="hero-content">
@@ -120,20 +120,19 @@ const handleSubmit = () => {
 }
 
 .hero {
-    padding: 80px 0 80px;
     background: linear-gradient(rgba(224, 60, 49, 0.1), rgba(224, 60, 49, 0.05));
     text-align: center;
 }
 
 .hero-content h1 {
-    font-size: 48px;
+    font-size: 28px;
     color: var(--color-primary);
-    margin-bottom: 20px;
+    margin-bottom: 10px;
 }
 
 .hero-content p {
-    font-size: 20px;
-    color: #666;
+    font-size: 18px;
+    color: #fff;
     margin-bottom: 20px;
 }
 
@@ -144,7 +143,7 @@ const handleSubmit = () => {
 .services h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: var(--color-primary);
+    color:#fff;
 }
 
 .services-grid {
@@ -159,6 +158,7 @@ const handleSubmit = () => {
     border-radius: 8px;
     transition: transform 0.3s;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    background-color: #fff;
 }
 
 .service-card .description {
@@ -192,7 +192,7 @@ const handleSubmit = () => {
 .projects h2 {
     text-align: center;
     margin-bottom: 20px;
-    color: var(--color-primary);
+    color:#fff;
 }
 
 .projects-grid {
@@ -206,6 +206,7 @@ const handleSubmit = () => {
     overflow: hidden;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     cursor: pointer;
+    background-color: #fff;
 }
 
 .project-card:hover {
@@ -229,6 +230,7 @@ const handleSubmit = () => {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
 }
 .project-info .description {
     display: -webkit-box;
@@ -236,9 +238,10 @@ const handleSubmit = () => {
     -webkit-box-orient: vertical;
     overflow: hidden;
     text-overflow: ellipsis;
+    text-align: left;
 }
 .footer {
-    background: #ccc;
+    background-color: #fff;
     color: #242424;
     padding: 20px 0;
 }
@@ -265,21 +268,6 @@ const handleSubmit = () => {
 }
 
 /* Buttons */
-.primary-btn {
-    background: var(--color-primary);
-    color: white;
-    padding: 12px 30px;
-    border: none;
-    border-radius: 4px;
-    font-size: 16px;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-.primary-btn:hover {
-    background: var(--color-primary);
-}
-
 .secondary-btn {
     background: var(--color-primary);
     color: white;
@@ -290,6 +278,9 @@ const handleSubmit = () => {
     cursor: pointer;
     transition: all 0.3s;
     margin-top: 10px ;
+    display: flex;
+    justify-content: center;
+    width: 100%;
 }
 
 .secondary-btn:hover {
