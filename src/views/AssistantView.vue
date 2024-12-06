@@ -1,17 +1,15 @@
 <script setup>
 import { ref, watch, onMounted, onUnmounted } from 'vue';
-import 'vue3-carousel/dist/carousel.css'
 import { useRouter } from 'vue-router';
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { encodeId } from '@/utils/encoding';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
-import PaginationView from '@/components/Pagination.vue';
 const router = useRouter();
-const viewType = ref('list');
 const assistants = ref([]);
+const searchAssistants = ref([]);
 const currentPage = ref(1);
-const itemsPerPage = ref(6);
+const itemsPerPage = ref(9);
 const total = ref(0);
 const isLoading = ref(false)
 const searchQuery = ref('');
@@ -31,7 +29,11 @@ const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.va
         limit
       }
     });
-    assistants.value = response.data;
+    if (page === 1) {
+      assistants.value = response.data;
+    } else {
+      assistants.value = [...assistants.value, ...response.data];
+    }
     total.value = response?.total ?? 1;
     currentPage.value = response?.page ?? 1;
     itemsPerPage.value = response?.limit ?? 10;
@@ -39,36 +41,8 @@ const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.va
     console.error('Lỗi lấy danh sách trợ lý:', error);
   }
 };
-
 const randomLikes = () => {
   return Math.floor(Math.random() * 100) + 1;
-};
-
-// const totalPages = computed(() => {
-//   return Math.ceil(total.value / itemsPerPage.value);
-// });
-
-const changePage = (page) => {
-  currentPage.value = page;
-  isLoading.value = false
-  assistants.value = []
-  setTimeout(async () => {
-    await fetchAssistants();
-    fetchAssistants(currentPage.value, itemsPerPage.value);
-    isLoading.value = true
-  }, 500)
-};
-
-const itemsToShow = ref(3);
-
-const updateItemsToShow = () => {
-  if (window.innerWidth < 768) {
-    itemsToShow.value = 1;
-  } else if (window.innerWidth < 1024) {
-    itemsToShow.value = 2;
-  } else {
-    itemsToShow.value = 3;
-  }
 };
 
 const loadAssistants = async () => {
@@ -82,43 +56,61 @@ watch(
     isLoading.value = false;
     try {
       clearTimeout(timeout);
-    } catch (error) {}
+    } catch (error) { }
 
     timeout = setTimeout(() => {
       fetchAssistants(currentPage.value, itemsPerPage.value, newQuery);
-      isLoading.value = true;
     }, 2000);
   }
 );
+const handleScroll = async () => {
+  const bottomOfWindow =
+    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
+  
+  if (bottomOfWindow) {
+    try {
+      await fetchAssistants(currentPage.value, itemsPerPage.value, searchQuery.value);
+    } catch (error) {
+      console.error('Lỗi tải thêm trợ lý:', error);
+    }
+    currentPage.value = Number(currentPage.value) + 1;
+  }
+};
 
 onMounted(() => {
   loadAssistants();
-  updateItemsToShow();
-  window.addEventListener('resize', updateItemsToShow);
+  window.addEventListener('scroll', handleScroll);
 });
+
 onUnmounted(() => {
-  window.removeEventListener('resize', updateItemsToShow);
+  window.removeEventListener('scroll', handleScroll);
 });
 
 </script>
 <template>
   <div class="main-container">
-    <div class="change-type">
-      <!-- <button class="list">Danh sách</button> -->
-    </div>
     <div class="header-title">
       <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
       <p style="color: white;">Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
     </div>
     <div class="search-bar">
-          <div class="search-row">
-              <i class='bx bx-search-alt-2 search-icon'></i>
-              <input type="text" v-model="searchQuery" placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
-          </div>
+      <div class="search-row">
+        <i class='bx bx-search-alt-2 search-icon'></i>
+        <input type="text" v-model="searchQuery" :class="{ 'active-search': searchAssistants.length > 0 }"
+          placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
       </div>
+      <div class="search-results" v-if="searchAssistants.length > 0">
+        <ul>
+          <li v-for="(result, index) in searchAssistants" :key="index">
+            {{ result.name }}
+          </li>
+        </ul>
+      </div>
+    </div>
+
     <LoadingSpinner v-if="!isLoading" />
 
-    <div class="main-content"  v-else>
+    <div class="main-content" v-else>
       <div class="assistant-list">
         <div class="assistant-card list-card" v-for="assistant in assistants" :key="assistant.id"
           @click="handleClick(assistant.id)">
@@ -139,12 +131,10 @@ onUnmounted(() => {
                   class='bx bx-chevron-right'></i></span></button>
           </div>
         </div>
-        <PaginationView :total="total" :itemsPerPage="itemsPerPage" :currentPage="currentPage"
-          @changePage="changePage" />
       </div>
     </div>
     <div class="note" v-if="assistants.length == 0">
-        Không tìm thấy kết quả
+      Không tìm thấy kết quả
     </div>
   </div>
 </template>
@@ -153,14 +143,17 @@ onUnmounted(() => {
 .it {
   padding-left: 10px;
 }
+
 .isloading {
-    height: 50vh;
-    background-color: transparent;
+  height: 50vh;
+  background-color: transparent;
 }
+
 .main-container .note {
-    text-align: center;
-    color: white;
+  text-align: center;
+  color: white;
 }
+
 .header-title {
   text-align: center;
   margin-top: 30px;
@@ -173,51 +166,96 @@ onUnmounted(() => {
   color: var(--color-primary);
   line-height: 40px;
 }
+
 .search-bar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 60%;
-    margin: 0 auto;
-    margin-bottom: 20px;
+  position: relative;
+  width: 60%;
+  max-width: 1000px;
+  margin: 0 auto;
+  margin-bottom: 20px;
 }
+
 .search-row {
-    position: relative;
-    width: 100%;
+  position: relative;
+  width: 100%;
 }
+
 .search-icon {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    pointer-events: none;
+  position: absolute;
+  top: 50%;
+  left: 15px;
+  transform: translateY(-50%);
+  font-size: 16px;
+  color: #aaa;
+  pointer-events: none;
 }
+
 .search-input {
-    width: 100%;
-    padding: 10px 20px 10px 40px;
-    border: 2px solid #fff;
-    border-radius: 25px;
-    font-size: 16px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+  width: 100%;
+  padding: 10px 20px 10px 40px;
+  border: 2px solid #fff;
+  border-radius: 25px;
+  font-size: 16px;
+  outline: none;
+  transition: all 0.3s ease-in-out;
 }
+
+.search-input.active-search {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
 .search-input:focus {
-    border-color: #4a90e2;
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }
 
 .search-input::placeholder {
-    color: #aaa;
-    font-size: 14px;
+  color: #aaa;
+  font-size: 14px;
 }
+
+.search-results {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  background: #fff;
+  width: 100%;
+  position: absolute;
+  z-index: 99;
+  top: 100%;
+  overflow: hidden;
+  padding-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.search-results ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-results li {
+  padding: 8px 10px;
+  cursor: pointer;
+}
+
+.search-results li:hover {
+  background: #f0f0f0;
+  border-left: 5px solid var(--color-primary);
+}
+
+.no-results {
+  margin-top: 10px;
+  color: #888;
+  font-size: 14px;
+  text-align: center;
+}
+
 .main-container {
   width: 100%;
-  padding: 0px 5%;
+  padding: 0px 10%;
   margin: 5px auto;
   position: relative;
 }
@@ -369,12 +407,14 @@ onUnmounted(() => {
   color: white;
   transform: scale(1.05);
 }
+
 /* Responsive Styles */
 @media (max-width: 1224px) {
   .assistant-card {
     width: calc(50% - 10px);
   }
 }
+
 /* Responsive Styles */
 @media (max-width: 1024px) {
   .assistant-card {
@@ -383,6 +423,10 @@ onUnmounted(() => {
 }
 
 @media (max-width: 768px) {
+  .search-bar {
+    width: 100%;
+  }
+
   .assistant-card {
     width: 100%;
     flex-direction: column;

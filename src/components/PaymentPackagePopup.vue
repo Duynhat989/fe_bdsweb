@@ -17,6 +17,7 @@ const paymentContent = ref('');
 const paymentData = ref({});
 const extensionPeriod = ref(1); 
 const isInvoiceCreated = ref(false); 
+const isQRCodeLoading = ref(false);
 import store from '@/store';
 
 const user = computed(() => store.state.user);
@@ -48,9 +49,11 @@ const closePopup = () => {
     emit('close');
     isInvoiceCreated.value = false;
     qrCodeUrl.value = null;
+    isQRCodeLoading.value = false;
 };
 const createInvoice = async () => {
     try {
+        isQRCodeLoading.value = true;
         const calculatedTotal = totalPrice.value * extensionPeriod.value;
 
         paymentContent.value = `APH${props.package.id}USER${user.value.id}CO${Math.floor(1000 + Math.random() * 9000)}`;
@@ -91,6 +94,8 @@ const createInvoice = async () => {
         notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
             showActions: false
         });
+    } finally {
+        isQRCodeLoading.value = false;
     }
 };
 </script>
@@ -128,8 +133,10 @@ const createInvoice = async () => {
                             <p>Nội dung chuyển : <span>{{ paymentContent }}</span></p>
                             <button @click="createInvoice" class="invoice-btn" :disabled="isInvoiceCreated" >Tạo hóa đơn</button>
                         </div>
-                        <div v-if="qrCodeUrl" class="payment-qr">
-                            <img :src="qrCodeUrl" alt="Mã QR thanh toán" />
+                       
+                        <div class="payment-qr">
+                            <span v-if="isQRCodeLoading" class="loading-icon"></span> <!-- Hiển thị icon loading QR -->
+                            <img v-else :src="qrCodeUrl"/>
                         </div>
                     </div>
                 </div>
@@ -332,4 +339,24 @@ button:disabled {
         width: 100%;
     }
 }
+.loading-icon {
+    display: inline-block;
+    width: 32px;
+    height: 32px;
+    border: 4px solid transparent;
+    border-top-color: #3498db;
+    border-radius: 50%;
+    animation: spin 1s linear infinite;
+    margin: 0 auto;
+}
+
+@keyframes spin {
+    from {
+        transform: rotate(0deg);
+    }
+    to {
+        transform: rotate(360deg);
+    }
+}
+
 </style>

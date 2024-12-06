@@ -44,6 +44,9 @@ console.log(isLoading);
         Đặc biệt, giải pháp của chúng tôi còn hỗ trợ quản lý toàn bộ vòng đời của hợp đồng, từ soạn thảo, phê duyệt, đến lưu trữ và gia hạn, 
         đảm bảo mọi hợp đồng đều được xử lý một cách hiệu quả và tuân thủ quy định pháp luật.
       </p>
+      <div class="note">
+        Đây là giải pháp tham khảo nhằm mục đích tối ưu quá trình tạo hợp đồng 1 cách nhanh nhất. Vui lòng chỉ sử dụng để tham khảo, chúng tôi không chịu trách nhiệm nếu bạn sử dụng trực tiếp với mục đích thương mại.
+      </div>
     </div>
   </div>
 </template>
@@ -134,15 +137,28 @@ console.log(isLoading);
 .contract-description {
   margin-top: 30px;
   background: #fff;
-  padding: 30px;
+  padding: 30px 30px 60px 30px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+  position: relative;
+  overflow: hidden;
 }
 
 .contract-description h2 {
   font-size: 23px;
   color: #333;
   margin-bottom: 20px;
+}
+.note {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background: #0d318b34;
+  padding: 0px 20px;
+  text-align: center;
+  font-size: 13px;
+  color: #c03228;
 }
 
 .contract-description p {

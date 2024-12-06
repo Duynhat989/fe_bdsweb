@@ -258,7 +258,7 @@ onMounted(() => {
                         </div>
                         <div class="prompts">
                             <div class="prompt-controls">
-                                <button @click="addPrompt" class="add-btn">Thêm Prompt</button>
+                                <button @click="addPrompt" class="add-btn">Thêm đề xuất</button>
                             </div>
                             <div v-if="prompts.length > 0" class="prompt-box">
                                 <div v-for="(prompt, index) in prompts" :key="prompt.id" class="prompt-card"
@@ -452,14 +452,14 @@ onMounted(() => {
     background-color: #fff;
     border: 1px solid #e0e0e0;
     border-radius: 8px;
-    padding: 10px;
+    padding: 5px;
     font-size: 13px;
     color: #333;
     cursor: pointer;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     width: calc((100% - 20px)/2);
-    max-width: 250px;
+    max-width: 180px;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -483,7 +483,6 @@ onMounted(() => {
     font-size: 24px;
     color: var(--color-primary);
     margin: 0 auto;
-    margin-bottom: 4px;
 }
 
 .action-card .title {

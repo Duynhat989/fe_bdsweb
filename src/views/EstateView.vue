@@ -7,6 +7,7 @@ import Pagination from '@/components/Pagination.vue';
 import EstateDetailPopup from '@/components/EstateDetailPopup.vue';
 import { getLatestPrice } from '@/utils/helps';
 const estales = ref([]);
+const searchSuggestions = ref([]);
 const provinces = ref([]);
 const currentPage = ref(1);
 const itemsPerPage = ref(8);
@@ -17,6 +18,8 @@ const selectedEstate = ref(null);
 // change selected
 const location = ref('');
 const transactionType = ref('');
+const priceRange = ref('');
+const areaRange = ref('');
 const isPopupVisible = ref(false);
 
 const openPopup = (estate) => {
@@ -32,7 +35,9 @@ const fetchEstates = async (
     limit = itemsPerPage.value,
     search = searchQuery.value,
     province = location.value,
-    type = transactionType.value
+    type = transactionType.value,
+    price = priceRange.value,
+    area = areaRange.value
   ) => {
   try {
     const response = await request.get(END_POINT.ESTALES_LIST, {
@@ -41,7 +46,9 @@ const fetchEstates = async (
         limit,
         search,
         province,
-        type
+        type,
+        price,
+        area
       }
     });
     estales.value = response.realEstates;
@@ -62,15 +69,15 @@ const fetchsProvince = async () => {
 };
 let timeout;
 watch(
-  [searchQuery, location, transactionType],
-  ([newQuery, newLocation, newType]) => {
+  [searchQuery, location, transactionType, priceRange, areaRange],
+  ([newQuery, newLocation, newType, newPrice, newArea]) => {
     isLoading.value = false;
     try {
       clearTimeout(timeout);
     } catch (error) {}
 
     timeout = setTimeout(() => {
-      fetchEstates(currentPage.value, itemsPerPage.value, newQuery, newLocation, newType);
+      fetchEstates(currentPage.value, itemsPerPage.value, newQuery, newLocation, newType, newPrice, newArea);
       isLoading.value = true;
     }, 1000);
   }
@@ -99,9 +106,18 @@ onMounted(() => {
         <p style="color: white;">Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
       </div>
       <div class="search-bar">
-          <div class="search-row">
-              <i class='bx bx-search-alt-2 search-icon'></i>
-              <input type="text" v-model="searchQuery" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
+          <div class="search-box">
+            <div class="search-row">
+                <i class='bx bx-search-alt-2 search-icon'></i>
+                <input type="text" v-model="searchQuery"  :class="{ 'active-search': searchSuggestions.length > 0 }" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
+            </div>
+            <div class="search-results" v-if="searchSuggestions.length > 0">
+              <ul>
+                <li v-for="(suggestion, index) in searchSuggestions" :key="index" @click="selectSuggestion(suggestion)">
+                  {{ suggestion.title }}
+                </li>
+              </ul>
+            </div>
           </div>
           <div class="filter-row">
               <select class="search-select" v-model="location">
@@ -110,11 +126,28 @@ onMounted(() => {
                   {{ province.province }}
                 </option>
               </select>
+              <select class="search-select" v-model="areaRange">
+                  <option value="">Chọn diện tích</option>
+                  <option value="0-50">Dưới 50 m²</option>
+                  <option value="50-100">50 - 100 m²</option>
+                  <option value="100-200">100 - 200 m²</option>
+                  <option value="200-500">200 - 500 m²</option>
+                  <option value="500-">Trên 500 m²</option>
+              </select>
               <select class="search-select"  v-model="transactionType">
                   <option value="">Chọn loại giao dịch</option>
                   <option value="buy">Mua & Bán</option>
                   <option value="rent">Thuê</option>
               </select>
+              <select class="search-select" v-model="priceRange">
+                  <option value="">Chọn mức giá</option>
+                  <option value="0-500">Dưới 500 triệu</option>
+                  <option value="500-1000">500 triệu - 1 tỷ</option>
+                  <option value="1000-2000">1 tỷ - 2 tỷ</option>
+                  <option value="2000-5000">2 tỷ - 5 tỷ</option>
+                  <option value="5000-">Trên 5 tỷ</option>
+              </select>
+             
           </div>
       </div>
     </div>
@@ -178,6 +211,39 @@ onMounted(() => {
     position: relative;
     width: 100%;
 }
+
+.search-results {
+  border-bottom-left-radius: 25px;
+  border-bottom-right-radius: 25px;
+  background: #fff;
+  width: 100%;
+  position: absolute;
+  z-index: 99;
+  top: 100%;
+  overflow: hidden;
+  padding-bottom: 15px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.search-results ul {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  max-height: 200px;
+  overflow-y: auto;
+}
+
+.search-results li {
+  padding: 8px 20px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.search-results li:hover {
+  background: #f0f0f0;
+  border-left: 5px solid var(--color-primary);
+}
+
 .filter-row {
     display: flex;
     justify-content: center;
@@ -210,6 +276,10 @@ onMounted(() => {
     width: 60%;
     margin: 0 auto;
 }
+.search-box {
+  width: 100%;
+  position: relative;
+}
 .search-icon {
     position: absolute;
     top: 50%;
@@ -229,8 +299,12 @@ onMounted(() => {
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
+.search-input.active-search {
+  border-bottom-left-radius: 0px;
+  border-bottom-right-radius: 0px;
+}
+
 .search-input:focus {
-    border-color: #4a90e2;
     background-color: #fff;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
 }

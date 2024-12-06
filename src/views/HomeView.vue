@@ -38,15 +38,14 @@ const handleClick = (routeName) => {
   <div class="main-container">
     <div class="header-title">
       <h1 class="title">An Phát Hưng</h1>
-      <p style="color: white;">Trợ lý An Phát Hưng giúp tra cứu, tìm kiếm và giải đáp mọi thắc mắc về bất động sản, giúp việc mua bán và quản lý
-        trở nên dễ dàng hơn.</p>
+      <p style="color: white;"><strong>Trợ lý toàn năng về bất động sản</strong></p>
     </div>
     <div class="content">
       <div class="left-box">
         <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" :imageUrl="q_a" />
         <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" :imageUrl="contract" />
         <ItemBox @click="handleClick('estate')" text="Tìm kiếm bất động sản" :imageUrl="search_home" />
-        <ItemBox @click="handleClick('course')" text="Khóa học bất động sản" :imageUrl="course" />
+        <ItemBox @click="handleClick('package')" text="Gói dịch vụ" :imageUrl="course" />
       </div>
       <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
@@ -61,8 +60,7 @@ const handleClick = (routeName) => {
         </div>
 
         <div class="form-container">
-          <LoginForm  v-if="activeTab === 'login'"
-            @switchToForgotPassword="setActiveTab('forgotPassword')" />
+          <LoginForm v-if="activeTab === 'login'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
           <RegisterForm v-if="activeTab === 'register'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
           <ForgotPasswordForm v-if="activeTab === 'forgotPassword'" />
         </div>
@@ -74,8 +72,9 @@ const handleClick = (routeName) => {
 <style scoped>
 .main-container {
   max-width: 1200px;
-  padding: 40px 5%;
-  margin: 10px auto;
+  padding: 0px 5%;
+  margin: 0px auto;
+  margin-top: 50px!important;
 }
 
 .content {
@@ -85,7 +84,8 @@ const handleClick = (routeName) => {
   gap: 30px;
   margin: 80px 0;
 }
-.title{
+
+.title {
   font-size: large;
   font-weight: bold !important;
   color: white !important;
@@ -93,6 +93,7 @@ const handleClick = (routeName) => {
   border-radius: 10px;
   padding: 10px;
 }
+
 .header-title {
   text-align: center;
   margin: 20px auto;
@@ -131,8 +132,9 @@ const handleClick = (routeName) => {
 
 .right-icon {
   position: absolute;
-  right: -10px;
-  top: -85px;
+  right: -25px;
+  top: -50px;
+  transform: rotate(10deg);
 }
 
 .right-icon img {
@@ -225,14 +227,17 @@ const handleClick = (routeName) => {
   .right-box {
     order: 1;
   }
+
   .right-icon {
     right: -12px;
     top: -105px;
   }
+
   .right-icon img {
     width: 112px;
     height: auto;
   }
+
   .left-box {
     order: 2;
     gap: 10px;

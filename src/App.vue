@@ -9,7 +9,7 @@ import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck"
 import request from "./utils/request";
 import { END_POINT } from "./api/api";
 import { encodeId, decodeId } from '@/utils/encoding';
-import icon_logo from '@/assets/images/icon_logo.png';
+import icon_logo from '@/assets/images/icon_logo1.png';
 
 import logo from '@/assets/images/logo.png';
 
@@ -139,7 +139,7 @@ const goHome = () => {
           <div class="logo">
             <div class="logo_web flex" @click="goHome">
               <div class="img flex">
-                <img :src="icon_logo" alt="Logo" width="50">
+                <img :src="icon_logo" alt="Logo" width="75">
               </div> &nbsp;&nbsp;&nbsp;&nbsp;
               <img :src="logo" alt="logo web" class="logo_text">
             </div>
@@ -223,8 +223,6 @@ const goHome = () => {
 <style scoped>
 .app-container {
   display: flex;
-  height: 100vh;
-  overflow: hidden;
 }
 
 .body-bar {
@@ -313,7 +311,6 @@ const goHome = () => {
 .body-content {
   flex-grow: 1;
   overflow-y: auto;
-  height: 100vh;
   margin-left: 310px;
   transition: margin-left 0.3s ease;
 }

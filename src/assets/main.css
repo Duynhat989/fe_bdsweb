@@ -19,15 +19,18 @@ a {
 body {
   background-image: url('../assets/images/gioi-thieu-sunreal.jpg');
   background-repeat: no-repeat;
-  background-size: cover; /* Đảm bảo hình nền bao phủ toàn màn hình */
-  background-position: center; /* Căn giữa hình nền */
-  height: 100vh; /* Đảm bảo body chiếm toàn bộ chiều cao của viewport */
-  margin: 0; /* Xóa bỏ bất kỳ khoảng trống mặc định nào */
-  /* filter: blur(8px); */
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed; 
+  margin: 0;
+  height: 100vh;
+  position: relative;
+  z-index: 0;
 }
+
 body::before {
   content: '';
-  position: absolute;
+  position: fixed; 
   top: 0;
   left: 0;
   width: 100%;
@@ -36,9 +39,10 @@ body::before {
   background-repeat: no-repeat;
   background-size: cover;
   background-position: center;
-  filter: brightness(70%); /* Giảm độ sáng của hình nền */
-  z-index: -1; /* Đưa background xuống dưới */
+  filter: brightness(70%); 
+  z-index: -1;
 }
+
 /* 
 @media (hover: hover) {
   a:hover {

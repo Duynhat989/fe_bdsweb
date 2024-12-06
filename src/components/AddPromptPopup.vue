@@ -79,10 +79,13 @@ const createPrompt = async () => {
             <div class="popup-content">
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <form @submit.prevent="createPrompt">
-                    <label>{{ isEdit ? 'Chỉnh sửa prompt' : 'Thêm prompt' }}</label>
-                    <input v-model="promptData.name" placeholder="Nhập tên prompt" required />
-                    <textarea v-model="promptData.prompt_text"></textarea>
-                    <button type="submit" class="button-prompt">{{ isEdit ? 'Chỉnh sửa' : 'Tạo prompt' }}</button>
+                    <label>{{ isEdit ? 'Chỉnh sửa đề xuất cá nhân' : 'Thêm đề xuất cá nhân' }}</label>
+                    <input v-model="promptData.name" placeholder="Nhập tiêu đề đề xuất" required />
+                    <textarea 
+                        v-model="promptData.prompt_text" 
+                        placeholder="Nhập đề xuất của bạn, ví dụ: 'Hãy tạo một chiến lược marketing cho dự án chung cư cao cấp dành cho gia đình trẻ.'">
+                    </textarea>
+                    <button type="submit" class="button-prompt">{{ isEdit ? 'Chỉnh sửa' : 'Tạo mới' }}</button>
                 </form>
             </div>
         </div>
@@ -148,7 +151,7 @@ input {
     margin-bottom: 15px;
     border: 1px solid #ddd;
     border-radius: 4px;
-    font-size: 16px;
+    font-size: 14px;
     color: #333;
 }
 textarea {
