@@ -72,12 +72,11 @@ onMounted(() => {
 .main-container {
     display: flex;
     justify-content: center;
-    padding: 0 5%;
+    padding: 0px 20px;
 }
 
 .package-page {
     width: 100%;
-    padding: 0px 20px;
     border-radius: 10px;
     color: #333;
 }
@@ -181,5 +180,10 @@ onMounted(() => {
 .register-btn:hover {
     background-color: #b33a3a;
     opacity: 0.8;
+}
+@media (max-width: 576px) {
+    .header-title {
+        margin-bottom: 20px;
+    }
 }
 </style>

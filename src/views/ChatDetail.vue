@@ -375,9 +375,10 @@ watch(conversationList, () => {
 .conversation-list {
     padding-top: 30px;
     max-height: calc(85vh - 100px);
-    overflow-y: scroll;
+    overflow: auto;
     transition: all 1s;
     -ms-overflow-style: none;
+    -webkit-overflow-scrolling: touch;
     scrollbar-width: none;
     width: 90%;
     max-width: 1000px;

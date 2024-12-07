@@ -3,6 +3,8 @@ export const END_POINT = {
     LOGIN: '/api/auth/login', // Đăng nhập
     REGISTER: '/api/auth/register', // Đăng ký
     FORGOT_PASSWORD: '/api/auth/forgot_password', // Quên mật khẩu
+    FORGET_PASSWORD: '/api/auth/forget', // Quên mật khẩu
+    CONFIRM_PASSWORD: '/api/auth/confirm', // Thay đổi mật khẩu 
 
     // Assistants APIs
     ASSISTANTS_LIST: '/api/assistants', // Danh sách trợ lý
@@ -10,6 +12,7 @@ export const END_POINT = {
     ASSISTANT_CREATE: '/api/assistant/create', // Thêm trợ lý
     ASSISTANT_UPDATE: '/api/assistant/update', // Cập nhật trợ lý
     ASSISTANT_DELETE: '/api/assistant/delete', // Xóa trợ lý
+    ASSISTANTS_SUGGEST: '/api/assistant/suggest', // Tìm gợi ý trợ lý
 
     // Conversation APIs
     CONVERSATION_THREAD: '/api/conversation/thread', // Tạo phiên tin nhắn mới
@@ -83,5 +86,8 @@ export const END_POINT = {
     ESTALE_FIND: '/api/estale/find', // Tìm bài viết bất động sản
     ESTALE_PROVINCE: '/api/estale/province', // Lấy vị trí
     PAYMENT_CREATE: '/api/pay/create', // Cập nhật thanh toan
+
+    ESTALE_LOCATION: 'api/estale/location', 
+    ESTALE_NAME: '/api/estale/name', 
 
 };

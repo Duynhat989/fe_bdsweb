@@ -13,14 +13,36 @@ const itemsPerPage = ref(9);
 const total = ref(0);
 const isLoading = ref(false)
 const searchQuery = ref('');
+let timeout;
 
+const fetchSuggestions = async (search) => {
+  try {
+    if (!search) {
+      searchAssistants.value = [];
+      return;
+    }
+    const response = await request.post(END_POINT.ASSISTANTS_SUGGEST, {
+      search,
+    });
+    searchAssistants.value = response?.data ?? [];
+  } catch (error) {
+    console.error("Error fetching assistant suggestions:", error);
+  }
+};
 
 const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
 };
 
-const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value,    search = searchQuery.value) => {
+const handleClickText = async (name) => {
+  searchQuery.value = name; 
+  searchAssistants.value = [];
+  isQueryChanged.value = false;
+  await fetchAssistants(1, itemsPerPage.value, name);
+};
+
+const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
   try {
     const response = await request.get(END_POINT.ASSISTANTS_LIST, {
       params: {
@@ -49,31 +71,40 @@ const loadAssistants = async () => {
   await fetchAssistants();
   isLoading.value = true
 };
-let timeout;
-watch(
-  searchQuery,
-  (newQuery) => {
-    isLoading.value = false;
-    try {
-      clearTimeout(timeout);
-    } catch (error) { }
 
-    timeout = setTimeout(() => {
-      fetchAssistants(currentPage.value, itemsPerPage.value, newQuery);
-    }, 2000);
+const isQueryChanged = ref(false);
+watch(searchQuery, (newQuery, oldQuery) => {
+  if (newQuery === oldQuery) {
+    return; 
   }
-);
+  try {
+    clearTimeout(timeout);
+  } catch (error) {}
+
+  if (!newQuery.trim()) {
+    searchAssistants.value = [];
+    fetchAssistants(1, itemsPerPage.value, newQuery);
+    isQueryChanged.value = false;
+    return;
+  }
+  isQueryChanged.value = true;
+
+  timeout = setTimeout(() => {
+    fetchSuggestions(newQuery);
+  }, 500);
+});
+
 const handleScroll = async () => {
-  const bottomOfWindow =
-    window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
-  
-  if (bottomOfWindow) {
+  const bottomOfWindow = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
+  if (bottomOfWindow && currentPage.value + 1 <= total) {
     try {
+      currentPage.value = Number(currentPage.value) + 1;
       await fetchAssistants(currentPage.value, itemsPerPage.value, searchQuery.value);
     } catch (error) {
       console.error('Lỗi tải thêm trợ lý:', error);
     }
-    currentPage.value = Number(currentPage.value) + 1;
+  } else if (currentPage.value + 1 > total) {
+    console.log('Đã tải hết dữ liệu!');
   }
 };
 
@@ -93,18 +124,21 @@ onUnmounted(() => {
       <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
       <p style="color: white;">Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
     </div>
-    <div class="search-bar">
+    <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">
         <i class='bx bx-search-alt-2 search-icon'></i>
-        <input type="text" v-model="searchQuery" :class="{ 'active-search': searchAssistants.length > 0 }"
+        <input type="text" v-model="searchQuery" 
           placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
       </div>
-      <div class="search-results" v-if="searchAssistants.length > 0">
+      <div  class="search-results" v-if="searchAssistants.length > 0">
         <ul>
-          <li v-for="(result, index) in searchAssistants" :key="index">
+          <li v-for="(result, index) in searchAssistants" :key="index" @click="handleClickText(result.name)">
             {{ result.name }}
           </li>
         </ul>
+      </div>
+      <div  class="search-results" v-if='isQueryChanged && searchAssistants.length === 0'>
+        <p  class="no-results">Không tìm thấy kết quả phù hợp.</p>
       </div>
     </div>
 
@@ -197,10 +231,10 @@ onUnmounted(() => {
   border-radius: 25px;
   font-size: 16px;
   outline: none;
-  transition: all 0.3s ease-in-out;
+  transition: border-radius 0.3s ease, border-color 0.3s ease, background-color 0.3s ease;
 }
 
-.search-input.active-search {
+.query-changed .search-input {
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
 }
@@ -237,7 +271,7 @@ onUnmounted(() => {
 }
 
 .search-results li {
-  padding: 8px 10px;
+  padding: 8px 20px;
   cursor: pointer;
 }
 
@@ -458,6 +492,10 @@ onUnmounted(() => {
 }
 
 @media (max-width: 480px) {
+  
+  .main-container {
+    padding: 0px 20px;
+  }
   .header-title .title {
     font-size: 20px;
   }

@@ -62,7 +62,7 @@ const handleClick = (routeName) => {
         <div class="form-container">
           <LoginForm v-if="activeTab === 'login'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
           <RegisterForm v-if="activeTab === 'register'" @switchToForgotPassword="setActiveTab('forgotPassword')" />
-          <ForgotPasswordForm v-if="activeTab === 'forgotPassword'" />
+          <ForgotPasswordForm  v-if="activeTab === 'forgotPassword'"  @switchToLogin="setActiveTab('login')"/>
         </div>
       </div>
     </div>
@@ -234,7 +234,7 @@ const handleClick = (routeName) => {
   }
 
   .right-icon img {
-    width: 112px;
+    width: 120px;
     height: auto;
   }
 
@@ -248,6 +248,10 @@ const handleClick = (routeName) => {
 @media (max-width: 576px) {
   .main-container {
     max-width: 100%;
+  }
+  .right-icon {
+    right: -15px;
+    top: -35px;
   }
 }
 </style>

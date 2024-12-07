@@ -137,7 +137,7 @@ console.log(isLoading);
 .contract-description {
   margin-top: 30px;
   background: #fff;
-  padding: 30px 30px 60px 30px;
+  padding: 20px;
   border-radius: 8px;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   position: relative;
@@ -150,12 +150,10 @@ console.log(isLoading);
   margin-bottom: 20px;
 }
 .note {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
+  position: relative;
+  margin-bottom: 0px;
+  margin-top: 20px;
   background: #0d318b34;
-  padding: 0px 20px;
   text-align: center;
   font-size: 13px;
   color: #c03228;

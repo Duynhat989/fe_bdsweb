@@ -1,5 +1,5 @@
 import { createStore } from 'vuex';
-import { login, register } from '../api/auth';
+import { login, register, forgetPassword, confirmPassword } from '../api/auth';
 
 const store = createStore({
     state: {
@@ -36,7 +36,6 @@ const store = createStore({
     actions: {
         async login({ commit }, credentials) {
             const data = await login(credentials);
-
             commit('setUser', data.data);
             commit('setToken', data.data.token);
         },
@@ -47,6 +46,21 @@ const store = createStore({
         },
         async logout({ commit }) {
             commit('clearAuthData');
+        },
+        async forgetPassword({ commit }, email) {
+            try {
+                await forgetPassword( email );
+            } catch (error) {
+                commit('setMessage', 'Có lỗi xảy ra khi gửi yêu cầu quên mật khẩu.');
+            }
+        },
+        async confirmPassword({ commit }, { code, email, new_password }) {
+            try {
+                const data = await confirmPassword({ code, email,new_password });
+                commit('setMessage', data.message);
+            } catch (error) {
+                commit('setMessage', 'Có lỗi xảy ra khi đặt lại mật khẩu.');
+            }
         }
     },
     getters: {

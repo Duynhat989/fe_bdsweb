@@ -86,7 +86,6 @@ onMounted(() => {
 
 .check-process-page {
     margin-top: 30px;
-    padding: 20px;
 }
 
 .header-title {

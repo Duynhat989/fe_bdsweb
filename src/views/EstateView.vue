@@ -14,9 +14,10 @@ const itemsPerPage = ref(8);
 const total = ref(0);
 const searchQuery = ref('');
 const isLoading = ref(false)
+const isInitialLoad = ref(true); 
 const selectedEstate = ref(null);
 // change selected
-const location = ref('');
+const provinceRange = ref('');
 const transactionType = ref('');
 const priceRange = ref('');
 const areaRange = ref('');
@@ -30,13 +31,47 @@ const openPopup = (estate) => {
 const closePopup = () => {
     isPopupVisible.value = false;
 };
+
+const handleClickText = async (name) => {
+  searchQuery.value = name; 
+  searchSuggestions.value = [];
+  const searchInput = document.querySelector('.search-input');
+  if (searchInput) {
+    searchInput.focus();
+  }
+  await fetchEstates(currentPage.value, itemsPerPage.value, name);
+};
+
+const fetchSearchSuggestions = async (name) => {
+  if (!name.trim()) {
+    searchSuggestions.value = [];
+    return;
+  }
+  try {
+    const [nameResponse, locationResponse] = await Promise.all([
+      request.get(END_POINT.ESTALE_NAME, { params: { name } }),
+      request.get(END_POINT.ESTALE_LOCATION, { params: { location: name } }),
+    ]);
+    searchSuggestions.value = [
+      ...(nameResponse.data || []).map((item) => ({
+        title: item.title,
+      })),
+      ...(locationResponse.data || []).map((item) => ({
+        title: item.location,
+      })),
+    ];
+  } catch (error) {
+    console.error('Lỗi lấy gợi ý tìm kiếm:', error);
+  }
+};
+
 const fetchEstates = async (
     page = currentPage.value,
     limit = itemsPerPage.value,
     search = searchQuery.value,
-    province = location.value,
+    province = provinceRange.value,
     type = transactionType.value,
-    price = priceRange.value,
+    max_price = priceRange.value,
     area = areaRange.value
   ) => {
   try {
@@ -47,7 +82,7 @@ const fetchEstates = async (
         search,
         province,
         type,
-        price,
+        max_price,
         area
       }
     });
@@ -57,6 +92,8 @@ const fetchEstates = async (
     itemsPerPage.value = response.limit;
   } catch (error) {
     console.error('Lỗi lấy danh sách bài viết:', error);
+  }finally {
+      isInitialLoad.value = false; 
   }
 };
 const fetchsProvince = async () => {
@@ -69,37 +106,35 @@ const fetchsProvince = async () => {
 };
 let timeout;
 watch(
-  [searchQuery, location, transactionType, priceRange, areaRange],
-  ([newQuery, newLocation, newType, newPrice, newArea]) => {
+  [searchQuery, provinceRange, transactionType, priceRange, areaRange],
+  ([newQuery, newProvince, newType, newPrice, newArea]) => {
     isLoading.value = false;
     try {
       clearTimeout(timeout);
     } catch (error) {}
-
     timeout = setTimeout(() => {
-      fetchEstates(currentPage.value, itemsPerPage.value, newQuery, newLocation, newType, newPrice, newArea);
+      fetchSearchSuggestions(newQuery);
+    }, 300);
+    timeout = setTimeout(() => {
+      fetchEstates(currentPage.value, itemsPerPage.value, newQuery, newProvince, newType, newPrice, newArea);
       isLoading.value = true;
     }, 1000);
   }
 );
 
+
 const changePage = (page) => {
   currentPage.value = page;
-  fetchEstates(currentPage.value, itemsPerPage.value, searchQuery.value, location.value, transactionType.value,);
+  fetchEstates(currentPage.value, itemsPerPage.value, searchQuery.value, provinceRange.value, transactionType.value,);
 };
 
-const loadEstates = async () => {
-  await fetchEstates();
-  isLoading.value = true
-  await fetchsProvince();
-};
 onMounted(() => {
-  loadEstates();
+  fetchsProvince();
 });
 </script>
 
 <template>
-  <div class="main-container">
+  <div class="main-container"  :class="isInitialLoad ? 'initial-load' : ''">
     <div class="header">
       <div class="header-title">
         <h1 class="title">Tìm kiếm bất động sản</h1>
@@ -113,17 +148,17 @@ onMounted(() => {
             </div>
             <div class="search-results" v-if="searchSuggestions.length > 0">
               <ul>
-                <li v-for="(suggestion, index) in searchSuggestions" :key="index" @click="selectSuggestion(suggestion)">
+                <li v-for="(suggestion, index) in searchSuggestions" :key="index" @click="handleClickText(suggestion.title)">
                   {{ suggestion.title }}
                 </li>
               </ul>
             </div>
           </div>
           <div class="filter-row">
-              <select class="search-select" v-model="location">
+              <select class="search-select" v-model="provinceRange">
                 <option value="">Chọn vị trí</option>
-                <option v-for="(province,index) in provinces" :key="index" :value="province.province">
-                  {{ province.province }}
+                <option v-for="(item,index) in provinces" :key="index" :value="item.province">
+                  {{ item.province }}
                 </option>
               </select>
               <select class="search-select" v-model="areaRange">
@@ -140,52 +175,52 @@ onMounted(() => {
                   <option value="rent">Thuê</option>
               </select>
               <select class="search-select" v-model="priceRange">
-                  <option value="">Chọn mức giá</option>
-                  <option value="0-500">Dưới 500 triệu</option>
-                  <option value="500-1000">500 triệu - 1 tỷ</option>
-                  <option value="1000-2000">1 tỷ - 2 tỷ</option>
-                  <option value="2000-5000">2 tỷ - 5 tỷ</option>
-                  <option value="5000-">Trên 5 tỷ</option>
+                <option value="">Chọn mức giá</option>
+                <option value="500">Dưới 500 triệu</option>
+                <option value="1000">Dưới 1 tỷ</option>
+                <option value="10000">Dưới 10 tỷ</option>
+                <option value="20000">Dưới 20 tỷ</option>
+                <option value="50000">Dưới 50 tỷ</option>
+                <option value="100000">Dưới 100 tỷ</option>
+                <option value="500000">Dưới 500 tỷ</option>
               </select>
-             
           </div>
       </div>
     </div>
-    <LoadingSpinner v-if="!isLoading" />
-    <div v-else>
-      <div v-if="estales.length > 0">
-          <div class="results" v-if="estales.length > 0">
-            <div class="result-box" v-for="item in estales" :key="item.id">
-              <img :src="item.image" alt="Property Image" class="item-image" />
-              <div class="result-detail">
-                <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
-                <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
-                <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
-                <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ getLatestPrice(item.price) }}</span></p>
-                <p class="item-more"><strong>Diện tích: </strong><span style="color: red;">{{ item.area }}</span> </p>
-                <p class="item-more">
-                  <strong>Tiện ích:</strong>
-                  {{ item.exten }}
-                </p>
-              </div>
-              <button @click="openPopup(item)" class="item-link">Xem chi tiết</button>
-              <a :href="item.base_url" target="_blank"  class="item-link">Link gốc</a>
+    <div v-if="estales.length > 0" >
+      <LoadingSpinner v-if="!isLoading" />
+      <div v-else >
+        <div class="results" >
+          <div class="result-box" v-for="item in estales" :key="item.id">
+            <img :src="item.image" alt="Property Image" class="item-image" />
+            <div class="result-detail">
+              <h3 class="item-name"><i class='bx bx-home' style='color:#2b2a2a' ></i>: {{ item.title }}</h3>
+              <p class="item-location"><i class='bx bx-map-pin' style='color:#2b2a2a'  ></i>: {{ item.location }}</p>
+              <p class="item-description"><i class='bx bx-buildings' style='color:#2b2a2a' ></i>: {{ item.description }}</p>
+              <p class="item-more"><strong>Giá: </strong> <span style="color: red;">{{ getLatestPrice(item.price) }}</span></p>
+              <p class="item-more"><strong>Diện tích: </strong><span style="color: red;">{{ item.area }}</span> </p>
+              <p class="item-more">
+                <strong>Tiện ích:</strong>
+                {{ item.exten }}
+              </p>
             </div>
+            <button @click="openPopup(item)" class="item-link">Xem chi tiết</button>
+            <a :href="item.base_url" target="_blank"  class="item-link">Link gốc</a>
           </div>
-          <Pagination
-            :total="total"
-            :itemsPerPage="itemsPerPage"
-            :currentPage="currentPage"
-            @changePage="changePage"
-          />
+        </div>
+        <Pagination
+          :total="total"
+          :itemsPerPage="itemsPerPage"
+          :currentPage="currentPage"
+          @changePage="changePage"
+        />
       </div>
     </div>
-    <div class="note" v-if="estales.length == 0">
+    <div class="note" v-else-if="!isInitialLoad">
         Không tìm thấy kết quả
     </div>
   </div>
   <EstateDetailPopup :estate="selectedEstate" :visible="isPopupVisible" @close="closePopup" />
-
 </template>
 
 <style scoped>
@@ -237,6 +272,10 @@ onMounted(() => {
   padding: 8px 20px;
   text-align: left;
   cursor: pointer;
+  text-transform: lowercase;
+}
+.search-results li::first-letter {
+  text-transform: uppercase; 
 }
 
 .search-results li:hover {
@@ -298,7 +337,12 @@ onMounted(() => {
     outline: none;
     transition: all 0.3s ease-in-out;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    text-transform: lowercase;
 }
+.search-input::first-letter {
+  text-transform: uppercase; 
+}
+
 .search-input.active-search {
   border-bottom-left-radius: 0px;
   border-bottom-right-radius: 0px;
@@ -316,6 +360,7 @@ onMounted(() => {
 
 .header-title {
   text-align: center;
+  margin-bottom: 20px;
 }
 
 .header-title .title {
@@ -387,8 +432,8 @@ onMounted(() => {
 }
 
 .result-box {
+  max-width: 400px;
   width: 100%;
-  max-width: 300px;
   border-radius: 5px;
   background-color: #fff;
   padding: 15px;
@@ -410,7 +455,12 @@ onMounted(() => {
   border: 1px solid var(--color-primary);
   transform: translateY(-10px);
 }
-
+.initial-load {
+  display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 65vh;
+}
 .item-image {
   width: 100%;
   height: 150px;

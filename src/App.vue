@@ -104,10 +104,10 @@ watch(assistantsSelected, (newValue) => {
 }, { deep: true });
 
 onMounted(() => {
-  checkMaintenanceStatus();
   checkScreenSize();
   setNotificationComponent(notificationRef.value);
   if (isLogin.value) {
+    checkMaintenanceStatus();
     loadAssistant();
     fetchLicense();
   }
@@ -230,7 +230,6 @@ const goHome = () => {
   background-color: #f5f5f5;
   border-right: 1px solid #ddd;
   position: fixed;
-  height: 100vh;
   transition: transform 0.3s ease;
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   z-index: 999;
@@ -298,6 +297,8 @@ const goHome = () => {
 }
 .nav {
   padding: 0px 10px;
+  height: 100vh;
+  position: relative;
 }
 
 .navbar.hidden {
@@ -328,15 +329,13 @@ const goHome = () => {
   max-height: 80vh;
   overflow-y: auto;
   padding-right: 10px;
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+  padding-bottom: 120px;
 }
 
 .menu::-webkit-scrollbar {
   display: none;
-}
-
-.menu {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 
 .menu_item {
@@ -410,11 +409,12 @@ const goHome = () => {
 }
 
 .user {
-  position: absolute;
+  position: fixed;
   bottom: 0;
   left: 0;
-  width: 100%;
+  width: 310px;
   cursor: pointer;
+  border-right: 1px solid #ddd;
 }
 
 .user:hover {
@@ -486,8 +486,9 @@ const goHome = () => {
 }
 
 .menu_icon.top {
-  right: -15%;
-  top: 20px;
+    right: -15%;
+    top: 0px;
+    padding: 20px 10px;
 }
 
 .avatar {
@@ -516,6 +517,10 @@ const goHome = () => {
   }
   .navbar {
     gap: 0px;
+    margin-left: 0px;
+  }
+  .menu_icon.top {
+      padding: 10px 10px;
   }
 }
 </style>
