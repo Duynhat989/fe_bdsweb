@@ -34,12 +34,13 @@ const handleClick = (id) => {
   const encodedId = encodeId(id);
   router.push(`/assistant/${encodedId}`);
 };
-
+const disableWatch = ref(false);
 const handleClickText = async (name) => {
-  searchQuery.value = name; 
-  searchAssistants.value = [];
+  disableWatch.value = true;
   isQueryChanged.value = false;
+  searchQuery.value = name; 
   await fetchAssistants(1, itemsPerPage.value, name);
+  disableWatch.value = false; 
 };
 
 const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
@@ -79,7 +80,7 @@ const clearSearchSuggestions = () => {
 };
 const isQueryChanged = ref(false);
 watch(searchQuery, (newQuery, oldQuery) => {
-  if (newQuery === oldQuery) {
+  if (disableWatch.value || newQuery === oldQuery) {
     return; 
   }
   try {
@@ -98,6 +99,12 @@ watch(searchQuery, (newQuery, oldQuery) => {
     isQueryChanged.value = true; 
   }, 500);
 });
+
+const handleEnter = async () => {
+  if (searchQuery.value.trim()) {
+    await fetchAssistants(1, itemsPerPage.value, searchQuery.value);
+  }
+};
 
 const handleScroll = async () => {
   const bottomOfWindow = window.innerHeight + window.scrollY >= document.documentElement.scrollHeight - 10;
@@ -132,7 +139,7 @@ onUnmounted(() => {
     <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">
         <i class='bx bx-search-alt-2 search-icon'></i>
-        <input type="text" v-model="searchQuery"  @blur="clearSearchSuggestions" 
+        <input type="text" v-model="searchQuery"  @blur="clearSearchSuggestions" @keyup.enter="handleEnter" 
           placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
       </div>
       <div  class="search-results" v-if="searchAssistants.length > 0">

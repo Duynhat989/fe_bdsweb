@@ -459,7 +459,7 @@ onMounted(() => {
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
     transition: transform 0.2s ease, box-shadow 0.2s ease;
     width: calc((100% - 20px)/2);
-    max-width: 180px;
+    max-width: 150px;
     text-align: left;
     display: flex;
     flex-direction: column;
@@ -467,7 +467,10 @@ onMounted(() => {
     overflow: hidden;
     text-overflow: ellipsis;
 }
-
+.action-card .icon img {
+    width: 20px;
+    height: 20px;
+}
 .action-card:hover {
     transform: scale(1.05);
     box-shadow: 0 6px 8px rgba(0, 0, 0, 0.15);
@@ -480,18 +483,15 @@ onMounted(() => {
 }
 
 .action-card .icon {
-    font-size: 24px;
     color: var(--color-primary);
     margin: 0 auto;
 }
 
 .action-card .title {
-    font-size: 13px;
+    font-size: 11px;
     font-weight: 400;
-    line-height: 20px;
+    line-height: 16px;
     text-align: center;
-    color: #333;
-    margin-bottom: 4px;
     width: fit-content;
 }
 
