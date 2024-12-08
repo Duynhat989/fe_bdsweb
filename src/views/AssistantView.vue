@@ -71,7 +71,12 @@ const loadAssistants = async () => {
   await fetchAssistants();
   isLoading.value = true
 };
-
+const clearSearchSuggestions = () => {
+  setTimeout(() => {
+    isQueryChanged.value = false;
+    searchAssistants.value = [];
+  }, 200); 
+};
 const isQueryChanged = ref(false);
 watch(searchQuery, (newQuery, oldQuery) => {
   if (newQuery === oldQuery) {
@@ -87,10 +92,10 @@ watch(searchQuery, (newQuery, oldQuery) => {
     isQueryChanged.value = false;
     return;
   }
-  isQueryChanged.value = true;
-
+  
   timeout = setTimeout(() => {
     fetchSuggestions(newQuery);
+    isQueryChanged.value = true; 
   }, 500);
 });
 
@@ -122,12 +127,12 @@ onUnmounted(() => {
   <div class="main-container">
     <div class="header-title">
       <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
-      <p style="color: white;">Kiến tạo giá trị vững bền – Nơi an cư lạc nghiệp cùng Bất động sản An Phát Hưng.</p>
+      <p style="color: white;"><strong>Trợ lý toàn năng về bất động sản</strong></p>
     </div>
     <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">
         <i class='bx bx-search-alt-2 search-icon'></i>
-        <input type="text" v-model="searchQuery" 
+        <input type="text" v-model="searchQuery"  @blur="clearSearchSuggestions" 
           placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
       </div>
       <div  class="search-results" v-if="searchAssistants.length > 0">

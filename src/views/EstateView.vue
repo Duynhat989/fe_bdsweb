@@ -39,7 +39,11 @@ const handleClickText = async (name) => {
   if (searchInput) {
     searchInput.focus();
   }
-  await fetchEstates(currentPage.value, itemsPerPage.value, name);
+};
+const clearSearchSuggestions = () => {
+  setTimeout(() => {
+    searchSuggestions.value = [];
+  }, 200); 
 };
 
 const fetchSearchSuggestions = async (name) => {
@@ -75,6 +79,7 @@ const fetchEstates = async (
     area = areaRange.value
   ) => {
   try {
+    isLoading.value = true;
     const response = await request.get(END_POINT.ESTALES_LIST, {
       params: {
         page,
@@ -93,7 +98,8 @@ const fetchEstates = async (
   } catch (error) {
     console.error('Lỗi lấy danh sách bài viết:', error);
   }finally {
-      isInitialLoad.value = false; 
+      isInitialLoad.value = false;
+      isLoading.value = false; 
   }
 };
 const fetchsProvince = async () => {
@@ -106,22 +112,55 @@ const fetchsProvince = async () => {
 };
 let timeout;
 watch(
-  [searchQuery, provinceRange, transactionType, priceRange, areaRange],
-  ([newQuery, newProvince, newType, newPrice, newArea]) => {
-    isLoading.value = false;
+  [searchQuery],
+  ([newQuery]) => {
     try {
       clearTimeout(timeout);
     } catch (error) {}
     timeout = setTimeout(() => {
-      fetchSearchSuggestions(newQuery);
-    }, 300);
-    timeout = setTimeout(() => {
-      fetchEstates(currentPage.value, itemsPerPage.value, newQuery, newProvince, newType, newPrice, newArea);
-      isLoading.value = true;
-    }, 1000);
+      if (newQuery.trim()) {
+        fetchSearchSuggestions(newQuery);
+      } else {
+        searchSuggestions.value = [];
+      }
+    }, 1500);
   }
 );
 
+watch(
+  [provinceRange, transactionType, priceRange, areaRange],
+  ([newProvince, newTransactionType, newPriceRange, newAreaRange]) => {
+    fetchEstates(
+      currentPage.value,
+      itemsPerPage.value,
+      searchQuery.value.trim(),
+      newProvince,
+      newTransactionType,
+      newPriceRange,
+      newAreaRange
+    );
+  }
+);
+
+const onSearch = () => {
+  searchSuggestions.value = [];
+  if (!searchQuery.value.trim() && !provinceRange.value && !transactionType.value && !priceRange.value && !areaRange.value) {
+    estales.value = [];
+    isInitialLoad.value = true; 
+    return;
+  }
+  timeout = setTimeout(() => {
+    fetchEstates(
+      currentPage.value,
+      itemsPerPage.value,
+      searchQuery.value.trim(), 
+      provinceRange.value,
+      transactionType.value,
+      priceRange.value,
+      areaRange.value
+    );
+  }, 1000);
+};
 
 const changePage = (page) => {
   currentPage.value = page;
@@ -138,20 +177,23 @@ onMounted(() => {
     <div class="header">
       <div class="header-title">
         <h1 class="title">Tìm kiếm bất động sản</h1>
-        <p style="color: white;">Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
+        <p >Khám phá các lựa chọn bất động sản phù hợp với nhu cầu của bạn.</p>
       </div>
       <div class="search-bar">
           <div class="search-box">
             <div class="search-row">
+              <div class="search-input">
                 <i class='bx bx-search-alt-2 search-icon'></i>
-                <input type="text" v-model="searchQuery"  :class="{ 'active-search': searchSuggestions.length > 0 }" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
-            </div>
-            <div class="search-results" v-if="searchSuggestions.length > 0">
-              <ul>
-                <li v-for="(suggestion, index) in searchSuggestions" :key="index" @click="handleClickText(suggestion.title)">
-                  {{ suggestion.title }}
-                </li>
-              </ul>
+                <input type="text" v-model="searchQuery"  :class="{ 'active-search': searchSuggestions.length > 0 }"  @blur="clearSearchSuggestions" placeholder="Nhập các yêu cầu bất động sản. VD: Địa điểm, phòng, view,..."  />
+                <div class="search-results" v-if="searchSuggestions.length > 0">
+                  <ul>
+                    <li v-for="(suggestion, index) in searchSuggestions" :key="index" @click="handleClickText(suggestion.title)">
+                      {{ suggestion.title }}
+                    </li>
+                  </ul>
+                </div>
+              </div>
+              <button @click="onSearch" class="search-button">Tìm kiếm</button>
             </div>
           </div>
           <div class="filter-row">
@@ -188,7 +230,7 @@ onMounted(() => {
       </div>
     </div>
     <div v-if="estales.length > 0" >
-      <LoadingSpinner v-if="!isLoading" />
+      <LoadingSpinner v-if="isLoading" />
       <div v-else >
         <div class="results" >
           <div class="result-box" v-for="item in estales" :key="item.id">
@@ -204,7 +246,7 @@ onMounted(() => {
                 {{ item.exten }}
               </p>
             </div>
-            <button @click="openPopup(item)" class="item-link">Xem chi tiết</button>
+            <span @click="openPopup(item)" class="item-link">Xem chi tiết</span>
             <a :href="item.base_url" target="_blank"  class="item-link">Link gốc</a>
           </div>
         </div>
@@ -224,39 +266,103 @@ onMounted(() => {
 </template>
 
 <style scoped>
-.main-container {
-  max-width: 1300px;
-  margin: 0 auto;
-  padding: 0px 20px;
-  text-align: center;
-}
 .note {
     text-align: center;
     color: white;
+  font-size: 18px;
 }
 .isloading {
     height: 50vh;
     background-color: transparent;
 }
-.header {
-  margin-bottom: 40px;
-  margin-top: 40px;
+.main-container {
+  max-width: 1200px;
+  width: 100%; 
+  margin: 0 auto;
+  padding: 0px 5%;
 }
+.initial-load {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin-top: 0px!important;
+}
+.header {
+  background-color: #f8f9fa;
+  padding: 20px 20px;
+  border-radius: 30px;
+  text-align: center;
+  margin-bottom: 20px;
+  width: 100%;
+}
+
+.header-title h1 {
+  margin: 0;
+  font-size: 24px;
+  font-weight: bold;
+}
+
+.header-title p {
+  margin: 10px 0 0;
+  font-size: 14px;
+  font-weight: 600 !important;
+  margin-bottom: 10px;
+}
+
+.search-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+  margin-bottom: 10px;
+}
+
+.search-box {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  position: relative;
+}
+
 .search-row {
-    position: relative;
-    width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.search-input {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  background-color: white;
+  padding: 10px;
+  position: relative;
+}
+
+.search-input input {
+  width: 100%;
+  border: none;
+  outline: none;
+  font-size: 16px;
+}
+
+.search-icon {
+  font-size: 20px;
+  color: #888;
 }
 
 .search-results {
-  border-bottom-left-radius: 25px;
-  border-bottom-right-radius: 25px;
-  background: #fff;
-  width: 100%;
   position: absolute;
-  z-index: 99;
   top: 100%;
+  left: 0;
+  width: 100%;
+  background-color: white;
+  border: 1px solid #ccc;
+  border-radius: 10px;
+  z-index: 10;
   overflow: hidden;
-  padding-bottom: 15px;
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
@@ -269,158 +375,60 @@ onMounted(() => {
 }
 
 .search-results li {
-  padding: 8px 20px;
+  padding: 5px 20px;
+  font-size: 14px;
   text-align: left;
   cursor: pointer;
-  text-transform: lowercase;
+  border-bottom: 1px solid #f0f0f0;
 }
-.search-results li::first-letter {
-  text-transform: uppercase; 
-}
-
 .search-results li:hover {
   background: #f0f0f0;
   border-left: 5px solid var(--color-primary);
 }
 
-.filter-row {
-    display: flex;
-    justify-content: center;
-    gap: 10px;
-    width: 100%;
-}
-.search-select {
-    padding: 10px 15px;
-    border: 2px solid #fff;
-    border-radius: 25px;
-    font-size: 16px;
-    background-color: white;
-    outline: none;
-    transition: border-color 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    color: #333;
-    cursor: pointer;
-    flex: 1;
-    max-width: fit-content;
+.search-results li:last-child {
+  border-bottom: none;
 }
 
-.search-select:focus {
-    border-color: #4a90e2;
-}
-.search-bar {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: 20px;
-    width: 60%;
-    margin: 0 auto;
-}
-.search-box {
-  width: 100%;
-  position: relative;
-}
-.search-icon {
-    position: absolute;
-    top: 50%;
-    left: 15px;
-    transform: translateY(-50%);
-    font-size: 16px;
-    color: #aaa;
-    pointer-events: none;
-}
-.search-input {
-    width: 100%;
-    padding: 10px 20px 10px 40px;
-    border: 2px solid #fff;
-    border-radius: 25px;
-    font-size: 16px;
-    outline: none;
-    transition: all 0.3s ease-in-out;
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
-    text-transform: lowercase;
-}
-.search-input::first-letter {
-  text-transform: uppercase; 
+.search-results li:hover {
+  background-color:  var(--color-primary);
+  color: white;
 }
 
-.search-input.active-search {
-  border-bottom-left-radius: 0px;
-  border-bottom-right-radius: 0px;
-}
-
-.search-input:focus {
-    background-color: #fff;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
-}
-
-.search-input::placeholder {
-    color: #aaa;
-    font-size: 14px;
-}
-
-.header-title {
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-.header-title .title {
-  font-size: 24px;
-  font-weight: bold;
-  color: #e03d31;
-  line-height: 40px;
-  margin-bottom: 10px;
-}
-
-.title {
-  font-size: 26px;
-  color: var(--color-primary);
-  font-weight: bold;
-  margin-bottom: 10px;
-}
-
-.filters {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  flex-wrap: wrap;
-  gap: 20px;
-  margin: 20px 0;
-  position: relative;
-}
-
-.filter-item {
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.filter-item label {
-  font-size: 14px;
-  margin-bottom: 5px;
-}
-
-.filter-item select {
-  padding: 8px;
-  border-radius: 5px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  font-family: inherit;
-}
-
-.filter-apply {
-  background-color: var(--color-primary);
+.search-button {
+  padding: 10px 20px;
+  background-color:  var(--color-primary);
   color: white;
   border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
+  border-radius: 10px;
   cursor: pointer;
-  font-size: 14px;
-  transition: background-color 0.3s;
-  margin-top: 26px;
+  font-size: 16px;
 }
 
-.filter-apply:hover {
-  background-color: #a02822;
+.search-button:hover {
+  background-color: #cd1313;
+
+}
+
+.filter-row {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 10px;
+}
+
+.search-select {
+  flex: 1;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+  background-color: white;
+  outline: none;
+  appearance: none;
+  position: relative;
+  background: #f9f9f9 url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7 10l5 5 5-5z' fill='%23333'/%3E%3C/svg%3E") no-repeat right 10px center;
+  background-size: 12px;
+  padding-right: 10px;
+  cursor: pointer;
 }
 
 .results {
@@ -432,7 +440,7 @@ onMounted(() => {
 }
 
 .result-box {
-  max-width: 400px;
+  max-width: 300px;
   width: 100%;
   border-radius: 5px;
   background-color: #fff;
@@ -444,29 +452,19 @@ onMounted(() => {
   cursor: pointer;
 }
 
-.result-detail {
-  height: 280px;
-  overflow-y: auto;
-  scrollbar-width: none;
-  margin-bottom: 20px;
-}
-
-.result-box:hover {
-  border: 1px solid var(--color-primary);
-  transform: translateY(-10px);
-}
-.initial-load {
-  display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 65vh;
-}
 .item-image {
   width: 100%;
   height: 150px;
   object-fit: cover;
   border-radius: 5px;
   margin-bottom: 10px;
+}
+
+.result-detail {
+  height: 250px;
+  overflow-y: auto;
+  scrollbar-width: none;
+  margin-bottom: 20px;
 }
 
 .item-name {
@@ -482,13 +480,12 @@ onMounted(() => {
   font-weight: 400 !important;
   margin-bottom: 10px;
 }
-
-.item-more,
-.item-description {
+.item-location,
+.item-description,
+.item-more {
   font-size: 12px;
   color: #555;
 }
-
 .item-description {
   font-size: 12px;
   display: -webkit-box;
@@ -499,9 +496,6 @@ onMounted(() => {
   text-align: justify;
 }
 
-.item-more strong {
-  color: var(--color-primary);
-}
 .link-root {
   color: #4a90e2;
   text-decoration: underline;
@@ -516,42 +510,47 @@ onMounted(() => {
   margin-top: 10px;
   border: none;
   width: 100%;
+  font-size: 12pz  ;
 }
 
 .item-link:hover {
   opacity: 0.8;
 }
-/* Responsive Styles */
-@media (max-width: 1024px) {
-  .results {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-  }
-
-  .filters {
-    gap: 10px;
-    margin: 10px 0;
-  }
-}
 
 @media (max-width: 768px) {
-  .results {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  .main-container {
+    width: 100%; 
+    padding: 0px 5%;
   }
 
-  .filters {
+  .header-title h1 {
+    font-size: 24px;
+  }
+
+  .header-title p {
+    font-size: 14px;
+  }
+
+  .search-bar {
     gap: 10px;
-    margin: 10px 0;
-    justify-content: flex-start;
   }
 
-}
-
-@media (max-width: 576px) {
-  .results {
-    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  .search-button {
+    font-size: 14px;
+    line-height: 20px;
+    padding: 8px 16px;
   }
-  .result-box{
+  .search-input {
+    padding: 8px 16px;
+  }
+  .search-input input,
+  .search-select {
+    font-size: 14px;
+  }
+  
+  .result-box {
     max-width: 100%;
+    width: 100%;
   }
 }
 </style>
