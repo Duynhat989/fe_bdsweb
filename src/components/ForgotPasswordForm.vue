@@ -8,6 +8,7 @@ import useNotification from '@/composables/useNotification';
 const notification = useNotification();
 const code = ref('');
 const newPassword = ref('');
+const reNewPassword = ref('');
 import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 
@@ -16,12 +17,12 @@ const handleForgotPassword = async () => {
     try {
         if (email.value) {
             await new Promise((resolve) => setTimeout(resolve, 1000));
-            const response = await request.post(END_POINT.FORGET_PASSWORD, {email: email.value});
+            const response = await request.post(END_POINT.FORGET_PASSWORD, { email: email.value });
             if (response.success) {
                 notification.success('Thành công vui lòng kiểm tra email!', response.message, {
                     showActions: false,
                 });
-                showConfirmForm.value = true; 
+                showConfirmForm.value = true;
             }
         }
     } catch (error) {
@@ -42,7 +43,13 @@ const emit = defineEmits(['switchToLogin']);
 const handleConfirmPassword = async () => {
     isLoading.value = true;
     try {
-        if (code.value && email.value && newPassword.value) {
+        if (code.value && email.value && newPassword.valu && reNewPassword.valuee) {
+            if (newPassword.value != reNewPassword.value) {
+                notification.error('Lỗi!', 'Xác nhận mật khẩu không giống nhau.', {
+                    showActions: false,
+                });
+                return
+            }
             await store.dispatch('confirmPassword', {
                 code: code.value,
                 email: email.value,
@@ -91,8 +98,11 @@ const handleConfirmPassword = async () => {
 
     <form v-else class="form" @submit.prevent="handleConfirmPassword">
         <input type="text" v-model="code" placeholder="Nhập mã xác nhận" required />
-        <input type="email" v-model="email" placeholder="Nhập email" required />
-        <input type="password" v-model="newPassword" placeholder="Nhập mật khẩu mới" required  autocomplete="current-password"/>
+        <input type="email" hidden v-model="email" placeholder="Nhập email" required />
+        <input type="password" v-model="newPassword" placeholder="Nhập mật khẩu mới" required
+            autocomplete="current-password" />
+        <input type="password" v-model="reNewPassword" placeholder="Xác nhận mật khẩu mới" required
+            autocomplete="current-password" />
         <button type="submit" :disabled="isLoading">
             <span v-if="isLoading">
                 <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
