@@ -43,7 +43,7 @@ const emit = defineEmits(['switchToLogin']);
 const handleConfirmPassword = async () => {
     isLoading.value = true;
     try {
-        if (code.value && email.value && newPassword.valu && reNewPassword.valuee) {
+        if (code.value && email.value && newPassword.value && reNewPassword.value) {
             if (newPassword.value != reNewPassword.value) {
                 notification.error('Lỗi!', 'Xác nhận mật khẩu không giống nhau.', {
                     showActions: false,
