@@ -123,7 +123,7 @@ watch(
       } else {
         searchSuggestions.value = [];
       }
-    }, 1500);
+    }, 500);
   }
 );
 
@@ -143,12 +143,14 @@ watch(
 );
 
 const onSearch = () => {
+  isLoading.value = true; 
   searchSuggestions.value = [];
   if (!searchQuery.value.trim() && !provinceRange.value && !transactionType.value && !priceRange.value && !areaRange.value) {
     estales.value = [];
     isInitialLoad.value = true; 
     return;
   }
+  clearTimeout(timeout)
   timeout = setTimeout(() => {
     fetchEstates(
       currentPage.value,
@@ -159,7 +161,7 @@ const onSearch = () => {
       priceRange.value,
       areaRange.value
     );
-  }, 1000);
+  }, 500);
 };
 
 const changePage = (page) => {
@@ -346,6 +348,7 @@ onMounted(() => {
   border: none;
   outline: none;
   font-size: 16px;
+  padding-left: 5px;
 }
 
 .search-icon {
