@@ -132,8 +132,8 @@ const handleClick = (routeName) => {
 
 .right-icon {
   position: absolute;
-  right: -25px;
-  top: -50px;
+  left: -10px;
+  top: -60px;
   transform: rotate(10deg);
 }
 
@@ -143,10 +143,11 @@ const handleClick = (routeName) => {
 }
 
 .tabs {
+  width: 100%;
   display: flex;
-  justify-content: left;
+  justify-content: flex-end;
   margin-bottom: 20px;
-  width: fit-content;
+  /* width: fit-content; */ 
   border-radius: 5px;
   overflow: hidden;
 }
@@ -160,7 +161,10 @@ const handleClick = (routeName) => {
   border: none;
   min-width: 150px;
 }
-
+.tab-button:first-child {
+  border-bottom-left-radius: 5px;
+  border-top-left-radius: 5px;
+}
 .tab-button.active {
   background: var(--color-primary);
   background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);

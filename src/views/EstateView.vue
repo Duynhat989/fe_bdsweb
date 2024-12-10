@@ -123,7 +123,7 @@ watch(
       } else {
         searchSuggestions.value = [];
       }
-    }, 500);
+    }, 1500);
   }
 );
 
@@ -143,14 +143,12 @@ watch(
 );
 
 const onSearch = () => {
-  isLoading.value = true; 
   searchSuggestions.value = [];
   if (!searchQuery.value.trim() && !provinceRange.value && !transactionType.value && !priceRange.value && !areaRange.value) {
     estales.value = [];
     isInitialLoad.value = true; 
     return;
   }
-  clearTimeout(timeout)
   timeout = setTimeout(() => {
     fetchEstates(
       currentPage.value,
@@ -161,7 +159,7 @@ const onSearch = () => {
       priceRange.value,
       areaRange.value
     );
-  }, 500);
+  }, 1000);
 };
 
 const changePage = (page) => {
@@ -199,6 +197,11 @@ onMounted(() => {
             </div>
           </div>
           <div class="filter-row">
+              <select class="search-select"  v-model="transactionType">
+                  <option value="">Chọn loại giao dịch</option>
+                  <option value="buy">Mua & Bán</option>
+                  <option value="rent">Thuê</option>
+              </select>
               <select class="search-select" v-model="provinceRange">
                 <option value="">Chọn vị trí</option>
                 <option v-for="(item,index) in provinces" :key="index" :value="item.province">
@@ -213,11 +216,7 @@ onMounted(() => {
                   <option value="200-500">200 - 500 m²</option>
                   <option value="500-">Trên 500 m²</option>
               </select>
-              <select class="search-select"  v-model="transactionType">
-                  <option value="">Chọn loại giao dịch</option>
-                  <option value="buy">Mua & Bán</option>
-                  <option value="rent">Thuê</option>
-              </select>
+          
               <select class="search-select" v-model="priceRange">
                 <option value="">Chọn mức giá</option>
                 <option value="500">Dưới 500 triệu</option>
@@ -291,7 +290,7 @@ onMounted(() => {
     margin-top: 0px!important;
 }
 .header {
-  background-color: #f8f9fa;
+  background-color: #f8f9fa; 
   padding: 20px 20px;
   border-radius: 30px;
   text-align: center;
@@ -348,7 +347,6 @@ onMounted(() => {
   border: none;
   outline: none;
   font-size: 16px;
-  padding-left: 5px;
 }
 
 .search-icon {
