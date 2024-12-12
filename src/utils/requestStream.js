@@ -78,29 +78,84 @@ export const handleResponseStream = async (response, conversationList) => {
     if (!response.ok) {
         throw new Error(await response.text());
     }
-    const decoder = new TextDecoder('utf-8');
-    for await (const chunk of response.body) {
-        try {
-            let dat = decoder.decode(chunk, { stream: true });
-            let arayDat = dat.trim().split('\r\n\r\n')
 
-            if (arayDat.length > 1) {
-                dat = arayDat[arayDat.length - 1]
-            }
-            let newData = {}
-            try {
-                newData = JSON.parse(arayDat[arayDat.length - 1])
-            } catch (error) {
-                newData = JSON.parse(arayDat[arayDat.length - 2])
-            } // Chuyển đổi dòng dữ liệu thành đối tượng JSON
-            let isDuplicate = conversationList[conversationList.length - 1].role == 'model'
-            if (isDuplicate) {
-                conversationList[conversationList.length - 1].content = newData.data.full
+    // Kiểm tra xem trình duyệt có hỗ trợ ReadableStream không
+    if (!response.body) {
+        const fullResponse = await response.text();
+        try {
+            const lines = fullResponse.split('\n');
+            for (const line of lines) {
+                if (line.trim()) {
+                    let newData = {};
+                    try {
+                        newData = JSON.parse(line);
+                    } catch (error) {
+                        continue;
+                    }
+                    
+                    const isDuplicate = conversationList[conversationList.length - 1].role === 'model';
+                    if (isDuplicate) {
+                        conversationList[conversationList.length - 1].content = newData.data.full;
+                    }
+                }
             }
         } catch (error) {
-
+            console.error('Error processing response:', error);
         }
+        return conversationList;
     }
+
+    // Sử dụng getReader() thay vì trực tiếp iterate response.body
+    const reader = response.body.getReader();
+    const decoder = new TextDecoder('utf-8');
+    let buffer = '';
+
+    try {
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) {
+                break;
+            }
+
+            buffer += decoder.decode(value, { stream: true });
+            const lines = buffer.split('\r\n\r\n');
+            buffer = lines.pop() || '';
+
+            for (const line of lines) {
+                if (line.trim()) {
+                    let newData = {};
+                    try {
+                        newData = JSON.parse(line);
+                    } catch (error) {
+                        continue;
+                    }
+
+                    const isDuplicate = conversationList[conversationList.length - 1].role === 'model';
+                    if (isDuplicate) {
+                        conversationList[conversationList.length - 1].content = newData.data.full;
+                    }
+                }
+            }
+        }
+
+        // Xử lý phần còn lại trong buffer
+        if (buffer.trim()) {
+            try {
+                const newData = JSON.parse(buffer);
+                const isDuplicate = conversationList[conversationList.length - 1].role === 'model';
+                if (isDuplicate) {
+                    conversationList[conversationList.length - 1].content = newData.data.full;
+                }
+            } catch (error) {
+                console.error('Error processing final buffer:', error);
+            }
+        }
+    } catch (error) {
+        console.error('Error processing stream:', error);
+    } finally {
+        reader.releaseLock(); // Giải phóng reader
+    }
+
     return conversationList;
 };
 
