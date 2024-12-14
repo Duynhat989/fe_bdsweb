@@ -5,6 +5,7 @@ import { useRouter } from 'vue-router';
 import useNotification from '@/composables/useNotification';
 import request from '@/utils/request';
 import { END_POINT } from '@/api/api';
+
 const notification = useNotification();
 
 const router = useRouter();
@@ -66,9 +67,9 @@ const handleLogin = async (event) => {
 </script>
 <template>
   <form class="form" @submit.prevent="handleLogin">
-    <input type="text" v-model="email" placeholder="Tài khoản" required />
+    <input type="text" v-model="email" placeholder="Tài khoản"   autocomplete="username"  required />
     <div class="password-container">
-      <input :type="isPasswordVisible ? 'text' : 'password'" v-model="password" placeholder="Mật khẩu" required />
+      <input :type="isPasswordVisible ? 'text' : 'password'"  autocomplete="current-password"  v-model="password" placeholder="Mật khẩu" required />
       <span class="toggle-password" @click="togglePasswordVisibility">
         <svg v-if="isPasswordVisible" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24">
           <path fill="currentColor"

@@ -41,12 +41,12 @@ const handleClick = (routeName) => {
       <p style="color: white;"><strong>Trợ lý toàn năng về bất động sản</strong></p>
     </div>
     <div class="content">
-      <div class="left-box">
+      <!-- <div class="left-box">
         <ItemBox @click="handleClick('assistant')" text="Hỏi đáp trợ lý" :imageUrl="q_a" />
         <ItemBox @click="handleClick('contract')" text="Rà soát & tạo mới hợp đồng" :imageUrl="contract" />
         <ItemBox @click="handleClick('estate')" text="Tìm kiếm bất động sản" :imageUrl="search_home" />
         <ItemBox @click="handleClick('package')" text="Gói dịch vụ" :imageUrl="course" />
-      </div>
+      </div> -->
       <div class="right-box" :class="{ highlight: isHighlighted }">
         <div class="right-icon">
           <img :src="icon_logo1" alt="icon logo">
@@ -113,21 +113,23 @@ const handleClick = (routeName) => {
   line-height: 1.6;
 }
 
-.left-box {
+/* .left-box {
   width: 55%;
   display: flex;
   flex-wrap: wrap;
   gap: 20px;
   justify-content: space-around;
-}
+} */
 
 .right-box {
-  width: calc(100% - 55% - 20px);
+  width: 100%;
+  max-width: 550px;
   background-color: #ffffffba;
   padding: 45px 30px;
   border-radius: 10px;
   box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
   position: relative;
+  margin: 0 auto;
 }
 
 .right-icon {

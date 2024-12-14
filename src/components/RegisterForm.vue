@@ -11,6 +11,7 @@ const email = ref('');
 const password = ref('');
 const phone = ref('');
 const notification = useNotification();
+const isPasswordVisible = ref(false);
 
 const isLoading = ref(false);
 const emit = defineEmits(['switchToForgotPassword']);
@@ -51,14 +52,17 @@ const handleRegister = async (event) => {
         isLoading.value = false;
     }
 };
+const togglePasswordVisibility = () => {
+  isPasswordVisible.value = !isPasswordVisible.value;
+};
 </script>
 <template>
     <form class="form" @submit.prevent="handleRegister">
-        <input type="text" v-model="name" placeholder="Tên đăng nhập" required />
-        <input type="email" v-model="email" placeholder="Email" required />
-        <input type="text" v-model="phone" placeholder="Nhập  số điện thoại" required />
+        <input type="text" v-model="name" placeholder="Tên đăng nhập" required autocomplete="username"/>
+        <input type="email" v-model="email" placeholder="Email" required autocomplete="email"/>
+        <input type="text" v-model="phone" placeholder="Nhập  số điện thoại" required autocomplete="tel"/>
         <div class="password-container">
-            <input :type="isPasswordVisible ? 'text' : 'password'" v-model="password" placeholder="Mật khẩu" required />
+            <input :type="isPasswordVisible ? 'text' : 'password'" v-model="password"  autocomplete="new-password"  placeholder="Mật khẩu" required />
             <span class="toggle-password" @click="togglePasswordVisibility">
                 <svg v-if="isPasswordVisible" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
                     viewBox="0 0 24 24">
