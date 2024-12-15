@@ -73,16 +73,8 @@ const handleClick = (routeName) => {
 .main-container {
   max-width: 1200px;
   padding: 0px 5%;
-  margin: 0px auto;
-  margin-top: 50px!important;
-}
-
-.content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-start;
-  gap: 30px;
-  margin: 80px 0;
+  margin: 80px auto;
+  height: 100vh;
 }
 
 .title {
@@ -161,7 +153,7 @@ const handleClick = (routeName) => {
   background-color: #f4f4f4;
   color: #333;
   border: none;
-  min-width: 150px;
+  min-width: 180px;
 }
 .tab-button:first-child {
   border-bottom-left-radius: 5px;
@@ -249,11 +241,15 @@ const handleClick = (routeName) => {
     gap: 10px;
     justify-content: center;
   }
+  .tab-button {
+    min-width: auto;
+  }
 }
 
 @media (max-width: 576px) {
   .main-container {
     max-width: 100%;
+    height: auto;
   }
   .right-icon {
     right: -15px;
