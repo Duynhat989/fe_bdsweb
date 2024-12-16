@@ -12,7 +12,7 @@ import { encodeId, decodeId } from '@/utils/encoding';
 import icon_logo from '@/assets/images/icon_logo1.png';
 
 import logo from '@/assets/images/logo.png';
-
+import SupportIcons from "./components/SupportIcons.vue";
 const license = ref({});
 
 const notificationRef = ref(null)
@@ -84,12 +84,13 @@ const loadAssistant = async () => {
   await fetchAssistants();
 };
 const fetchLicense = async () => {
-    try {
-        const response = await request.get(END_POINT.LICENSE_GET);
-        license.value = response.license;
-    } catch (error) {
-        console.error('Lỗi lấy thông tin gói:', error);
-    }
+  try {
+    const response = await request.get(END_POINT.LICENSE_GET);
+    license.value = response.license;
+    localStorage.setItem('license', JSON.stringify(response.license));
+  } catch (error) {
+    console.error('Lỗi lấy thông tin gói:', error);
+  }
 };
 
 watch(isLogin, (newIsLogin) => {
@@ -125,16 +126,16 @@ const goHome = () => {
       <div class="navbar" :class="{ hidden: hiddenPopup }">
         <p><strong></strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
         </p>
-        <a  href="/package" class="upgrade-button">
-            <span class="icon crown"></span>
-            Nâng cấp
+        <a href="/package" class="upgrade-button">
+          <span class="icon crown"></span>
+          Nâng cấp
         </a>
         <div class="user-text">
           <a href="/user_detail">
-            &nbsp;&nbsp; <span>{{ user.name  }}</span></a>
+            &nbsp;&nbsp; <span>{{ user.name }}</span></a>
         </div>
       </div>
-      <div class="body-bar" :class="{ hidden: hiddenPopup }"  >
+      <div class="body-bar" :class="{ hidden: hiddenPopup }">
         <div class="nav">
           <div class="logo">
             <div class="logo_web flex" @click="goHome">
@@ -219,6 +220,7 @@ const goHome = () => {
     </div>
     <NotificationModule ref="notificationRef" />
   </div>
+  <SupportIcons />
 </template>
 <style scoped>
 .app-container {
@@ -253,12 +255,14 @@ const goHome = () => {
   padding: 15px 15px 15px 45px;
   box-shadow: rgba(0, 0, 0, 0.1) 0px 4px 12px;
 }
+
 .navbar p {
   font-size: 12px;
   color: #333;
   margin: 0;
   text-align: right;
 }
+
 .upgrade-button {
   display: flex;
   align-items: center;
@@ -277,7 +281,7 @@ const goHome = () => {
   width: 14px;
   height: 14px;
   margin-right: 8px;
-  background-image: url('https://img.icons8.com/color/48/000000/crown.png'); /* Thay bằng link icon của bạn */
+  background-image: url('https://img.icons8.com/color/48/000000/crown.png');
   background-size: contain;
   background-repeat: no-repeat;
 }
@@ -285,6 +289,7 @@ const goHome = () => {
 .upgrade-button:hover {
   transform: scale(1.05);
 }
+
 .navbar .user-text {
   display: flex;
   flex-direction: column;
@@ -292,9 +297,11 @@ const goHome = () => {
   align-items: center;
   cursor: pointer;
 }
-.navbar .user-text:hover a{
+
+.navbar .user-text:hover a {
   color: var(--color-primary);
 }
+
 .nav {
   padding: 0px 10px;
   height: 100vh;
@@ -486,9 +493,9 @@ const goHome = () => {
 }
 
 .menu_icon.top {
-    right: -15%;
-    top: 0px;
-    padding: 20px 10px;
+  right: -15%;
+  top: 0px;
+  padding: 20px 10px;
 }
 
 .avatar {
@@ -505,22 +512,26 @@ const goHome = () => {
     margin-left: 0;
   }
 }
+
 @media (max-width: 768px) {
   .upgrade-button {
     font-size: 12px;
     padding: 4px 8px;
   }
 }
+
 @media (max-width: 460px) {
   .upgrade-button {
     display: none;
   }
+
   .navbar {
     gap: 0px;
     margin-left: 0px;
   }
+
   .menu_icon.top {
-      padding: 10px 10px;
+    padding: 10px 10px;
   }
 }
 </style>

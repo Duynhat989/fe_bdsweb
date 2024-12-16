@@ -69,7 +69,27 @@ const updateUser = async () => {
         isLoading.value = false;
     }
 };
+const passwordForm = ref({
+    oldPassword: '',
+    newPassword: '',
+    confirmPassword: ''
+});
+const showPasswordBox = ref(false);
 
+const togglePasswordBox = () => {
+    showPasswordBox.value = !showPasswordBox.value;
+};
+const updatePassword = () => {
+    if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
+        alert('Mật khẩu xác nhận không khớp!');
+        notification.error('Lỗi!', `Mật khẩu xác nhận không khớp!}`, {
+            showActions: false
+        })
+        return;
+    }
+    // call api 
+
+};
 const loadUser = async () => {
     await fetchLicense();
     await fetchUser();
@@ -111,6 +131,29 @@ onMounted(() => {
                 </div>
                 <button @click="updateUser" class="save-btn">Lưu thay đổi</button>
             </div>
+            <button @click="togglePasswordBox" class="toggle-btn">
+              Đổi mật khẩu
+            </button>
+        </div>
+    </div>
+    
+    <div v-if="showPasswordBox" class="modal">
+        <div class="modal-content edit-form">
+            <span class="close-btn" @click="togglePasswordBox">&times;</span>
+            <h3>Đổi mật khẩu</h3>
+            <label>
+                Mật khẩu cũ:
+                <input v-model="passwordForm.oldPassword" type="text" placeholder="Nhập mật khẩu cũ" />
+            </label>
+            <label>
+                Mật khẩu mới:
+                <input v-model="passwordForm.newPassword" type="text" placeholder="Nhập mật khẩu mới" />
+            </label>
+            <label>
+                Xác nhận mật khẩu mới:
+                <input v-model="passwordForm.confirmPassword" type="text" placeholder="Nhập lại mật khẩu mới" />
+            </label>
+            <button @click="updatePassword" class="save-btn">Lưu mật khẩu</button>
         </div>
     </div>
 </template>
@@ -150,7 +193,66 @@ onMounted(() => {
     color: #242424;
     font-weight: bold;
 }
+.modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+}
 
+.modal-content {
+    background-color: #fff;
+    padding: 20px;
+    border-radius: 8px;
+    max-width: 400px;
+    width: 100%;
+    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    position: relative;
+}
+
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 24px;
+    font-weight: bold;
+    cursor: pointer;
+    color: #555;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    font-size: 16px;
+    background-color: #f44336;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.close-btn:hover {
+    background-color: #d32f2f;
+}
+.toggle-btn {
+    margin-top: 20px;
+    background-color: var(--color-primary);
+    color: white;
+    border: none;
+    padding: 5px 16px;
+    font-size: 14px;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.toggle-btn:hover {
+    opacity: 0.8;
+}
 .edit-btn,
 .save-btn {
     background-color: var(--color-primary);
@@ -166,7 +268,7 @@ onMounted(() => {
 
 .edit-btn:hover,
 .save-btn:hover {
-    background-color: var(--color-primary);
+    opacity: 0.8;
 }
 
 .form-box {
@@ -185,6 +287,7 @@ onMounted(() => {
     margin: 10px 0;
     font-size: 14px;
     color: #333;
+    text-align: left;
 }
 
 .edit-form input {

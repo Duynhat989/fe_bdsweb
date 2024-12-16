@@ -163,7 +163,7 @@ onUnmounted(() => {
           <div class="base-info">
             <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
             <div class="it">
-              <h2 style="font-size: 16px;font-weight: 450 !important;">AI. An Phát Hưng</h2>
+              <h2 style="font-size: 16px;font-weight: 600 !important;">AI. An Phát Hưng</h2>
               <h3 style="font-size: 14px;" class="assistant-title">{{ assistant.name }}</h3>
             </div>
           </div>
@@ -391,9 +391,9 @@ onUnmounted(() => {
   width: 100%;
 }
 
-.assistant-title {
+h3.assistant-title {
   font-size: 1.2em;
-  font-weight: normal;
+  font-weight: 500 !important;
   color: #333;
 }
 

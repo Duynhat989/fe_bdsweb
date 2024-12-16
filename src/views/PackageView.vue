@@ -10,7 +10,20 @@ const packages = ref([]);
 const isPopupVisible = ref(false);
 const selectedPackage = ref({});
 const isLoading = ref(false)
+const license = ref({});
 
+// const fetchLicense = async () => {
+//   try {
+//     const response = await request.get(END_POINT.LICENSE_GET);
+//     license.value = response.license;
+//     console.log(license.value);
+//   } catch (error) {
+//     console.error('Lỗi lấy thông tin gói:', error);
+//     notification.error('Lỗi!', 'Không thể lấy thông tin gói. Vui lòng thử lại!', {
+//       showActions: false,
+//     });
+//   }
+// };
 const openPopup = (pkg) => {
     
     selectedPackage.value = pkg;
@@ -38,6 +51,11 @@ const loadPackages = async () => {
 
 onMounted(() => {
     loadPackages();
+    const licenseData = localStorage.getItem('license');
+    if (licenseData) {
+        license.value = JSON.parse(licenseData);
+    }
+    console.log(license.value.pack.name);
 });
 </script>
 
@@ -51,15 +69,16 @@ onMounted(() => {
             </div>
             <div class="package-content">
                 <div class="package-list">
-                    <div v-for="pkg in packages" :key="pkg.id" class="package-card">
+                    <div v-for="pkg in packages" :key="pkg.id" class="package-card" v-show="pkg.price !== '0'" >
                         <h2 class="package-name">{{ pkg.name }}</h2>
                         <p class="package-description">{{ pkg.description }}</p>
-                        <p class="package-price">Giá: {{ pkg.price === '0' ? 'Miễn phí' : formatCurrency(pkg.price) }}
+                        <p class="package-price">
+                            Giá: {{ formatCurrency(pkg.price) }}
                         </p>
                         <p class="package-features"
                             v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></p>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
-                        <button @click="openPopup(pkg)"  v-show="pkg.price !== '0'"  class="register-btn">Đăng ký gói</button>
+                        <button @click="openPopup(pkg)"  class="register-btn">Nâng cấp</button>
                     </div>
                 </div>
             </div>

@@ -12,7 +12,7 @@ const router = useRouter();
 
 const email = ref('');
 const password = ref('');
-const license = ref({});
+// const license = ref({});
 
 const isLoading = ref(false);
 const isPasswordVisible = ref(false);
@@ -26,25 +26,24 @@ const togglePasswordVisibility = () => {
 const switchToForgotPassword = () => {
   emit('switchToForgotPassword');
 };
-const fetchLicense = async () => {
-  try {
-    const response = await request.get(END_POINT.LICENSE_GET);
-    license.value = response.license;
+// const fetchLicense = async () => {
+//   try {
+//     const response = await request.get(END_POINT.LICENSE_GET);
+//     license.value = response.license;
 
-    localStorage.setItem('license', JSON.stringify(response.license));
-  } catch (error) {
-    console.error('Lỗi lấy thông tin gói:', error);
-    notification.error('Lỗi!', 'Không thể lấy thông tin gói. Vui lòng thử lại!', {
-      showActions: false,
-    });
-  }
-};
+//     localStorage.setItem('license', JSON.stringify(response.license));
+//   } catch (error) {
+//     console.error('Lỗi lấy thông tin gói:', error);
+//     notification.error('Lỗi!', 'Không thể lấy thông tin gói. Vui lòng thử lại!', {
+//       showActions: false,
+//     });
+//   }
+// };
 const handleLogin = async (event) => {
   isLoading.value = true;
   try {
     await new Promise(resolve => setTimeout(resolve, 1000));
     await store.dispatch('login', { email: email.value, password: password.value });
-    await fetchLicense();
     const intendedRoute = localStorage.getItem('intendedRoute');
     if (intendedRoute) {
       router.push(intendedRoute);
@@ -67,7 +66,7 @@ const handleLogin = async (event) => {
 </script>
 <template>
   <form class="form" @submit.prevent="handleLogin">
-    <input type="text" v-model="email" placeholder="Tài khoản"   autocomplete="username"  required />
+    <input type="text" v-model="email" placeholder="Nhập Email/SĐT"   autocomplete="username"  required />
     <div class="password-container">
       <input :type="isPasswordVisible ? 'text' : 'password'"  autocomplete="current-password"  v-model="password" placeholder="Mật khẩu" required />
       <span class="toggle-password" @click="togglePasswordVisibility">

@@ -38,7 +38,7 @@ const handleClick = (routeName) => {
   <div class="main-container">
     <div class="header-title">
       <h1 class="title">An Phát Hưng</h1>
-      <p style="color: white;"><strong>Trợ lý toàn năng về bất động sản</strong></p>
+      <p >Trợ lý toàn năng về bất động sản</p>
     </div>
     <div class="content">
       <!-- <div class="left-box">
@@ -77,15 +77,6 @@ const handleClick = (routeName) => {
   height: 100vh;
 }
 
-.title {
-  font-size: large;
-  font-weight: bold !important;
-  color: white !important;
-  /* background-color: #318be05d; */
-  border-radius: 10px;
-  padding: 10px;
-}
-
 .header-title {
   text-align: center;
   margin: 20px auto;
@@ -93,16 +84,19 @@ const handleClick = (routeName) => {
 
 .header-title .title {
   font-size: 50px;
-  font-weight: bold;
   color: var(--color-primary);
   line-height: 56px;
+  font-weight: bold !important;
+  border-radius: 10px;
+  margin-bottom: 10px;
 }
 
 .header-title p {
   font-size: 18px;
-  color: #555;
+  color: #f4f4f4;
   margin-top: 10px;
   line-height: 1.6;
+  font-weight: 500!important;
 }
 
 /* .left-box {
@@ -128,7 +122,6 @@ const handleClick = (routeName) => {
   position: absolute;
   left: -10px;
   top: -60px;
-  transform: rotate(10deg);
 }
 
 .right-icon img {
@@ -139,7 +132,7 @@ const handleClick = (routeName) => {
 .tabs {
   width: 100%;
   display: flex;
-  justify-content: flex-end;
+  justify-content: center;
   margin-bottom: 20px;
   /* width: fit-content; */ 
   border-radius: 5px;
@@ -158,6 +151,10 @@ const handleClick = (routeName) => {
 .tab-button:first-child {
   border-bottom-left-radius: 5px;
   border-top-left-radius: 5px;
+}
+.tab-button:last-child {
+  border-bottom-right-radius: 5px;
+  border-top-right-radius: 5px;
 }
 .tab-button.active {
   background: var(--color-primary);

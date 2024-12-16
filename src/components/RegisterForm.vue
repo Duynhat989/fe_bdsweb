@@ -41,7 +41,7 @@ const handleRegister = async (event) => {
         } else {
             router.push('/assistant');
         }
-        notification.success('Thành công!', 'Đăng ký thành công!', {
+        notification.success('Thành công!', 'Bạn đã đăng ký thành công!', {
             showActions: false
         })
     } catch (error) {
@@ -91,7 +91,7 @@ const togglePasswordVisibility = () => {
             <span v-else>Đăng ký</span>
         </button>
         <span class="forgot-password" @click="switchToForgotPassword">Quên mật khẩu</span>
-        <div class="tertiary">Tiếp tục đăng ký, bạn đồng ý với
+        <div class="tertiary"> Khi đăng ký là bạn đã đồng ý với
             <a href="https://trogiup.batdongsan.com.vn/docs/dieu-khoan-thoa-thuan">
                 Điều khoản sử dụng
             </a>,

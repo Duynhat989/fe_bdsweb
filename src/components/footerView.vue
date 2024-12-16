@@ -4,7 +4,7 @@
             <div class="footer-section">
                 <img src="https://hocvienamg.edu.vn/wp-content/uploads/2023/03/Logo-CED-01.png"
                     alt="Batdongsan Logo" class="footer-logo" />
-                <p>CÔNG TY CỔ PHẦN HỌC VIỆN ĐÀO TẠO AMG </p>
+                <h4>CÔNG TY CỔ PHẦN HỌC VIỆN ĐÀO TẠO AMG </h4>
                 <p><i class='bx bx-map' ></i> Lô TT04-23 HD Mon, Hàm Nghi, Mỹ Đình 2, Nam Từ Liêm, Hà Nội</p>
                 <p>📞 035.863.5665 - 088.699.6565</p>
             </div>
@@ -51,9 +51,10 @@
 .footer-container {
     display: flex;
     justify-content: space-between;
-    max-width: 1300px;
+    max-width: 1400px;
     margin: 0 auto;
     padding: 0 20px;
+    gap: 30px;
 }
 .footer-copyright {
     text-align: center;
@@ -64,12 +65,18 @@
 }
 
 .footer-logo {
-    width: 150px;
+    max-width: 150px;
+    width: 100%;
+    object-fit: cover;
+    margin-bottom: 20px;
 }
-
+.footer-section p {
+    line-height: 24px;
+    margin-bottom: 10px;
+}
 .footer-section h4 {
     font-weight: bold;
-    margin-bottom: 10px;
+    margin-bottom: 20px;
 }
 
 .footer-section ul {
@@ -114,6 +121,7 @@
     .footer-container {
         flex-direction: column;
         align-items: flex-start;
+        gap: 0px;
     }
     .footer-section {
         width: 100%;
