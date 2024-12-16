@@ -12,22 +12,10 @@ const selectedPackage = ref({});
 const isLoading = ref(false)
 const license = ref({});
 
-// const fetchLicense = async () => {
-//   try {
-//     const response = await request.get(END_POINT.LICENSE_GET);
-//     license.value = response.license;
-//     console.log(license.value);
-//   } catch (error) {
-//     console.error('Lỗi lấy thông tin gói:', error);
-//     notification.error('Lỗi!', 'Không thể lấy thông tin gói. Vui lòng thử lại!', {
-//       showActions: false,
-//     });
-//   }
-// };
 const openPopup = (pkg) => {
-    
+
     selectedPackage.value = pkg;
-    if(pkg.price !== '0') {
+    if (pkg.price !== '0') {
         isPopupVisible.value = true;
     }
 };
@@ -55,7 +43,7 @@ onMounted(() => {
     if (licenseData) {
         license.value = JSON.parse(licenseData);
     }
-    console.log(license.value.pack.name);
+
 });
 </script>
 
@@ -69,7 +57,7 @@ onMounted(() => {
             </div>
             <div class="package-content">
                 <div class="package-list">
-                    <div v-for="pkg in packages" :key="pkg.id" class="package-card" v-show="pkg.price !== '0'" >
+                    <div v-for="pkg in packages" :key="pkg.id" class="package-card" v-show="pkg.price !== '0'">
                         <h2 class="package-name">{{ pkg.name }}</h2>
                         <p class="package-description">{{ pkg.description }}</p>
                         <p class="package-price">
@@ -78,7 +66,11 @@ onMounted(() => {
                         <p class="package-features"
                             v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></p>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
-                        <button @click="openPopup(pkg)"  class="register-btn">Nâng cấp</button>
+                        <button @click="openPopup(pkg)" class="register-btn"
+                            :disabled="license?.pack?.name === pkg.name">
+                            {{ license?.pack?.name === pkg.name ? 'Đã đăng ký' : 'Nâng cấp' }}
+                        </button>
+                        <p v-if="license?.pack?.name === pkg.name" class="renew-message">Gia hạn thêm</p>
                     </div>
                 </div>
             </div>
@@ -148,12 +140,15 @@ onMounted(() => {
     color: #333;
     cursor: pointer;
     transition: box-shadow 0.3s ease, transform 0.3s ease;
+    position: relative;
 }
+
 .package-card:hover {
     box-shadow: 0px 8px 16px rgba(0, 0, 0, 0.438);
     transform: translateY(-10px);
     border: 1px solid rgb(0, 162, 255);
 }
+
 .package-name {
     font-size: 20px;
     font-weight: bold;
@@ -184,6 +179,19 @@ onMounted(() => {
     text-overflow: ellipsis;
 }
 
+.renew-message {
+    font-size: 12px;
+    color: #fff;
+    font-weight: 500;
+    margin-top: 5px;
+    position: absolute;
+    top: 0px;
+    right: 5px;
+    border-radius: 5px;
+    padding: 3px 10px;
+    background-color: #b33a3a;
+}
+
 .register-btn {
     background-color: var(--color-primary);
     color: white;
@@ -195,11 +203,16 @@ onMounted(() => {
     transition: background-color 0.3s ease;
     font-family: inherit;
 }
-
+.register-btn:disabled {
+    background-color: #ccc;
+    color: #666;
+    cursor: not-allowed;
+}
 .register-btn:hover {
     background-color: #b33a3a;
     opacity: 0.8;
 }
+
 @media (max-width: 576px) {
     .header-title {
         margin-bottom: 20px;
