@@ -32,26 +32,33 @@ const isDataChanged = (newData, oldData) => {
 };
 const fetchAssistants = async () => {
   try {
-    const [estateAnalysis, financialAnalysis, teamTraining, newsSummary, investmentAdvice] = await Promise.all([
-      request.get(END_POINT.ESTATEANALYSIS),
-      request.get(END_POINT.FINANCIALANALYSIS),
-      request.get(END_POINT.TEAMTRAINGING),
-      request.get(END_POINT.NEWSSUMMARY),
-      request.get(END_POINT.INVESTMENTADVISE)
-    ]);
-
-    const newAssistants = [
-      estateAnalysis.assistant,
-      financialAnalysis.assistant,
-      teamTraining.assistant,
-      newsSummary.assistant,
-      investmentAdvice.assistant
+    const endpoints = [
+      { name: "estateAnalysis", endpoint: END_POINT.ESTATEANALYSIS },
+      { name: "financialAnalysis", endpoint: END_POINT.FINANCIALANALYSIS },
+      { name: "teamTraining", endpoint: END_POINT.TEAMTRAINGING },
+      { name: "newsSummary", endpoint: END_POINT.NEWSSUMMARY },
+      { name: "investmentAdvice", endpoint: END_POINT.INVESTMENTADVISE }
     ];
+
+    const results = await Promise.allSettled(
+      endpoints.map(({ endpoint }) => request.get(endpoint))
+    );
+
+    const newAssistants = results.map((result, index) => {
+      if (result.status === "fulfilled") {
+        return result.value.assistant;
+      } else {
+        return null; 
+      }
+    }).filter(assistant => assistant); 
+
     const storedAssistants = JSON.parse(localStorage.getItem("assistantsSelected"));
+
     if (isDataChanged(newAssistants, storedAssistants)) {
       assistantsSelected.value = newAssistants;
       localStorage.setItem("assistantsSelected", JSON.stringify(newAssistants));
     }
+
   } catch (error) {
     if (error.response && error.response.status === 500) {
       console.error('Lỗi 500: Lỗi máy chủ trong quá trình lấy danh sách trợ lý:', error);
