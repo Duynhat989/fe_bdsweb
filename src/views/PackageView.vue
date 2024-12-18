@@ -52,7 +52,7 @@ onMounted(() => {
     <div class="main-container" v-else>
         <div class="package-page">
             <div class="header-title">
-                <h1 class="title">Các gói hiện tại</h1>
+                <h1 class="title">Gói dịch vụ hiện tại</h1>
                 <p class="description">Khám phá các gói đăng ký và tính năng mà bạn có thể sử dụng.</p>
             </div>
             <div class="package-content">
@@ -70,7 +70,7 @@ onMounted(() => {
                             :disabled="license?.pack?.name === pkg.name">
                             {{ license?.pack?.name === pkg.name ? 'Đã đăng ký' : 'Nâng cấp' }}
                         </button>
-                        <p v-if="license?.pack?.name === pkg.name" class="renew-message">Gia hạn thêm</p>
+                        <p v-if="license?.pack?.name === pkg.name" class="renew-message"> Bạn đang sử dụng {{ license?.pack?.name  }}. Thời hạn của bạn đến ngày {{ license?.date }}</p>
                     </div>
                 </div>
             </div>
@@ -180,14 +180,14 @@ onMounted(() => {
 
 
 .renew-message {
-    font-size: 12px;
+    font-size: 10px;
     color: #fff;
     font-weight: 500;
-    margin-top: 5px;
     position: absolute;
     top: 0px;
-    right: 5px;
-    border-radius: 5px;
+    right: 0;
+    left: 0;
+    border-radius: 10px;
     padding: 3px 10px;
     background-color: #b33a3a;
 }
