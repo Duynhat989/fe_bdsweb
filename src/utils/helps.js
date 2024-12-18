@@ -70,18 +70,34 @@ export function getImagePath(imageName) {
     return require(`@/assets/images/${imageName}`);
 }
 
-export function getFeatureNames(values, kt="<br>") {
+export function getFeatureNames(values) {
     if (typeof values === 'string') {
         try {
             values = JSON.parse(values);
-        } catch (error) {
+        } catch {
             return '';
         }
     }
 
+    const grouped = values.reduce((acc, { type, name }) => {
+        const typeLabel = type === 'assistant' 
+            ? 'Tính năng trợ lý' 
+            : type === 'course' 
+            ? 'Tính năng khóa học' 
+            : 'Tính năng khác';
+        acc[typeLabel] = acc[typeLabel] || [];
+        acc[typeLabel].push(name);
+        return acc;
+    }, {});
 
-    return values.map(item => item.name).join(kt);
-};
+    return Object.entries(grouped)
+    .map(([label, names]) => 
+        `<strong>${label}:</strong><ul>${names.map(name => `<li>${name}</li>`).join('')}</ul>`
+    )
+    .join("<br>"); 
+}
+
+
 export function parseJSON (str) {
     try {
         return JSON.parse(str || '[]');

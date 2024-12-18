@@ -106,8 +106,8 @@ const createInvoice = async () => {
             <div class="popup-content" >
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ package.name }}</h3>
-                <p class="package-features"
-                    v-html="getFeatureNames(package.features, ', ') || 'Không có tính năng bổ sung'"></p>
+                <div class="package-features feature-list"
+                    v-html="getFeatureNames(package.features) || 'Không có tính năng bổ sung'"></div>
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
                     <p>Gói đăng ký: <span> {{ package.name }}</span></p>
@@ -359,4 +359,35 @@ button:disabled {
     }
 }
 
+</style>
+<style>
+.feature-list {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.feature-list strong {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.feature-list ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.feature-list ul li {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #080808;
+    line-height: 1.5;
+}
+
+.feature-list ul li:last-child {
+    margin-bottom: 0;
+}
 </style>

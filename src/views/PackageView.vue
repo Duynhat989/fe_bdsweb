@@ -63,8 +63,8 @@ onMounted(() => {
                         <p class="package-price">
                             Giá: {{ formatCurrency(pkg.price) }}
                         </p>
-                        <p class="package-features"
-                            v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></p>
+                        <div class="package-features feature-list"
+                            v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></div>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
                         <button @click="openPopup(pkg)" class="register-btn"
                             :disabled="license?.pack?.name === pkg.name">
@@ -172,12 +172,12 @@ onMounted(() => {
 .package-features {
     font-size: 14px;
     color: var(--color-primary);
-    display: -webkit-box;
-    -webkit-line-clamp: 5;
-    -webkit-box-orient: vertical;
-    overflow: hidden;
+    height: 200px;
+    overflow-y: auto;
     text-overflow: ellipsis;
+    text-align: left;
 }
+
 
 .renew-message {
     font-size: 12px;
@@ -217,5 +217,36 @@ onMounted(() => {
     .header-title {
         margin-bottom: 20px;
     }
+}
+</style>
+<style>
+.feature-list {
+    margin: 20px 0;
+    padding: 0;
+}
+
+.feature-list strong {
+    font-size: 16px;
+    font-weight: bold;
+    color: #333;
+    display: block;
+    margin-bottom: 10px;
+}
+
+.feature-list ul {
+    list-style-type: disc;
+    padding-left: 20px;
+    margin: 0;
+}
+
+.feature-list ul li {
+    margin-bottom: 5px;
+    font-size: 16px;
+    color: #555;
+    line-height: 1.5;
+}
+
+.feature-list ul li:last-child {
+    margin-bottom: 0;
 }
 </style>

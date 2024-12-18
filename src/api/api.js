@@ -41,6 +41,8 @@ export const END_POINT = {
     USER_UPDATE: '/api/user/update', // Cập nhật người dùng
     USER_DELETE: '/api/user/delete', // Xóa người dùng
 
+    USER_CHANGE: '/api/auth/change-user', // admin update password
+
     // Users APIs
     USER_GET: '/api/user/me', // Lấy thông tin người dùng
     USER_UPDATE: '/api/user/edit', // Cập nhật người dùng

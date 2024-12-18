@@ -15,14 +15,14 @@ const form = ref({
     phone: userInfo.value.phone || '',
     email: userInfo.value.email || ''
 });
-const fetchLicense = async () => {
-    try {
-        const response = await request.get(END_POINT.LICENSE_GET);
-        license.value = response.license;
-    } catch (error) {
-        console.error('Lỗi lấy thông tin gói:', error);
-    }
-};
+// const fetchLicense = async () => {
+//     try {
+//         const response = await request.get(END_POINT.LICENSE_GET);
+//         license.value = response.license;
+//     } catch (error) {
+//         console.error('Lỗi lấy thông tin gói:', error);
+//     }
+// };
 
 const fetchUser = async () => {
     try {
@@ -78,20 +78,50 @@ const showPasswordBox = ref(false);
 
 const togglePasswordBox = () => {
     showPasswordBox.value = !showPasswordBox.value;
+    passwordForm.value = {
+        oldPassword: '',
+        newPassword: '',
+        confirmPassword: ''
+    };
 };
-const updatePassword = () => {
+const updatePassword = async () => {
     if (passwordForm.value.newPassword !== passwordForm.value.confirmPassword) {
-        alert('Mật khẩu xác nhận không khớp!');
-        notification.error('Lỗi!', `Mật khẩu xác nhận không khớp!}`, {
-            showActions: false
-        })
+        notification.error('Lỗi!', 'Mật khẩu xác nhận không khớp.');
         return;
     }
-    // call api 
 
+    isLoading.value = true;
+    try {
+        const payload = {
+            id_user: userInfo.value.id, 
+            oldPassword: passwordForm.value.oldPassword,
+            nPassword: passwordForm.value.newPassword
+        };
+        console.log(payload);
+        const response = await request.post(END_POINT.USER_CHANGE, payload);
+
+        if (response.success) {
+            notification.success('Thành công!', 'Mật khẩu đã được cập nhật.');
+            togglePasswordBox(); 
+        } else {
+            notification.error('Lỗi!', 'Cập nhật mật khẩu thất bại. Vui lòng thử lại.');
+        }
+    } catch (error) {
+        const errorMessage =
+            error.response && error.response.data && error.response.data.message
+                ? error.response.data.message
+                : 'Đã xảy ra lỗi không xác định.';
+        notification.error('Lỗi!', `Không thể cập nhật mật khẩu: ${errorMessage}`);
+    } finally {
+        isLoading.value = false;
+    }
 };
+
 const loadUser = async () => {
-    await fetchLicense();
+    const licenseData = localStorage.getItem('license');
+    if (licenseData) {
+        license.value = JSON.parse(licenseData);
+    }
     await fetchUser();
 };
 
