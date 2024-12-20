@@ -167,8 +167,8 @@ import logo from '@/assets/images/logo.png';
           <div class="base-info">
             <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
             <div class="it">
-              <h2 style="font-size: 14px;" class="assistant-title">{{ assistant.name }}</h2>
-              <h3 style="font-size: 14px;font-weight: 600 !important;">AI. An Phát Hưng</h3>
+              <h2 style="font-size: 14px;font-weight: 600 !important;" class="assistant-title">{{ assistant.name }}</h2>
+              <h3 style="font-size: 14px;">An Phát Hưng AI</h3>
             </div>
           </div>
           <div class="assistant-content">
