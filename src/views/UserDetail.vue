@@ -93,7 +93,7 @@ const updatePassword = async () => {
     isLoading.value = true;
     try {
         const payload = {
-            id_user: userInfo.value.id, 
+            id_user: userInfo.value.id,
             oldPassword: passwordForm.value.oldPassword,
             nPassword: passwordForm.value.newPassword
         };
@@ -102,7 +102,7 @@ const updatePassword = async () => {
 
         if (response.success) {
             notification.success('Thành công!', 'Mật khẩu đã được cập nhật.');
-            togglePasswordBox(); 
+            togglePasswordBox();
         } else {
             notification.error('Lỗi!', 'Cập nhật mật khẩu thất bại. Vui lòng thử lại.');
         }
@@ -142,8 +142,13 @@ onMounted(() => {
                     'Vai trò không xác định' }}</p>
                 <p><strong>Gói đang sử dụng:</strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
                 </p>
+                <p class="note-text">
+                    Thời gian hết hạn: <strong>{{ license?.date }}</strong>, số lượt dùng còn lại:
+                    <strong>{{ license?.pack?.ask - license?.day?.count }}</strong> lời yêu cầu.
+                </p>
+
             </div>
-            <div  class="edit-form">
+            <div class="edit-form">
                 <div class="form-box">
                     <h3>Cập nhật thông tin tài khoản</h3>
                     <label>
@@ -162,11 +167,11 @@ onMounted(() => {
                 <button @click="updateUser" class="save-btn">Lưu thay đổi</button>
             </div>
             <button @click="togglePasswordBox" class="toggle-btn">
-              Đổi mật khẩu
+                Đổi mật khẩu
             </button>
         </div>
     </div>
-    
+
     <div v-if="showPasswordBox" class="modal">
         <div class="modal-content edit-form">
             <span class="close-btn" @click="togglePasswordBox">&times;</span>
@@ -223,6 +228,7 @@ onMounted(() => {
     color: #242424;
     font-weight: bold;
 }
+
 .modal {
     position: fixed;
     top: 0;
@@ -269,6 +275,7 @@ onMounted(() => {
 .close-btn:hover {
     background-color: #d32f2f;
 }
+
 .toggle-btn {
     margin-top: 20px;
     background-color: var(--color-primary);
@@ -283,6 +290,7 @@ onMounted(() => {
 .toggle-btn:hover {
     opacity: 0.8;
 }
+
 .edit-btn,
 .save-btn {
     background-color: var(--color-primary);
@@ -306,6 +314,11 @@ onMounted(() => {
     border: 1px solid var(--color-primary);
     border-radius: 20px;
     padding: 20px;
+}
+.note-text strong,
+.note-text {
+    color: rgb(136, 15, 15);
+    font-size: 14px;
 }
 
 .edit-form {

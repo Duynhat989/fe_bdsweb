@@ -40,6 +40,7 @@ const loadPackages = async () => {
 onMounted(() => {
     loadPackages();
     const licenseData = localStorage.getItem('license');
+    console.log(licenseData);
     if (licenseData) {
         license.value = JSON.parse(licenseData);
     }
@@ -66,10 +67,15 @@ onMounted(() => {
                         <div class="package-features feature-list"
                             v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></div>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
-                        <button @click="openPopup(pkg)" class="register-btn"
-                            :disabled="license?.pack?.name === pkg.name">
-                            {{ license?.pack?.name === pkg.name ? 'Đã đăng ký' : 'Nâng cấp' }}
-                        </button>
+                        <div class="package-buttons">
+                            <button @click="openPopup(pkg)" class="register-btn"
+                                :disabled="license?.pack?.name === pkg.name">
+                                {{ license?.pack?.name === pkg.name ? 'Đã đăng ký' : 'Nâng cấp' }}
+                            </button>
+                            <button @click="openPopup(pkg)" class="register-btn" v-if="license?.pack?.name === pkg.name" >
+                                Nâng cấp
+                            </button>
+                        </div>
                         <p v-if="license?.pack?.name === pkg.name" class="renew-message"> Bạn đang sử dụng {{ license?.pack?.name  }}. Thời hạn của bạn đến ngày {{ license?.date }}</p>
                     </div>
                 </div>
@@ -161,7 +167,12 @@ onMounted(() => {
     color: #777;
     margin-bottom: 10px;
 }
-
+.package-buttons {
+    display: flex;
+    gap: 10px;
+    align-items: center;
+    justify-content: center;
+}
 .package-price {
     font-size: 16px;
     font-weight: bold;
@@ -241,7 +252,7 @@ onMounted(() => {
 
 .feature-list ul li {
     margin-bottom: 5px;
-    font-size: 16px;
+    font-size: 14px;
     color: #555;
     line-height: 1.5;
 }

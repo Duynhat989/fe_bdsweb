@@ -410,31 +410,6 @@ watch(conversationList, () => {
     order: 2;
 }
 
-.tabs {
-    display: flex;
-    margin: 0 auto;
-    width: fit-content;
-    border-radius: 5px;
-    overflow: hidden;
-}
-
-.tab {
-    padding: 5px 20px;
-    font-size: 18px;
-    cursor: pointer;
-    background-color: #f4f4f4;
-    color: #333;
-    border: none;
-    text-align: center;
-    width: 150px;
-}
-
-.tab.active {
-    background: var(--color-primary);
-    background: linear-gradient(90deg, var(--color-primary) 0%, var(--color-primary) 35%, rgba(44, 44, 44, 1) 100%);
-    color: white;
-}
-
 .content {
     margin-top: 30px;
 }

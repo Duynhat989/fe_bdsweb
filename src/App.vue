@@ -131,7 +131,7 @@ const goHome = () => {
   <div v-else class="app-container">
     <div v-if="isLogin">
       <div class="navbar" :class="{ hidden: hiddenPopup }">
-        <p><strong></strong> {{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
+        <p>{{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
         </p>
         <a href="/package" class="upgrade-button">
           <span class="icon crown"></span>

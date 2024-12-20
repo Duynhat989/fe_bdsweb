@@ -501,7 +501,7 @@ onMounted(() => {
 
 .prompt-controls {
     display: flex;
-    justify-content: flex-end;
+    justify-content: center;
     margin-bottom: 20px;
 }
 
@@ -677,14 +677,18 @@ onMounted(() => {
 }
 
 .tab {
-    padding: 5px 20px;
-    font-size: 18px;
+    padding: 5px 15px;
+    font-size: 16px;
     cursor: pointer;
     background-color: #f4f4f4;
     color: #333;
     border: none;
     text-align: center;
-    width: 150px;
+    width: 130px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
 }
 
 .tab.active {

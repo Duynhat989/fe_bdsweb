@@ -128,13 +128,17 @@ onMounted(() => {
 onUnmounted(() => {
   window.removeEventListener('scroll', handleScroll);
 });
+import logo from '@/assets/images/logo.png';
 
 </script>
 <template>
   <div class="main-container">
     <div class="header-title">
-      <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1>
-      <p style="color: white;"><strong>Trợ lý toàn năng về bất động sản</strong></p>
+      <!-- <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1> -->
+      <h1 class="title"> 
+        <img :src="logo" alt="logo web" width="200px" height="50px" class="logo_text">
+      </h1>
+      <p style="color: white;"><strong>Trợ lý toàn năng BĐS</strong></p>
     </div>
     <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">
@@ -163,15 +167,16 @@ onUnmounted(() => {
           <div class="base-info">
             <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
             <div class="it">
-              <h2 style="font-size: 16px;font-weight: 600 !important;">AI. An Phát Hưng</h2>
-              <h3 style="font-size: 14px;" class="assistant-title">{{ assistant.name }}</h3>
+              <h2 style="font-size: 14px;" class="assistant-title">{{ assistant.name }}</h2>
+              <h3 style="font-size: 14px;font-weight: 600 !important;">AI. An Phát Hưng</h3>
             </div>
           </div>
           <div class="assistant-content">
             <p class="assistant-detail">{{ assistant.detail }}</p>
             <div class="likes-container">
-              <span class="assistant-view">Lượt xem: {{ assistant.view + randomLikes() }}</span>
-              <span class="likes">{{ randomLikes() }} <i class='bx bxs-heart' style='color:#ff0808'></i></span>
+              <span class="assistant-view">Lượt xem: {{ assistant.view  }}</span>
+              <!-- <span class="assistant-view">Lượt xem: {{ assistant.view + randomLikes() }}</span> -->
+              <!-- <span class="likes">{{ randomLikes() }} <i class='bx bxs-heart' style='color:#ff0808'></i></span> -->
             </div>
             <button class="action-btn">Bắt đầu trò chuyện <span style="margin-left: auto;"><i
                   class='bx bx-chevron-right'></i></span></button>
@@ -186,10 +191,6 @@ onUnmounted(() => {
 </template>
 
 <style scoped>
-.it {
-  padding-left: 10px;
-}
-
 .isloading {
   height: 50vh;
   background-color: transparent;
@@ -205,12 +206,26 @@ onUnmounted(() => {
   margin-top: 30px;
   margin-bottom: 20px;
 }
-
+/* 
 .header-title .title {
   font-size: 30px;
   font-weight: bold;
   color: var(--color-primary);
   line-height: 40px;
+} */
+.header-title .title {
+  aspect-ratio: 200/60;
+  max-width: 200px;
+  height: auto;
+  text-align: center;
+  display: flex;
+  justify-content: center;
+  margin: 0 auto;
+}
+.header-title .title img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
 }
 
 .search-bar {
@@ -356,7 +371,6 @@ onUnmounted(() => {
   width: 80px;
   height: 80px;
   border-radius: 15px;
-  margin-right: 15px;
   transition: transform 0.3s ease;
   object-fit: cover;
 }
@@ -373,11 +387,12 @@ onUnmounted(() => {
 
 .base-info {
   display: flex;
-  align-items: center;
+  align-items: self-start;
   background-color: #e9f2fc;
   border: 1px solid #cae4ff;
   padding: 12px 10px;
   border-radius: 15px;
+  gap: 10px;
   box-shadow: 0px 4px 8px rgba(133, 133, 133, 0.101);
 }
 

@@ -15,7 +15,7 @@
 </script>
 <template>
     <div class="floating-icons">
-        <a href="https://zalo.me/your-zalo-oa-link" target="_blank" class="icon">
+        <a href="https://zalo.me/3855735057178174662" target="_blank" class="icon">
             <img :src="zalo" alt="Logo zalo" width="50">
         </a>
         <a href="https://m.me/your-messenger-id" target="_blank" class="icon">
@@ -45,8 +45,8 @@
 }
 
 .floating-icons .icon {
-    width: 40px;
-    height: 40px;
+    width: 60px;
+    height: 60px;
     display: flex;
     justify-content: center;
     align-items: center;
