@@ -47,9 +47,9 @@ const fetchAssistants = async () => {
       if (result.status === "fulfilled") {
         return result.value.assistant;
       } else {
-        return null; 
+        return null;
       }
-    }).filter(assistant => assistant); 
+    }).filter(assistant => assistant);
 
     const storedAssistants = JSON.parse(localStorage.getItem("assistantsSelected"));
 
@@ -418,6 +418,12 @@ const goHome = () => {
 .logo_web .logo_text {
   width: 175px;
   cursor: pointer;
+}
+
+.logo_web .img {
+  display: flex;
+  width: 100%;
+  justify-content: center;
 }
 
 .user {
