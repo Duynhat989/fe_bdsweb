@@ -214,7 +214,7 @@ import logo from '@/assets/images/logo.png';
   line-height: 40px;
 } */
 .header-title .title {
-  aspect-ratio: 200/60;
+  aspect-ratio: 200/100;
   max-width: 200px;
   height: auto;
   text-align: center;

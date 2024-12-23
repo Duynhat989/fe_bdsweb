@@ -9,9 +9,8 @@ import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck"
 import request from "./utils/request";
 import { END_POINT } from "./api/api";
 import { encodeId, decodeId } from '@/utils/encoding';
-import icon_logo from '@/assets/images/icon_logo1.png';
 
-import logo from '@/assets/images/logo.png';
+import logo from '@/assets/images/logo1.png';
 import SupportIcons from "./components/SupportIcons.vue";
 const license = ref({});
 
@@ -147,9 +146,8 @@ const goHome = () => {
           <div class="logo">
             <div class="logo_web flex" @click="goHome">
               <div class="img flex">
-                <img :src="icon_logo" alt="Logo" width="75">
-              </div> &nbsp;&nbsp;&nbsp;&nbsp;
-              <img :src="logo" alt="logo web" class="logo_text">
+                <img :src="logo" alt="logo web" class="logo_text">
+              </div>
             </div>
           </div>
 
