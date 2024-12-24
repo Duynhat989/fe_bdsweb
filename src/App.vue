@@ -9,7 +9,7 @@ import { checkMaintenanceStatus, isMaintenance } from "./utils/maintenanceCheck"
 import request from "./utils/request";
 import { END_POINT } from "./api/api";
 import { encodeId, decodeId } from '@/utils/encoding';
-
+import icon_logo from '@/assets/images/icon_logo1.png';
 import logo from '@/assets/images/logo1.png';
 import SupportIcons from "./components/SupportIcons.vue";
 const license = ref({});
@@ -124,6 +124,7 @@ onMounted(() => {
 const goHome = () => {
   location.href = '/'
 };
+const isChatDetailPage = computed(() => route.path.includes('/chat'));
 </script>
 <template>
   <MaintenancePage v-if="isMaintenance" />
@@ -146,8 +147,9 @@ const goHome = () => {
           <div class="logo">
             <div class="logo_web flex" @click="goHome">
               <div class="img flex">
-                <img :src="logo" alt="logo web" class="logo_text">
+                <img :src="icon_logo" alt="Logo" width="75">
               </div>
+              <img :src="logo" alt="logo web" class="logo_text">
             </div>
           </div>
 
@@ -225,7 +227,9 @@ const goHome = () => {
     </div>
     <NotificationModule ref="notificationRef" />
   </div>
-  <SupportIcons />
+  <div v-if="!isChatDetailPage">
+    <SupportIcons />
+  </div>
 </template>
 <style scoped>
 .app-container {
@@ -404,7 +408,7 @@ const goHome = () => {
 .logo_web {
   display: flex;
   align-items: center;
-  padding: 5px 10px;
+  padding: 5px 0px;
   margin-bottom: 30px;
   border-bottom: 1px solid #ccc;
 }

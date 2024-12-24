@@ -138,7 +138,7 @@ import logo from '@/assets/images/logo.png';
       <h1 class="title"> 
         <img :src="logo" alt="logo web" width="200px" height="50px" class="logo_text">
       </h1>
-      <p style="color: white;"><strong>Trợ lý toàn năng BĐS</strong></p>
+      <!--<p style="color: white;"><strong>Trợ lý toàn năng BĐS</strong></p> -->
     </div>
     <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">
@@ -168,7 +168,7 @@ import logo from '@/assets/images/logo.png';
             <img :src="assistant.image" alt="Assistant Image" class="assistant-image" />
             <div class="it">
               <h2 style="font-size: 14px;font-weight: 600 !important;" class="assistant-title">{{ assistant.name }}</h2>
-              <h3 style="font-size: 14px;">An Phát Hưng AI</h3>
+              <!-- <h3 style="font-size: 14px;">An Phát Hưng AI</h3>-->
             </div>
           </div>
           <div class="assistant-content">
@@ -370,7 +370,7 @@ import logo from '@/assets/images/logo.png';
 .assistant-image {
   width: 80px;
   height: 80px;
-  border-radius: 15px;
+  border-radius: 8px;
   transition: transform 0.3s ease;
   object-fit: cover;
 }
@@ -387,7 +387,7 @@ import logo from '@/assets/images/logo.png';
 
 .base-info {
   display: flex;
-  align-items: self-start;
+  align-items: center;
   background-color: #e9f2fc;
   border: 1px solid #cae4ff;
   padding: 12px 10px;

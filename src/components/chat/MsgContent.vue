@@ -4,7 +4,7 @@ import hljs from "highlight.js";
 import MarkdownIt from 'markdown-it';
 import copy from 'copy-to-clipboard';
 import mathjax3 from 'markdown-it-mathjax3';
-import q_a from '@/assets/images/q_a.png';
+import q_a from '@/assets/images/icon_logo1.png';
 
 const md = new MarkdownIt({
     linkify: true,
