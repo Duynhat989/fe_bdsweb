@@ -225,7 +225,7 @@ import logo from '@/assets/images/logo.png';
 .header-title .title img {
   width: 100%;
   height: 100%;
-  object-fit: cover;
+  object-fit: contain;
 }
 
 .search-bar {
