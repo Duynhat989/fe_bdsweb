@@ -2,7 +2,7 @@
     import { ref } from 'vue';
     import zalo from '@/assets/images/Icon_of_Zalo.svg';
     import message from '@/assets/images/message.svg';
-    import robot_phone from '@/assets/images/robot_phone.jpg';
+    import robot_phone from '@/assets/images/robot_phone.png';
     const showSupportModal = ref(false);
 
     const openSupportModal = () => {
