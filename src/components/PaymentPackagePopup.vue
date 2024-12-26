@@ -15,9 +15,12 @@ const bankCode = import.meta.env.VITE_BANK_CODE;
 const accountName = import.meta.env.VITE_ACCOUNT_NAME;
 const paymentContent = ref('');
 const paymentData = ref({});
-const extensionPeriod = ref(1); 
-const isInvoiceCreated = ref(false); 
+const extensionPeriod = ref(1);
+const isInvoiceCreated = ref(false);
 const isQRCodeLoading = ref(false);
+
+const isPaidLoading = ref(false);
+
 import store from '@/store';
 
 const user = computed(() => store.state.user);
@@ -33,7 +36,7 @@ const props = defineProps({
 });
 const updateTotalPrice = () => {
     if (extensionPeriod.value < 1) {
-        extensionPeriod.value = 1; 
+        extensionPeriod.value = 1;
     }
 };
 const emit = defineEmits(['close']);
@@ -65,17 +68,17 @@ const createInvoice = async () => {
             accountName
         );
         paymentData.value = {
-            user_id: user.value.id, 
-            pay_status: 1, 
-            invoice_code: paymentContent.value, 
+            user_id: user.value.id,
+            pay_status: 1,
+            invoice_code: paymentContent.value,
             must_pay: calculatedTotal,
             package_id: props.package.id,
             extension_period: extensionPeriod,
-            message_code: paymentContent.value, 
+            message_code: paymentContent.value,
         };
 
         const response = await request.post(END_POINT.PAYMENT_CREATE, paymentData.value);
-       
+
         if (response.data && response.success) {
             notification.success('Thành công!', 'Hóa đơn đã được tạo thành công vui lòng chuyển khoản theo mã QA dưới đây!', {
                 showActions: false
@@ -88,7 +91,9 @@ const createInvoice = async () => {
                 accountName
             );
             isInvoiceCreated.value = true;
-        } 
+            // load invoice 
+            loadInvoice(paymentContent.value)
+        }
     } catch (error) {
         console.error(error);
         notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
@@ -98,12 +103,31 @@ const createInvoice = async () => {
         isQRCodeLoading.value = false;
     }
 };
+
+const loadInvoice = async (paymentValue) => {
+    isPaidLoading.value = true
+    let intelval = setInterval(async () => {
+        const response = await request.post(END_POINT.PAYMENT_VERIFY, {
+            invoice_code: paymentValue
+        });
+        if (response.isPaid) {
+            notification.success('Thành công!', 'Nâng cấp thành công. Chuyển tiếp vào trang chủ sau 5s!', {
+                showActions: false
+            });
+            clearInterval(intelval)
+            setTimeout(() => {
+                window.location.href = './'
+            }, 7000)
+        }
+
+    }, 10000)
+}
 </script>
 
 <template>
     <div v-if="visible" class="modal-overlay">
         <div class="payment-popup">
-            <div class="popup-content" >
+            <div class="popup-content">
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ package.name }}</h3>
                 <div class="package-features feature-list"
@@ -120,23 +144,22 @@ const createInvoice = async () => {
                             <p>Tên tài khoản: <span>{{ accountName }}</span></p>
                             <div class="input-number">
                                 <label for="extension-period">Số tháng:</label>
-                                <input 
-                                    id="extension-period" 
-                                    type="number" 
-                                    min="1" 
-                                    v-model.number="extensionPeriod" 
-                                    @input="updateTotalPrice" 
-                                    :disabled="isInvoiceCreated" 
-                                />
+                                <input id="extension-period" type="number" min="1" v-model.number="extensionPeriod"
+                                    @input="updateTotalPrice" :disabled="isInvoiceCreated" />
                             </div>
                             <p>Giá: <span>{{ formatCurrency(totalPrice * extensionPeriod) }}</span></p>
                             <p>Nội dung chuyển : <span>{{ paymentContent }}</span></p>
-                            <button @click="createInvoice" class="invoice-btn" :disabled="isInvoiceCreated" >Tạo hóa đơn</button>
+                            <button @click="createInvoice" class="invoice-btn" :disabled="isInvoiceCreated">Tạo hóa
+                                đơn</button>
+                                <div class="notify flex" v-if="isPaidLoading">
+                                    <div class="notify_icon"><box-icon name='loader' animation='spin' ></box-icon></div>
+                                    <div><label>Đang kiểm tra trạng thái hóa đơn!</label></div>
+                                </div>
                         </div>
-                       
+
                         <div class="payment-qr">
                             <span v-if="isQRCodeLoading" class="loading-icon"></span> <!-- Hiển thị icon loading QR -->
-                            <img v-else :src="qrCodeUrl"/>
+                            <img v-else :src="qrCodeUrl" />
                         </div>
                     </div>
                 </div>
@@ -146,6 +169,10 @@ const createInvoice = async () => {
 </template>
 
 <style scoped>
+.notify{
+    width: 100%;
+    text-align: center;
+}
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -233,6 +260,7 @@ h3 {
     padding-top: 20px;
     border-top: 1px solid #ddd;
 }
+
 .payment-qr,
 .recipient-info {
     width: 50%;
@@ -259,10 +287,12 @@ h3 {
     margin-top: 10px;
     font-family: inherit;
 }
+
 .invoice-btn:hover {
     background-color: #b33a3a;
     opacity: 0.8;
 }
+
 .payment-qr {
     margin-top: 15px;
     text-align: center;
@@ -290,10 +320,12 @@ h3 {
 canvas {
     margin-top: 10px;
 }
+
 .recipient-info label {
     font-weight: bold;
     display: block;
 }
+
 .input-number {
     display: flex;
     align-items: center;
@@ -306,12 +338,14 @@ canvas {
 .input-number .input {
     flex: 50%;
 }
+
 .recipient-info input {
     width: 100%;
     padding: 5px;
     border: 1px solid #ccc;
     border-radius: 5px;
 }
+
 input:disabled {
     background-color: #f5f5f5;
     color: #999;
@@ -327,10 +361,12 @@ button:disabled {
 }
 
 @media (max-width: 768px) {
+
     .payment-qr,
     .recipient-info {
         width: 100%;
     }
+
     .payment-info {
         flex-wrap: wrap;
     }
@@ -339,6 +375,7 @@ button:disabled {
         width: 100%;
     }
 }
+
 .loading-icon {
     display: inline-block;
     width: 32px;
@@ -354,11 +391,11 @@ button:disabled {
     from {
         transform: rotate(0deg);
     }
+
     to {
         transform: rotate(360deg);
     }
 }
-
 </style>
 <style>
 .feature-list {
@@ -389,5 +426,9 @@ button:disabled {
 
 .feature-list ul li:last-child {
     margin-bottom: 0;
+}
+.flex{
+    display: block;
+    align-items: center;
 }
 </style>

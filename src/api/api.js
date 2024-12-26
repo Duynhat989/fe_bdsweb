@@ -88,6 +88,8 @@ export const END_POINT = {
     ESTALE_FIND: '/api/estale/find', // Tìm bài viết bất động sản
     ESTALE_PROVINCE: '/api/estale/province', // Lấy vị trí
     PAYMENT_CREATE: '/api/pay/create', // Cập nhật thanh toan
+    PAYMENT_VERIFY: '/api/pay/verifyInvoice', //Câp nhật trạng thái hóa đơn
+
 
     ESTALE_LOCATION: 'api/estale/location', 
     ESTALE_NAME: '/api/estale/name', 
