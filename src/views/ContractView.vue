@@ -72,7 +72,7 @@ console.log(isLoading);
 }
 
 .header-title p {
-  font-size: 13px;
+  font-size: 16px;
   margin-top: 8px;
 }
 
@@ -114,7 +114,7 @@ console.log(isLoading);
 }
 
 .contract-box p {
-  font-size: 13px;
+  font-size: 15px;
   color: #666;
   margin-bottom: 10px;
 }
@@ -124,7 +124,7 @@ console.log(isLoading);
   color: #fff;
   border: none;
   padding: 10px 20px;
-  font-size: 13px;
+  font-size: 14px;
   cursor: pointer;
   border-radius: 5px;
   transition: background-color 0.3s;
@@ -160,7 +160,7 @@ console.log(isLoading);
 }
 
 .contract-description p {
-  font-size: 13px;
+  font-size: 14px;
   color: #555;
   line-height: 1.6;
 }

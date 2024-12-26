@@ -84,7 +84,7 @@ onMounted(() => {
                 <input type="text" v-model="searchQuery" placeholder="Nhập từ khóa tìm kiếm..." class="search-input" />
             </div>
         </div>
-        <p style="color: white; text-align: center;">Lưu ý: <i style="font-size: 12px;color: red;">Đây là giải pháp tham khảo nhằm mục đích tối ưu quá trình tạo hợp đồng 1 cách nhanh nhất. Vui lòng chỉ sử dụng để tham khảo, chúng tôi không chịu trách nhiệm nếu bạn sử dụng trực tiếp với mục đích thương mại.</i></p>
+        <p style="color: white; text-align: center;">Lưu ý: <i style="font-size: 13px;color: red;">Đây là giải pháp tham khảo nhằm mục đích tối ưu quá trình tạo hợp đồng 1 cách nhanh nhất. Vui lòng chỉ sử dụng để tham khảo, chúng tôi không chịu trách nhiệm nếu bạn sử dụng trực tiếp với mục đích thương mại.</i></p>
         <div class="main-content"  >
             <LoadingSpinner v-if="!isLoading" />
             <div class="contract-list"  v-else>
@@ -166,7 +166,7 @@ onMounted(() => {
 }
 
 .header-title .title {
-    font-size: 30px;
+    font-size: 32px;
     font-weight: bold;
     color: var(--color-primary);
     line-height: 40px;

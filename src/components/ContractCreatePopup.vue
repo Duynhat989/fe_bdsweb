@@ -210,10 +210,10 @@ p {
 .contract-image img {
     max-width: 100%;
     width: 100%;
-    object-fit: cover;
+    object-fit: contain;
     border-radius: 4px;
     margin: 10px 0;
-    height: 250px;
+    height: 300px;
 }
 
 .form-group {

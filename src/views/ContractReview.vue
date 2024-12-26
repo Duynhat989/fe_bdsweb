@@ -45,9 +45,25 @@ const startReview = async () => {
             const res = await sendMessageRequest(message, threadId.value, END_POINT);
             if (!res.ok) {
                 const errorData = await res.json();
-                notification.info('Thông báo!', `${errorData.message}`, {
-                    showActions: true
-                });
+                if (errorData.message === 'License expired, please upgrade') {
+                    notification.info('Thông báo!', 'Gói đã hết hạn, vui lòng nâng cấp!', {
+                        showActions: true,
+                        onAction: ({ action }) => {
+                            if (action === 'info') {
+                                router.push('/package');
+                            }
+                        }
+                    });
+                } else {
+                    notification.info('Thông báo!', `${errorData.message}`, {
+                        showActions: true,
+                        onAction: ({ action }) => {
+                            if (action === 'info') {
+                                router.push('/package');
+                            }
+                        }
+                    });
+                }
             } else {
                 const newConversation = await handleResponseStream(res, reviewResults.value);
                 reviewResults.value = newConversation;
@@ -74,14 +90,14 @@ const handleChatMore = async () => {
     isChatMoreLoading.value = true;
     try {
         store.commit('setAssistantName', contractAssistant.value.name);
-        await new Promise(resolve => setTimeout(resolve, 3000)); 
+        await new Promise(resolve => setTimeout(resolve, 3000));
         window.location.href = `/chat/${threadId.value}`;
     } catch (error) {
         notification.error('Lỗi!', 'Không thể chuyển sang chat. Vui lòng thử lại!', {
             showActions: false
         });
     } finally {
-        isChatMoreLoading.value = false; 
+        isChatMoreLoading.value = false;
     }
 };
 
@@ -157,14 +173,14 @@ onMounted(() => {
                 <div class="chat-more-btn">
                     <button :disabled="isChatMoreLoading" @click="handleChatMore" class="chat-more-button">
                         <span v-if="isChatMoreLoading">
-                            <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em" height="1em"
-                                viewBox="0 0 24 24">
+                            <svg style="margin-bottom: -3px;" xmlns="http://www.w3.org/2000/svg" width="1em"
+                                height="1em" viewBox="0 0 24 24">
                                 <path fill="currentColor"
                                     d="M12 2A10 10 0 1 0 22 12A10 10 0 0 0 12 2Zm0 18a8 8 0 1 1 8-8A8 8 0 0 1 12 20Z"
                                     opacity="0.5" />
                                 <path fill="currentColor" d="M20 12h2A10 10 0 0 0 12 2V4A8 8 0 0 1 20 12Z">
-                                    <animateTransform attributeName="transform" dur="1s" from="0 12 12" repeatCount="indefinite"
-                                        to="360 12 12" type="rotate" />
+                                    <animateTransform attributeName="transform" dur="1s" from="0 12 12"
+                                        repeatCount="indefinite" to="360 12 12" type="rotate" />
                                 </path>
                             </svg>
                             Đang chuyển hướng ...
@@ -311,10 +327,12 @@ onMounted(() => {
 .chat-more-btn {
     text-align: center;
 }
+
 .chat-more-button:disabled {
-  background-color: #ccc;
-  cursor: not-allowed;
+    background-color: #ccc;
+    cursor: not-allowed;
 }
+
 .chat-more-button {
     background-color: #007bff;
     color: white;
@@ -330,9 +348,9 @@ onMounted(() => {
     opacity: 0.8;
     transform: scale(1.05);
 }
+
 .chat-more-button:hover:enabled {
     background-color: #a02620;
     transform: scale(1.05);
 }
-
 </style>
