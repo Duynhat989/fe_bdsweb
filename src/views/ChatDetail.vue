@@ -16,10 +16,13 @@ const conversationContainer = ref(null);
 const message = ref('');
 const messageOld = computed(() => store.state.message);
 const assistantName = computed(() => store.state.assistantName);
-
+const messageInput = ref(null);
 const threadId = computed(() => route.params.id);
 const goBack = () => router.back();
 
+const updateMessage = () => {
+    message.value = messageInput.value.innerText;
+};
 
 const scrollToBottom = () => {
     nextTick(() => {
@@ -42,24 +45,41 @@ const fetchConversationList = async () => {
         })
     }
 };
+const handlePaste = (event) => {
+    event.preventDefault();
 
+    const plainText = event.clipboardData.getData('text/plain');
+
+    document.execCommand('insertText', false, plainText);
+};
 const handleSend = async () => {
     if (!message.value?.trim() || loading.value) {
         return;
     }
     loading.value = true;
-    conversationList.value.push({
-            role: "user",
-            content: message.value
-        });
-        conversationList.value.push( {
-            role:"model",
-            content:'',
-        });
-        const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
 
-        if (!response.ok) {
-            const errorData = await response.json();
+    conversationList.value.push({
+        role: "user",
+        content: message.value
+    });
+    conversationList.value.push({
+        role: "model",
+        content: '',
+    });
+    const response = await sendMessageRequest(message.value, threadId.value, END_POINT);
+
+    if (!response.ok) {
+        const errorData = await response.json();
+        if (errorData.message === 'License expired, please upgrade') {
+            notification.info('Thông báo!', 'Gói đã hết hạn, vui lòng nâng cấp!', {
+                showActions: true,
+                onAction: ({ action }) => {
+                    if (action === 'info') {
+                        router.push('/package');
+                    }
+                }
+            });
+        } else {
             notification.info('Thông báo!', `${errorData.message}`, {
                 showActions: true,
                 onAction: ({ action }) => {
@@ -67,20 +87,22 @@ const handleSend = async () => {
                         router.push('/package');
                     }
                 }
-            })
-        } else {
-            conversationList.value = await handleResponseStream(response, conversationList.value);
-            store.commit('setMessage', "");
-            message.value = "";
-            console.log(conversationList.value);
+            });
         }
+    } else {
+        conversationList.value = await handleResponseStream(response, conversationList.value);
+        store.commit('setMessage', "");
+        message.value = "";
+    }
     try {
-        
+
     } catch (error) {
         notification.error('Lỗi!', `Lỗi khi tải gửi tin! Lỗi ${error}`, {
             showActions: false
         })
     } finally {
+        message.value = '';
+        messageInput.value.innerText = '';
         loading.value = false;
     }
 };
@@ -110,18 +132,19 @@ watch(conversationList, () => {
             </div>
             <div v-if="conversationList && conversationList.length > 0" ref="conversationContainer"
                 class="conversation-list">
-                <MsgContent v-for="(item, index) of conversationList" :key="index"  :messA="item"   :loading="loading && index === conversationList.length - 1" />
+                <MsgContent v-for="(item, index) of conversationList" :key="index" :messA="item"
+                    :loading="loading && index === conversationList.length - 1" />
             </div>
             <div class="send-bar">
                 <div class="send-container">
                     <div class="input-wrapper">
-                        <input :disabled="loading" type="text" v-model="message" @keydown.enter="handleSend"
-                            placeholder="Nhập yêu cầu hỗ trợ..." />
-                        <span class="send-icon">🔍</span>
+                        <div class="editable-input" contenteditable="true" @keydown.enter.prevent="handleSend"
+                            @input="updateMessage" @paste="handlePaste" ref="messageInput"
+                            placeholder="Nhập yêu cầu hỗ trợ..."></div>
                     </div>
                     <button class="send-button" @click="handleSend" :disabled="loading">
-                        <i v-if="!loading" class='bx bx-up-arrow-circle'></i>
-                        <i v-else class='bx bx-loader bx-spin'></i>
+                        <i v-if="!loading" class="bx bx-up-arrow-circle"></i>
+                        <i v-else class="bx bx-loader bx-spin"></i>
                     </button>
                 </div>
             </div>
@@ -211,6 +234,7 @@ watch(conversationList, () => {
     white-space: pre-wrap;
     opacity: 1;
 }
+
 .copy-button {
     cursor: pointer;
     font-size: 16px;
@@ -235,6 +259,7 @@ watch(conversationList, () => {
     align-items: center;
     margin: 20px 0;
     flex-direction: column;
+    width: 100%;
 }
 
 .send-container {
@@ -242,36 +267,10 @@ watch(conversationList, () => {
     align-items: center;
     background-color: #f0f0f0;
     padding: 8px 10px;
-    border-radius: 5px;
-    width:70%;
+    border-radius: 15px;
+    width: 100%;
     max-width: 800px;
     box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-
-.input-wrapper {
-    position: relative;
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-.input-wrapper input {
-    width: 100%;
-    padding: 10px 40px 10px 30px;
-    border: none;
-    margin-left: 20px;
-    border-radius: 10px;
-    outline: none;
-    color: #2C2C2C;
-    font-size: 18px;
-    background-color: #f0f0f0;
-    font-family: inherit;
-}
-
-.send-icon {
-    position: absolute;
-    left: 10px;
-    font-size: 20px;
 }
 
 .send-button {
@@ -279,7 +278,7 @@ watch(conversationList, () => {
     color: #fff;
     border: none;
     padding: 8px 10px 4px 10px;
-    border-radius: 5px;
+    border-radius: 50%;
     margin-left: 10px;
     font-size: 25px;
     cursor: pointer;
@@ -287,6 +286,52 @@ watch(conversationList, () => {
 
 .send-button:hover {
     opacity: 0.7;
+}
+
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.editable-input {
+    width: 100%;
+    max-height: 100px;
+    /* Giới hạn chiều cao (nếu cần) */
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    outline: none;
+}
+
+.editable-input:empty:before {
+    content: attr(placeholder);
+    color: #aaa;
+    pointer-events: none;
+}
+
+.editable-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.editable-input::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editable-input::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.editable-input::-webkit-scrollbar-thumb:hover {
+    background: #555;
 }
 
 .actions {
@@ -425,7 +470,7 @@ watch(conversationList, () => {
         max-width: 1000px;
     }
 
-    .send-container {
+    .send-bar {
         width: 70%;
     }
 }
@@ -435,7 +480,7 @@ watch(conversationList, () => {
         max-width: 800px;
     }
 
-    .send-container {
+    .send-bar {
         width: 80%;
     }
 
@@ -453,6 +498,7 @@ watch(conversationList, () => {
         width: 100%;
         margin: 0 auto;
     }
+
     .main-container {
         max-width: 600px;
     }
@@ -470,11 +516,13 @@ watch(conversationList, () => {
         font-size: 25px;
         line-height: 30px;
     }
+
     .message-item .avatar {
         width: 35px;
         height: 35px;
         position: absolute;
     }
+
     .user-message .avatar {
         right: -40px;
     }
@@ -511,23 +559,27 @@ watch(conversationList, () => {
     .history-item {
         width: 100%;
     }
- 
+
     .message-item {
         width: 100%;
         position: relative;
     }
+
     .user-message .copy-button {
         display: flex;
         justify-content: start;
     }
-    .model-message .copy-button{
+
+    .model-message .copy-button {
         display: flex;
         justify-content: flex-end;
     }
+
     .user-message .avatar {
         right: 0px;
         top: 10px;
     }
+
     .model-message .avatar {
         left: 0px;
         top: 10px;

@@ -65,7 +65,7 @@ console.log(isLoading);
 }
 
 .header-title .title {
-  font-size: 24px;
+  font-size: 32px;
   font-weight: bold;
   color: var(--color-primary);
   line-height: 40px;

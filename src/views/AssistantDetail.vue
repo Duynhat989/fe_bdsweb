@@ -19,7 +19,6 @@ const assistantId = decodeId(encodedId);
 const assistantData = ref([]);
 const message = ref('');
 const threadId = ref('');
-const conversationList = ref([]);
 const suggests = ref([]);
 const historys = ref([]);
 const loading = ref(false);
@@ -40,7 +39,16 @@ const selectePrompt = ref(null)
 const isLoading = ref(false)
 
 const goBack = () => router.back();
-
+const updateMessage = () => {
+    message.value = messageInput.value.innerText;
+};
+const handlePaste = (event) => {
+  event.preventDefault(); 
+  
+  const plainText = event.clipboardData.getData('text/plain');
+  
+  document.execCommand('insertText', false, plainText);
+};
 const addPrompt = () => {
     showPopup.value = true;
     isEdit.value = false;
@@ -147,11 +155,15 @@ const changePromptPage = (page) => {
 
 const executeAction = (suggest) => {
     message.value = suggest;
+    messageInput.value.innerText = suggest; 
     handleSend();
 };
 const executePrompt = (suggest) => {
-    message.value = suggest.prompt_text;
-    messageInput.value.focus();
+    message.value = suggest.prompt_text; 
+    if (messageInput.value) {
+        messageInput.value.innerText = suggest.prompt_text; 
+        messageInput.value.focus(); 
+    }
 };
 const deletePrompt = async (id) => {
     let data = JSON.stringify({
@@ -197,6 +209,8 @@ const handleSend = async () => {
     } catch (error) {
         console.error('Send request failed:', error);
     } finally {
+        message.value = '';
+        messageInput.value.innerText = '';
         loading.value = false;
     }
 };
@@ -303,13 +317,13 @@ onMounted(() => {
             <div class="send-bar">
                 <div class="send-container">
                     <div class="input-wrapper">
-                        <input type="text" @keydown.enter="handleSend" v-model="message"
-                            placeholder="Nhập yêu cầu hỗ trợ..." ref="messageInput" />
-                        <span class="send-icon">🔍</span>
+                        <div class="editable-input" contenteditable="true" @keydown.enter.prevent="handleSend"
+                            @input="updateMessage" @paste="handlePaste" ref="messageInput"
+                            placeholder="Nhập yêu cầu hỗ trợ..."></div>
                     </div>
                     <button class="send-button" @click="handleSend" :disabled="loading">
-                        <i v-if="!loading" class='bx bx-up-arrow-circle'></i>
-                        <i v-else class='bx bx-loader bx-spin'></i>
+                        <i v-if="!loading" class="bx bx-up-arrow-circle"></i>
+                        <i v-else class="bx bx-loader bx-spin"></i>
                     </button>
                 </div>
             </div>
@@ -387,6 +401,7 @@ onMounted(() => {
     align-items: center;
     margin: 20px 0;
     flex-direction: column;
+    width: 100%;
 }
 
 .send-container {
@@ -394,35 +409,10 @@ onMounted(() => {
     align-items: center;
     background-color: #f0f0f0;
     padding: 8px 10px;
-    border-radius: 5px;
-    width: 50%;
-    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
-}
-
-.input-wrapper {
-    position: relative;
-    flex: 1;
-    display: flex;
-    align-items: center;
-}
-
-.input-wrapper input {
+    border-radius: 15px;
     width: 100%;
-    padding: 10px 40px 10px 30px;
-    border: none;
-    margin-left: 20px;
-    border-radius: 10px;
-    outline: none;
-    color: #2C2C2C;
-    font-size: 18px;
-    background-color: #f0f0f0;
-    font-family: inherit;
-}
-
-.send-icon {
-    position: absolute;
-    left: 10px;
-    font-size: 20px;
+    max-width: 800px;
+    box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
 }
 
 .send-button {
@@ -430,17 +420,61 @@ onMounted(() => {
     color: #fff;
     border: none;
     padding: 8px 10px 4px 10px;
-    border-radius: 5px;
+    border-radius: 50%;
     margin-left: 10px;
     font-size: 25px;
     cursor: pointer;
 }
 
 .send-button:hover {
-    background-color: #c9302c;
-    opacity: 0.8;
+    opacity: 0.7;
 }
 
+.input-wrapper {
+    position: relative;
+    width: 100%;
+}
+
+.editable-input {
+    width: 100%;
+    max-height: 100px;
+    /* Giới hạn chiều cao (nếu cần) */
+    padding: 8px 12px;
+    font-size: 14px;
+    line-height: 1.5;
+    border: 1px solid #ccc;
+    border-radius: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+    overflow-x: hidden;
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    outline: none;
+}
+
+.editable-input:empty:before {
+    content: attr(placeholder);
+    color: #aaa;
+    pointer-events: none;
+}
+
+.editable-input:focus {
+    border-color: #007bff;
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.editable-input::-webkit-scrollbar {
+    width: 8px;
+}
+
+.editable-input::-webkit-scrollbar-thumb {
+    background: #888;
+    border-radius: 4px;
+}
+
+.editable-input::-webkit-scrollbar-thumb:hover {
+    background: #555;
+}
 .actions {
     display: flex;
     gap: 10px;

@@ -191,10 +191,13 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
                 <h3>{{ user.name }}</h3>
               </div>
               <div class="info">
-                <div class="menu_item" :class="{ active: currentRoute === '/course' }">
-                  <a href="/course" class="button"><i style="margin-bottom: -3px;" class='bx bx-movie-play'></i>
-                    &nbsp;&nbsp;<span>Khóa học bất động sản</span></a>
+                <div class="menu_item">
+                  <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button">
+                    <i style="margin-bottom: -3px;" class='bx bx-help-circle'></i>
+                    &nbsp;&nbsp;<span> Hướng dẫn sử dụng </span>
+                  </a>
                 </div>
+
                 <div class="menu_item" :class="{ active: currentRoute === '/introducing_page' }">
                   <a href="/introducing_page" class="button"><i style="margin-bottom: -3px;"
                       class='bx bxs-buildings'></i>

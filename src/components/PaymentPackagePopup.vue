@@ -15,7 +15,7 @@ const bankCode = import.meta.env.VITE_BANK_CODE;
 const accountName = import.meta.env.VITE_ACCOUNT_NAME;
 const paymentContent = ref('');
 const paymentData = ref({});
-const extensionPeriod = ref(1);
+const extensionPeriod = ref(6);
 const isInvoiceCreated = ref(false);
 const isQRCodeLoading = ref(false);
 
@@ -53,6 +53,7 @@ const closePopup = () => {
     isInvoiceCreated.value = false;
     qrCodeUrl.value = null;
     isQRCodeLoading.value = false;
+    isPaidLoading.value= false;
 };
 const createInvoice = async () => {
     try {
@@ -121,7 +122,7 @@ const loadInvoice = async (paymentValue) => {
         }
 
     }, 10000)
-}
+};
 </script>
 
 <template>
@@ -144,17 +145,20 @@ const loadInvoice = async (paymentValue) => {
                             <p>Tên tài khoản: <span>{{ accountName }}</span></p>
                             <div class="input-number">
                                 <label for="extension-period">Số tháng:</label>
-                                <input id="extension-period" type="number" min="1" v-model.number="extensionPeriod"
-                                    @input="updateTotalPrice" :disabled="isInvoiceCreated" />
+                                <select id="extension-period" v-model.number="extensionPeriod"
+                                    @change="updateTotalPrice" :disabled="isInvoiceCreated" class="custom-select">
+                                    <option value="6">6 tháng</option>
+                                    <option value="12">12 tháng</option>
+                                </select>
                             </div>
                             <p>Giá: <span>{{ formatCurrency(totalPrice * extensionPeriod) }}</span></p>
-                            <p>Nội dung chuyển : <span>{{ paymentContent }}</span></p>
+                            <p v-if="paymentContent">Nội dung chuyển: <span>{{ paymentContent }}</span></p>
                             <button @click="createInvoice" class="invoice-btn" :disabled="isInvoiceCreated">Tạo hóa
                                 đơn</button>
-                                <div class="notify flex" v-if="isPaidLoading">
-                                    <div class="notify_icon"><box-icon name='loader' animation='spin' ></box-icon></div>
-                                    <div><label>Đang kiểm tra trạng thái hóa đơn!</label></div>
-                                </div>
+                            <div class="notify flex" v-if="isPaidLoading">
+                                <div class="notify_icon"><box-icon name='loader' animation='spin'></box-icon></div>
+                                <div><label>Đang kiểm tra trạng thái hóa đơn!</label></div>
+                            </div>
                         </div>
 
                         <div class="payment-qr">
@@ -169,10 +173,11 @@ const loadInvoice = async (paymentValue) => {
 </template>
 
 <style scoped>
-.notify{
+.notify {
     width: 100%;
     text-align: center;
 }
+
 .modal-overlay {
     position: fixed;
     top: 0;
@@ -325,18 +330,42 @@ canvas {
     font-weight: bold;
     display: block;
 }
-
 .input-number {
-    display: flex;
-    align-items: center;
-    gap: 20px;
     margin-top: 10px;
-    margin-bottom: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    flex-direction: row;
+    align-items: flex-end;
+    gap: 20px;
 }
 
-.input-number label,
-.input-number .input {
-    flex: 50%;
+.input-number label {
+    margin-bottom: 5px;
+    font-size: 14px;
+    color: #333;
+}
+
+.custom-select {
+    padding: 8px 12px;
+    font-size: 14px;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    outline: none;
+    background-color: #fff;
+    transition: border-color 0.3s ease;
+    width: 100%;
+    max-width: 150px; 
+}
+
+.custom-select:focus {
+    border-color: #007bff; 
+    box-shadow: 0 0 5px rgba(0, 123, 255, 0.5);
+}
+
+.custom-select:disabled {
+    background-color: #e9ecef;
+    color: #6c757d;
+    cursor: not-allowed;
 }
 
 .recipient-info input {
@@ -427,7 +456,8 @@ button:disabled {
 .feature-list ul li:last-child {
     margin-bottom: 0;
 }
-.flex{
+
+.flex {
     display: block;
     align-items: center;
 }

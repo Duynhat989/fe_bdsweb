@@ -148,6 +148,9 @@ watch(
 .message__content {
     flex-grow: 1;
 }
+.msg-content {
+    width: 100%;
+}
 .message__header {
     display: flex;
     justify-content: space-between;
