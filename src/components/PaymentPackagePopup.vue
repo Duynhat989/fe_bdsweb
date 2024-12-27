@@ -15,7 +15,7 @@ const bankCode = import.meta.env.VITE_BANK_CODE;
 const accountName = import.meta.env.VITE_ACCOUNT_NAME;
 const paymentContent = ref('');
 const paymentData = ref({});
-const extensionPeriod = ref(6);
+const extensionPeriod = ref(1);
 const isInvoiceCreated = ref(false);
 const isQRCodeLoading = ref(false);
 
