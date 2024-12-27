@@ -317,7 +317,8 @@ onMounted(() => {
             <div class="send-bar">
                 <div class="send-container">
                     <div class="input-wrapper">
-                        <div class="editable-input" contenteditable="true" @keydown.enter.prevent="handleSend"
+                        <!--  @keydown.enter.prevent="handleSend" -->
+                        <div class="editable-input" contenteditable="true"
                             @input="updateMessage" @paste="handlePaste" ref="messageInput"
                             placeholder="Nhập yêu cầu hỗ trợ..."></div>
                     </div>
@@ -437,7 +438,7 @@ onMounted(() => {
 
 .editable-input {
     width: 100%;
-    max-height: 100px;
+    max-height: 200px;
     /* Giới hạn chiều cao (nếu cần) */
     padding: 8px 12px;
     font-size: 14px;
