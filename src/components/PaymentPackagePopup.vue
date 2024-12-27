@@ -15,7 +15,7 @@ const bankCode = import.meta.env.VITE_BANK_CODE;
 const accountName = import.meta.env.VITE_ACCOUNT_NAME;
 const paymentContent = ref('');
 const paymentData = ref({});
-const extensionPeriod = ref(1);
+const extensionPeriod = ref(6);
 const isInvoiceCreated = ref(false);
 const isQRCodeLoading = ref(false);
 
@@ -147,7 +147,6 @@ const loadInvoice = async (paymentValue) => {
                                 <label for="extension-period">Số tháng:</label>
                                 <select id="extension-period" v-model.number="extensionPeriod"
                                     @change="updateTotalPrice" :disabled="isInvoiceCreated" class="custom-select">
-                                    <option value="1">1 tháng</option>
                                     <option value="6">6 tháng</option>
                                     <option value="12">12 tháng</option>
                                 </select>
