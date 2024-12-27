@@ -147,6 +147,7 @@ const loadInvoice = async (paymentValue) => {
                                 <label for="extension-period">Số tháng:</label>
                                 <select id="extension-period" v-model.number="extensionPeriod"
                                     @change="updateTotalPrice" :disabled="isInvoiceCreated" class="custom-select">
+                                    <option value="1">1 tháng</option>
                                     <option value="6">6 tháng</option>
                                     <option value="12">12 tháng</option>
                                 </select>
