@@ -452,6 +452,7 @@ onMounted(() => {
     white-space: pre-wrap;
     word-wrap: break-word;
     outline: none;
+    background: #fff;
 }
 
 .editable-input:empty:before {
