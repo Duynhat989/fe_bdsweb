@@ -358,6 +358,7 @@ onMounted(() => {
     text-align: center;
     margin-top: 40px;
     margin-bottom: 40px;
+    width:55%;
 }
 
 .header-title .title {
@@ -648,6 +649,9 @@ onMounted(() => {
 
 /* Responsive adjustments */
 @media (max-width: 768px) {
+    .header-title {
+        width:90%;
+    }
     .prompt-card {
         width: 100%;
         flex-direction: column;
