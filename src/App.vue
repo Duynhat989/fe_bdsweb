@@ -172,7 +172,7 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
               </a>
             </li>
             <li class="menu_item" :class="{ active: currentRoute === '/check_process' }">
-              <a href="/check_process" class="button"><i class='bx bx-check-shield'></i> <span>Kiểm tra quy
+              <a href="/check_process" class="button"><i class='bx bx-check-shield'></i> <span>Hướng dẫn kiểm tra quy
                   hoạch</span></a>
             </li>
 
