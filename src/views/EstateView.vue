@@ -216,8 +216,14 @@ onMounted(() => {
                   <option value="200-500">200 - 500 m²</option>
                   <option value="500-">Trên 500 m²</option>
               </select>
-          
-              <select class="search-select" v-model="priceRange">
+              
+              <select class="search-select" v-model="priceRange" v-if="transactionType == 'rent'">
+                <option value="">Chọn mức giá</option>
+                <option value="5">Dưới 4 triệu</option>
+                <option value="8">Dưới 8 triệu</option>
+                <option value="10">Dưới 10 triệu</option>
+              </select> 
+              <select class="search-select" v-model="priceRange" v-else>
                 <option value="">Chọn mức giá</option>
                 <option value="500">Dưới 500 triệu</option>
                 <option value="1000">Dưới 1 tỷ</option>

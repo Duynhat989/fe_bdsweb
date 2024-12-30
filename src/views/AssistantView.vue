@@ -5,6 +5,8 @@ import { END_POINT } from '@/api/api';
 import request from '@/utils/request';
 import { encodeId } from '@/utils/encoding';
 import LoadingSpinner from '@/components/LoadingSpinner.vue';
+import useNotification from '@/composables/useNotification';
+const notification = useNotification();
 const router = useRouter();
 const assistants = ref([]);
 const searchAssistants = ref([]);
@@ -30,17 +32,37 @@ const fetchSuggestions = async (search) => {
   }
 };
 
-const handleClick = (id) => {
+const handleClick = async (id) => {
   const encodedId = encodeId(id);
-  router.push(`/assistant/${encodedId}`);
+  // Kiểm tra xem id có đươc phép sử dụng hay không
+  console.log("Handle: ", id)
+  const checkLicense = async (id) => {
+    let isLicense = JSON.parse(localStorage.getItem("license") || "{}")
+    let features = JSON.parse(isLicense.pack.features)
+    for (let item of features) {
+      if (item.type == "assistant" & item.id == id) {
+        console.log(item)
+        return true
+      }
+    }
+    return false
+  }
+  let licenses = await checkLicense(id)
+  if (licenses) {
+    router.push(`/assistant/${encodedId}`);
+  } else {
+    notification.error('Lỗi!', `Hãy nâng cấp gói nâng cao để sử dụng tính năng này!`, {
+      showActions: false
+    });
+  }
 };
 const disableWatch = ref(false);
 const handleClickText = async (name) => {
   disableWatch.value = true;
   isQueryChanged.value = false;
-  searchQuery.value = name; 
+  searchQuery.value = name;
   await fetchAssistants(1, itemsPerPage.value, name);
-  disableWatch.value = false; 
+  disableWatch.value = false;
 };
 
 const fetchAssistants = async (page = currentPage.value, limit = itemsPerPage.value, search = searchQuery.value) => {
@@ -76,16 +98,16 @@ const clearSearchSuggestions = () => {
   setTimeout(() => {
     isQueryChanged.value = false;
     searchAssistants.value = [];
-  }, 200); 
+  }, 200);
 };
 const isQueryChanged = ref(false);
 watch(searchQuery, (newQuery, oldQuery) => {
   if (disableWatch.value || newQuery === oldQuery) {
-    return; 
+    return;
   }
   try {
     clearTimeout(timeout);
-  } catch (error) {}
+  } catch (error) { }
 
   if (!newQuery.trim()) {
     searchAssistants.value = [];
@@ -93,10 +115,10 @@ watch(searchQuery, (newQuery, oldQuery) => {
     isQueryChanged.value = false;
     return;
   }
-  
+
   timeout = setTimeout(() => {
     fetchSuggestions(newQuery);
-    isQueryChanged.value = true; 
+    isQueryChanged.value = true;
   }, 500);
 });
 
@@ -135,7 +157,7 @@ import logo from '@/assets/images/logo.png';
   <div class="main-container">
     <div class="header-title">
       <!-- <h1 class="title"><i class='bx bx-brain'></i> AI Assistants</h1> -->
-      <h1 class="title"> 
+      <h1 class="title">
         <img :src="logo" alt="logo web" width="200px" height="50px" class="logo_text">
       </h1>
       <p style="color: white;"><strong>Trợ lý toàn năng BĐS</strong></p>
@@ -143,18 +165,18 @@ import logo from '@/assets/images/logo.png';
     <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">
         <i class='bx bx-search-alt-2 search-icon'></i>
-        <input type="text" v-model="searchQuery"  @blur="clearSearchSuggestions" @keyup.enter="handleEnter" 
+        <input type="text" v-model="searchQuery" @blur="clearSearchSuggestions" @keyup.enter="handleEnter"
           placeholder="Nhập từ tìm kiếm trợ lý..." class="search-input" />
       </div>
-      <div  class="search-results" v-if="searchAssistants.length > 0">
+      <div class="search-results" v-if="searchAssistants.length > 0">
         <ul>
           <li v-for="(result, index) in searchAssistants" :key="index" @click="handleClickText(result.name)">
             {{ result.name }}
           </li>
         </ul>
       </div>
-      <div  class="search-results" v-if='isQueryChanged && searchAssistants.length === 0'>
-        <p  class="no-results">Không tìm thấy kết quả phù hợp.</p>
+      <div class="search-results" v-if='isQueryChanged && searchAssistants.length === 0'>
+        <p class="no-results">Không tìm thấy kết quả phù hợp.</p>
       </div>
     </div>
 
@@ -174,7 +196,7 @@ import logo from '@/assets/images/logo.png';
           <div class="assistant-content">
             <p class="assistant-detail">{{ assistant.detail }}</p>
             <div class="likes-container">
-              <span class="assistant-view">Lượt xem: {{ assistant.view  }}</span>
+              <span class="assistant-view">Lượt xem: {{ assistant.view }}</span>
               <!-- <span class="assistant-view">Lượt xem: {{ assistant.view + randomLikes() }}</span> -->
               <!-- <span class="likes">{{ randomLikes() }} <i class='bx bxs-heart' style='color:#ff0808'></i></span> -->
             </div>
@@ -206,6 +228,7 @@ import logo from '@/assets/images/logo.png';
   margin-top: 30px;
   margin-bottom: 20px;
 }
+
 /* 
 .header-title .title {
   font-size: 30px;
@@ -222,6 +245,7 @@ import logo from '@/assets/images/logo.png';
   justify-content: center;
   margin: 0 auto;
 }
+
 .header-title .title img {
   width: 100%;
   height: 100%;
@@ -519,10 +543,11 @@ h3.assistant-title {
 }
 
 @media (max-width: 480px) {
-  
+
   .main-container {
     padding: 0px 20px;
   }
+
   .header-title .title {
     font-size: 20px;
   }
