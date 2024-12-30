@@ -175,15 +175,14 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
               <a href="/check_process" class="button"><i class='bx bx-check-shield'></i> <span>Hướng dẫn kiểm tra quy
                   hoạch</span></a>
             </li>
-
-            <li class="menu_item" :class="{ active: currentRoute === '/package' }">
-              <a href="/package" class="button"><i class='bx bx-package'></i><span>Gói dịch vụ</span></a>
-            </li>
             <li class="menu_item">
               <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button" target="_blank">
                     <i style="margin-bottom: -3px;" class='bx bx-help-circle'></i>
                     &nbsp;&nbsp;<span> Hướng dẫn sử dụng </span>
                   </a>
+            </li>
+            <li class="menu_item" :class="{ active: currentRoute === '/package' }">
+              <a href="/package" class="button"><i class='bx bx-package'></i><span>Gói dịch vụ</span></a>
             </li>
           </ul>
           <div class="user">
@@ -196,15 +195,15 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
                 <h3>{{ user.name }}</h3>
               </div>
               <div class="info">
-                <div class="menu_item">
+                <!-- <div class="menu_item">
                   <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button">
                     <i style="margin-bottom: -3px;" class='bx bx-help-circle'></i>
                     &nbsp;&nbsp;<span> Hướng dẫn sử dụng </span>
                   </a>
-                </div>
+                </div> -->
 
                 <div class="menu_item" :class="{ active: currentRoute === '/introducing_page' }">
-                  <a href="/introducing_page" class="button"><i style="margin-bottom: -3px;"
+                  <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button"><i style="margin-bottom: -3px;"
                       class='bx bxs-buildings'></i>
                     &nbsp;&nbsp;<span>Giới thiệu doanh nghiệp</span></a>
                 </div>
