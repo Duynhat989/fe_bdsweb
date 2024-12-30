@@ -179,7 +179,12 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
             <li class="menu_item" :class="{ active: currentRoute === '/package' }">
               <a href="/package" class="button"><i class='bx bx-package'></i><span>Gói dịch vụ</span></a>
             </li>
-
+            <li class="menu_item">
+              <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button" target="_blank">
+                    <i style="margin-bottom: -3px;" class='bx bx-help-circle'></i>
+                    &nbsp;&nbsp;<span> Hướng dẫn sử dụng </span>
+                  </a>
+            </li>
           </ul>
           <div class="user">
             <div class="user_profile flex">
