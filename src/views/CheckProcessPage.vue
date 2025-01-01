@@ -23,11 +23,7 @@ onMounted(() => {
                 <!-- Video Column -->
                 <div class="video-column">
                     <div class="video-box">
-                        <iframe src="https://www.youtube.com/embed/tgbNymZ7vqY" title="YouTube video player 1"
-                            frameborder="0"
-                            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                            allowfullscreen>
-                        </iframe>
+                        <iframe src="https://drive.google.com/file/d/10--aeWEnQY4IvJ2n7BGtlFThXKfUW1I9/preview" width="640" height="480" allow="autoplay"></iframe>
                     </div>
                 </div>
 
