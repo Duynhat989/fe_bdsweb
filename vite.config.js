@@ -13,8 +13,7 @@ export default defineConfig({
   ],
   resolve: {
     alias: {
-      '@': fileURLToPath(new URL('./src', import.meta.url)),
-      "../upload/videoquyhoach.mp4": false
+      '@': fileURLToPath(new URL('./src', import.meta.url))
     }
   }
 })
