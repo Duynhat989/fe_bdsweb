@@ -28,4 +28,4 @@ coverage
 *.sw?
 .env
 *.tsbuildinfo
-# .upload
+upload
