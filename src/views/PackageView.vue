@@ -40,7 +40,6 @@ const loadPackages = async () => {
 onMounted(() => {
     loadPackages();
     const licenseData = localStorage.getItem('license');
-    console.log(licenseData);
     if (licenseData) {
         license.value = JSON.parse(licenseData);
     }
@@ -65,7 +64,7 @@ onMounted(() => {
                             Giá: {{ formatCurrency(pkg.price) }}
                         </p>
                         <div class="package-features feature-list"
-                            v-html="getFeatureNames(pkg.features) || 'Không có tính năng bổ sung'"></div>
+                            v-html="getFeatureNames(pkg.features,packages) || 'Không có tính năng bổ sung'"></div>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
                         <div class="package-buttons">
                             <button @click="openPopup(pkg)" class="register-btn"

@@ -70,32 +70,47 @@ export function getImagePath(imageName) {
     return require(`@/assets/images/${imageName}`);
 }
 
-export function getFeatureNames(values) {
-    if (typeof values === 'string') {
-        try {
-            values = JSON.parse(values);
-        } catch {
-            return '';
-        }
+export function getFeatureNames(values, allPackages) {
+    if (!values) return 'Không có thông tin về tính năng.';
+    try {
+        values = typeof values === 'string' ? JSON.parse(values) : values;
+    } catch {
+        return 'Dữ liệu tính năng không hợp lệ.';
     }
+    if (!Array.isArray(values) || values.length === 0) return 'Không có tính năng bổ sung.';
+    if (!Array.isArray(allPackages) || allPackages.length === 0) return 'Không có gói nào để so sánh tính năng.';
+
+    const allFeatures = allPackages.flatMap(pkg => {
+        try {
+            return typeof pkg.features === 'string' ? JSON.parse(pkg.features) : pkg.features || [];
+        } catch {
+            return [];
+        }
+    });
+
+    const uniqueFeatures = [...new Set(allFeatures.map(f => f.name))];
+    const sharedFeatures = uniqueFeatures.filter(name =>
+        allPackages.every(pkg => {
+            const features = typeof pkg.features === 'string' ? JSON.parse(pkg.features) : pkg.features || [];
+            return features.some(f => f.name === name);
+        })
+    );
 
     const grouped = values.reduce((acc, { type, name }) => {
-        const typeLabel = type === 'assistant' 
-            ? 'Tính năng trợ lý' 
-            : type === 'course' 
-            ? 'Tính năng khóa học' 
-            : 'Tính năng khác';
+        const typeLabel = type === 'assistant' ? 'Tính năng trợ lý' 
+                       : type === 'course' ? 'Tính năng khóa học' 
+                       : 'Tính năng khác';
         acc[typeLabel] = acc[typeLabel] || [];
-        acc[typeLabel].push(name);
+        acc[typeLabel].push(`<li${!sharedFeatures.includes(name) ? ' style="font-weight: bold;"' : ''}>${name}</li>`);
         return acc;
     }, {});
 
     return Object.entries(grouped)
-    .map(([label, names]) => 
-        `<strong>${label}:</strong><ul>${names.map(name => `<li>${name}</li>`).join('')}</ul>`
-    )
-    .join("<br>"); 
+        .map(([label, features]) => `<strong>${label}:</strong><ul>${features.join('')}</ul>`)
+        .join("<br>");
 }
+
+
 
 
 export function parseJSON (str) {
