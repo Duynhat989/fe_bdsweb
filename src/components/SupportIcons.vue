@@ -21,16 +21,9 @@
         <a href=" https://messenger.com/t/535785202944836?ref=appaph" target="_blank" class="icon">
             <img :src="message" alt="Logo Messenger" width="50">
         </a>
-        <div class="icon icon-robot">
-            <img :src="robot_phone" alt="Logo Messenger" width="50"  @click="openSupportModal" >
-        </div>
-        <div v-if="showSupportModal" class="modal">
-            <div class="modal-content">
-                <span class="close-btn" @click="closeSupportModal">&times;</span>
-                <h3>Hướng dẫn sử dụng</h3>
-                <p>Vui lòng làm theo các bước sau để được hỗ trợ...</p>
-            </div>
-        </div>
+        <a href="tel:0358635665" class="icon">
+            <img :src="robot_phone" alt="Logo Messenger" width="50">
+        </a>
     </div>
 </template>
 <style scoped>
