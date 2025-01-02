@@ -131,7 +131,7 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
   <div v-else class="app-container">
     <div v-if="isLogin">
       <div class="navbar" :class="{ hidden: hiddenPopup }">
-        <p>{{ license?.pack?.name }} với {{ license?.pack?.ask }} lời yêu cầu
+        <p>{{ license?.pack?.name }} còn {{ license?.pack?.ask - license?.day?.count }} lời yêu cầu
         </p>
         <a href="/package" class="upgrade-button">
           <span class="icon crown"></span>
@@ -427,14 +427,15 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
 }
 
 .logo_web .logo_text {
-  width: 175px;
+  width: 200px;
   cursor: pointer;
 }
 
 .logo_web .img {
   display: flex;
   width: 100%;
-  justify-content: center;
+  justify-content: flex-end;
+  margin-right: -30px;
 }
 
 .user {

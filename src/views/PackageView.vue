@@ -67,12 +67,8 @@ onMounted(() => {
                             v-html="getFeatureNames(pkg.features,packages) || 'Không có tính năng bổ sung'"></div>
                         <p class="package-description">Số lượt yêu cầu: {{ pkg.ask }}</p>
                         <div class="package-buttons">
-                            <button @click="openPopup(pkg)" class="register-btn"
-                                :disabled="license?.pack?.name === pkg.name">
-                                {{ license?.pack?.name === pkg.name ? 'Đã đăng ký' : 'Nâng cấp' }}
-                            </button>
-                            <button @click="openPopup(pkg)" class="register-btn" v-if="license?.pack?.name === pkg.name" >
-                                Nâng cấp
+                            <button @click="openPopup(pkg)" class="register-btn">
+                                {{ license?.pack?.name === pkg.name ? 'Gia hạn' : 'Nâng cấp' }}
                             </button>
                         </div>
                         <p v-if="license?.pack?.name === pkg.name" class="renew-message"> Bạn đang sử dụng {{ license?.pack?.name  }}. Thời hạn của bạn đến ngày {{ license?.date }}</p>
@@ -80,7 +76,7 @@ onMounted(() => {
                 </div>
             </div>
         </div>
-        <PaymentPackagePopup :package="selectedPackage" :visible="isPopupVisible" @close="closePopup" />
+        <PaymentPackagePopup :package="selectedPackage" :packages="packages" :visible="isPopupVisible" @close="closePopup" />
     </div>
 </template>
 

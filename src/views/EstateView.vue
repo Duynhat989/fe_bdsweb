@@ -216,22 +216,26 @@ onMounted(() => {
                   <option value="200-500">200 - 500 m²</option>
                   <option value="500-">Trên 500 m²</option>
               </select>
-              
               <select class="search-select" v-model="priceRange" v-if="transactionType == 'rent'">
-                <option value="">Chọn mức giá</option>
-                <option value="5">Dưới 4 triệu</option>
-                <option value="8">Dưới 8 triệu</option>
-                <option value="10">Dưới 10 triệu</option>
+                <option value="">Chọn mức giá thuê</option>
+                <option value="5">Dưới 5 triệu</option>
+                <option value="5-10">Từ 5-10 triệu</option>
+                <option value="10-20">Từ 10-20 triệu</option>
+                <option value="10-50">Từ 20-50 triệu</option>
+                <option value="50-100">Từ 50-100 triệu</option>
+                <option value="100-">Trên 100 triệu</option>
               </select> 
               <select class="search-select" v-model="priceRange" v-else>
-                <option value="">Chọn mức giá</option>
+                <option value="">Chọn mức giá bán</option>
                 <option value="500">Dưới 500 triệu</option>
-                <option value="1000">Dưới 1 tỷ</option>
-                <option value="10000">Dưới 10 tỷ</option>
-                <option value="20000">Dưới 20 tỷ</option>
-                <option value="50000">Dưới 50 tỷ</option>
-                <option value="100000">Dưới 100 tỷ</option>
-                <option value="500000">Dưới 500 tỷ</option>
+                <option value="500-1000">Từ 500 triệu - 1 tỷ</option>
+                <option value="1000-2000">Từ 1 tỷ - 2 tỷ</option>
+                <option value="2000-5000">Từ 2 tỷ - 5 tỷ</option>
+                <option value="5000-10000">Từ 5 tỷ - 10 tỷ</option>
+                <option value="10000-20000">Từ 10 tỷ - 20 tỷ</option>
+                <option value="20000-50000">Từ 20 tỷ - 50 tỷ</option>
+                <option value="50000-100000">Từ 50 tỷ - 100 tỷ</option>
+                <option value="100000-">Trên 100 tỷ</option>
               </select>
           </div>
       </div>

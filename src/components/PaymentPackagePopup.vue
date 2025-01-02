@@ -29,6 +29,10 @@ const props = defineProps({
         type: Object,
         default: () => ({}),
     },
+    packages: {
+      type: Array, 
+      required: true,
+    },
     visible: {
         type: Boolean,
         default: false,
@@ -96,7 +100,6 @@ const createInvoice = async () => {
             loadInvoice(paymentContent.value)
         }
     } catch (error) {
-        console.error(error);
         notification.error('Lỗi!', `Không thể tạo hóa đơn. Vui lòng thử lại sau.`, {
             showActions: false
         });
@@ -132,7 +135,7 @@ const loadInvoice = async (paymentValue) => {
                 <button class="close-btn" @click="closePopup"><i class="bx bxs-x-circle"></i></button>
                 <h3>{{ package.name }}</h3>
                 <div class="package-features feature-list"
-                    v-html="getFeatureNames(package.features) || 'Không có tính năng bổ sung'"></div>
+                    v-html="getFeatureNames(package.features, props.packages) || 'Không có tính năng bổ sung'"></div>
                 <div class="payment-details">
                     <h4>Chi tiết thanh toán</h4>
                     <p>Gói đăng ký: <span> {{ package.name }}</span></p>
