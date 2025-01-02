@@ -155,16 +155,15 @@ const loadInvoice = async (paymentValue) => {
                             <p v-if="paymentContent">Nội dung chuyển: <span>{{ paymentContent }}</span></p>
                             <button @click="createInvoice" class="invoice-btn" :disabled="isInvoiceCreated">Tạo hóa
                                 đơn</button>
-                            <div class="notify flex" v-if="isPaidLoading">
-                                <div class="notify_icon"><box-icon name='loader' animation='spin'></box-icon></div>
-                                <div><label>Đang kiểm tra trạng thái hóa đơn!</label></div>
-                            </div>
                         </div>
-
                         <div class="payment-qr">
                             <span v-if="isQRCodeLoading" class="loading-icon"></span> <!-- Hiển thị icon loading QR -->
                             <img v-else :src="qrCodeUrl" />
                         </div>
+                    </div>
+                    <div class="notify flex" v-if="isPaidLoading">
+                        <div class="notify_icon"><box-icon name='loader' animation='spin'></box-icon></div>
+                        <span>Quá  trình thanh toán có  thể mất thời  gian, vui  lòng chờ trong ít phút, nếu  có  bất  kỳ  vấn  đề  nào  vui  lòng  liên  hệ  hotline!</span>
                     </div>
                 </div>
             </div>
@@ -177,7 +176,9 @@ const loadInvoice = async (paymentValue) => {
     width: 100%;
     text-align: center;
 }
-
+.payment-details .notify span {
+    color: #b33a3a;
+}
 .modal-overlay {
     position: fixed;
     top: 0;

@@ -92,16 +92,19 @@ const togglePasswordVisibility = () => {
         </button>
         <span class="forgot-password" @click="switchToForgotPassword">Quên mật khẩu</span>
         <div class="tertiary"> Khi đăng ký là bạn đã đồng ý với
-            <a href="https://trogiup.batdongsan.com.vn/docs/dieu-khoan-thoa-thuan">
+            <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai">
                 Điều khoản sử dụng
             </a>,
-            <a href="https://trogiup.batdongsan.com.vn/docs/chinh-sach-bao-mat">
+            <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/loi-cam-on/publish-your-docs-1">
+                Chính  sách  miễn  trừ  trách  nhiệm
+            </a>,
+            <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai">
                 Chính sách bảo mật
             </a>,
-            <a href="https://trogiup.batdongsan.com.vn/docs/quy-che-hoat-dong">
+            <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai">
                 Quy chế
             </a>,
-            <a href="https://trogiup.batdongsan.com.vn/" class="sc-ksXhwv yKtqX">
+            <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai" class="sc-ksXhwv yKtqX">
                 Chính sách
             </a> của chúng tôi.
         </div>

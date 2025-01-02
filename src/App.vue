@@ -176,7 +176,7 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
                   hoạch.</span></a>
             </li>
             <li class="menu_item">
-              <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button" target="_blank">
+              <a href="https://www.duongdinhchau.com/huongdansudungaphai" class="button" target="_blank">
                     <i style="margin-bottom: -3px;" class='bx bx-help-circle'></i>
                     &nbsp;&nbsp;<span> Hướng dẫn sử dụng </span>
                   </a>

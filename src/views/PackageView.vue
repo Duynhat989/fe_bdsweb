@@ -225,6 +225,9 @@ onMounted(() => {
 }
 
 @media (max-width: 576px) {
+    .package-card {
+        padding-top: 40px;
+    }
     .header-title {
         margin-bottom: 20px;
     }
