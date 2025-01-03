@@ -13,7 +13,6 @@ import icon_logo from '@/assets/images/icon_logo1.png';
 import logo from '@/assets/images/logo1.png';
 import SupportIcons from "./components/SupportIcons.vue";
 const license = ref({});
-
 const notificationRef = ref(null)
 const hiddenPopup = ref(false);
 const router = useRouter();
@@ -252,7 +251,10 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
   box-shadow: rgba(149, 157, 165, 0.2) 0px 8px 24px;
   z-index: 999;
 }
-
+.pack_name {
+  font-weight: bold;
+  color: var(--color-primary);
+}
 .navbar {
   position: fixed;
   display: flex;

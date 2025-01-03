@@ -121,3 +121,19 @@ export function parseJSON (str) {
         return [];
     }
 };
+
+// export function calculateRemainingRequests(license) {
+//     if (!license || !license.pack || !license.day) {
+//         return "";
+//     }
+
+//     const today = new Date();
+//     const licenseDate = new Date(license.date);
+
+//     const daysRemaining = Math.max(0, Math.ceil((licenseDate - today) / (1000 * 60 * 60 * 24)));
+
+//     const totalRequests = license.pack.ask * daysRemaining;
+//     const remainingRequests = totalRequests - license.day.count;
+
+//     return Math.max(0, remainingRequests);
+// }
