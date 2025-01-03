@@ -130,7 +130,7 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
   <div v-else class="app-container">
     <div v-if="isLogin">
       <div class="navbar" :class="{ hidden: hiddenPopup }">
-        <p>{{ license?.pack?.name }} còn {{ license?.pack?.ask - license?.day?.count }} lời yêu cầu
+        <p><span class="pack_name">{{ license?.pack?.name }}</span> còn {{ license?.pack?.ask - license?.day?.count }} lời yêu cầu
         </p>
         <a href="/package" class="upgrade-button">
           <span class="icon crown"></span>
