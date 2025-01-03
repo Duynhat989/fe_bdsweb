@@ -59,8 +59,8 @@ const createContract = async () => {
         if (props.contract.id) {
             const replaceData = InputForm.value.reduce((acc, field) => {
                 acc[field.keyword] = field.type === "select"
-                    ? (field.selectedValue || "..........") 
-                    : (field.value || "..........");     
+                    ? (field.selectedValue || ".....") 
+                    : (field.value || ".....");     
                 return acc;
             }, {});
             const payload = {

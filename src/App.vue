@@ -176,7 +176,7 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
                   hoạch.</span></a>
             </li>
             <li class="menu_item">
-              <a href="https://www.duongdinhchau.com/huongdansudungaphai" class="button" target="_blank">
+              <a href="https://www.anphathung.ai/huongdansudung" class="button" target="_blank">
                     <i style="margin-bottom: -3px;" class='bx bx-help-circle'></i>
                     &nbsp;&nbsp;<span> Hướng dẫn sử dụng </span>
                   </a>
@@ -203,7 +203,7 @@ const isChatDetailPage = computed(() => route.path.includes('/chat'));
                 </div> -->
 
                 <div class="menu_item" :class="{ active: currentRoute === '/introducing_page' }">
-                  <a href="https://an-phat-hung-ai.gitbook.io/an-phat-hung-ai/" class="button"><i style="margin-bottom: -3px;"
+                  <a href="https://www.anphathung.ai/gioithieudoanhnghiep" class="button"><i style="margin-bottom: -3px;"
                       class='bx bxs-buildings'></i>
                     &nbsp;&nbsp;<span>Giới thiệu doanh nghiệp</span></a>
                 </div>
