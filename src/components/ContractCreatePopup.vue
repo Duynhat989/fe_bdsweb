@@ -58,14 +58,17 @@ const createContract = async () => {
     try {
         if (props.contract.id) {
             const replaceData = InputForm.value.reduce((acc, field) => {
-                acc[field.keyword] = field.type === "select" ? field.selectedValue : field.value;
+                acc[field.keyword] = field.type === "select"
+                    ? (field.selectedValue || "..........") 
+                    : (field.value || "..........");     
                 return acc;
             }, {});
-
             const payload = {
                 id: props.contract.id,
                 replaceData: replaceData
             };
+            console.log(payload);
+
             const response = await request.post(END_POINT.CONTRACT_EXPORT, payload, {
                 responseType: 'blob'
             });
