@@ -36,16 +36,10 @@ console.log(isLoading);
     <div class="contract-description">
       <h2>Giải pháp quản lý hợp đồng</h2>
       <p>
-        Giải pháp quản lý hợp đồng của chúng tôi giúp bạn tiết kiệm thời gian và tối ưu hóa quy trình quản lý với sự hỗ trợ từ AI. 
-        Với tính năng rà soát tự động, hệ thống sẽ phân tích các điều khoản, phát hiện những rủi ro tiềm ẩn và đề xuất chỉnh sửa hợp lý. 
-        Đồng thời, bạn có thể tạo mới hợp đồng một cách nhanh chóng, sử dụng các mẫu có sẵn hoặc tùy chỉnh theo nhu cầu cụ thể.
-      </p>
-      <p>
-        Đặc biệt, giải pháp của chúng tôi còn hỗ trợ quản lý toàn bộ vòng đời của hợp đồng, từ soạn thảo, phê duyệt, đến lưu trữ và gia hạn, 
-        đảm bảo mọi hợp đồng đều được xử lý một cách hiệu quả và tuân thủ quy định pháp luật.
+        Giải pháp quản lý hợp đồng của chúng tôi giúp bạn tiết kiệm thời gian và tối ưu hóa quy trình quản lý với sự hỗ trợ từ AI. Với tính năng rà soát tự động, hệ thống sẽ phân tích các điều khoản, phát hiện những rủi ro tiềm ẩn và đề xuất chỉnh sửa hợp lý. Đồng thời, bạn có thể tạo mới hợp đồng một cách nhanh chóng, sử dụng các mẫu có sẵn hoặc tùy chỉnh theo nhu cầu cụ thể.
       </p>
       <div class="note">
-        Đây là giải pháp tham khảo nhằm mục đích tối ưu quá trình tạo hợp đồng 1 cách nhanh nhất. Vui lòng chỉ sử dụng để tham khảo, chúng tôi không chịu trách nhiệm nếu bạn sử dụng trực tiếp với mục đích thương mại.
+        Đây là giải pháp tham khảo nhằm mục đích tối ưu quá trình rà soát và tạo hợp đồng 1 cách nhanh nhất. Vui lòng chỉ sử dụng để tham khảo, chúng tôi không chịu trách nhiệm nếu bạn sử dụng trực tiếp hợp đồng này.
       </div>
     </div>
   </div>
@@ -146,14 +140,13 @@ console.log(isLoading);
 
 .contract-description h2 {
   font-size: 23px;
-  color: #333;
+  color:  var(--color-primary);
   margin-bottom: 20px;
 }
 .note {
   position: relative;
   margin-bottom: 0px;
   margin-top: 20px;
-  background: #0d318b34;
   text-align: center;
   font-size: 13px;
   color: #c03228;

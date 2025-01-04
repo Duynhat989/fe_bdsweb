@@ -160,7 +160,7 @@ import logo from '@/assets/images/logo.png';
       <h1 class="title">
         <img :src="logo" alt="logo web" width="200px" height="50px" class="logo_text">
       </h1>
-      <p style="color: white;"><strong>Trợ lý toàn năng BĐS</strong></p>
+      <p style="color: white;"><strong>Trợ Lý Toàn Năng Bất Động Sản</strong></p>
     </div>
     <div class="search-bar" :class="{ 'query-changed': isQueryChanged }">
       <div class="search-row">

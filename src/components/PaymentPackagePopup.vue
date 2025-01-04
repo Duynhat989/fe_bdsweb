@@ -161,12 +161,13 @@ const loadInvoice = async (paymentValue) => {
                         </div>
                         <div class="payment-qr">
                             <span v-if="isQRCodeLoading" class="loading-icon"></span> <!-- Hiển thị icon loading QR -->
-                            <img v-else :src="qrCodeUrl" />
+                            <img v-else :src="qrCodeUrl" /> <br>
+                            <span>Quét mã QR code</span>
                         </div>
                     </div>
                     <div class="notify flex" v-if="isPaidLoading">
                         <div class="notify_icon"><box-icon name='loader' animation='spin'></box-icon></div>
-                        <span>Quá  trình thanh toán có  thể mất thời  gian, vui  lòng chờ trong ít phút, nếu  có  bất  kỳ  vấn  đề  nào  vui  lòng  liên  hệ  hotline!</span>
+                        <span>Quá  trình thanh toán có  thể mất thời  gian, vui  lòng chờ trong ít phút, nếu  có  bất  kỳ  vấn  đề  nào  vui  lòng  liên  hệ  hotline 0358635665!</span>
                     </div>
                 </div>
             </div>

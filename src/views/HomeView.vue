@@ -38,7 +38,7 @@ const handleClick = (routeName) => {
   <div class="main-container">
     <div class="header-title">
       <h1 class="title">An Phát Hưng</h1>
-      <p >Trợ lý toàn năng về bất động sản</p>
+      <p >Trợ Lý Toàn Năng Bất Động Sản</p>
     </div>
     <div class="content">
       <!-- <div class="left-box">

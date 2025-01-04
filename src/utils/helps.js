@@ -78,7 +78,7 @@ export function getFeatureNames(values, allPackages) {
         return 'Dữ liệu tính năng không hợp lệ.';
     }
     if (!Array.isArray(values) || values.length === 0) return 'Không có tính năng bổ sung.';
-    if (!Array.isArray(allPackages) || allPackages.length === 0) return 'Không có gói nào để so sánh tính năng.';
+    if (!Array.isArray(allPackages) || allPackages.length === 0) return '';
 
     const allFeatures = allPackages.flatMap(pkg => {
         try {
